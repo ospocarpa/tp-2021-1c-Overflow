@@ -1,5 +1,5 @@
-#ifndef UTIL_H_
-#define UTIL_H_
+#ifndef SOCKET_CLIENT_H_
+#define SOCKET_CLIENT_H_
 
 #include<stdio.h>
 #include<stdlib.h>
@@ -18,4 +18,4 @@
 	void liberar_conexion(int socket_cliente);
 	void sendMessage(t_paquete* paquete, int socket_cliente);
 
-#endif /* UTIL_H_ */
+#endif /* SOCKET_CLIENT_H_ */

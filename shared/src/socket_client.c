@@ -1,4 +1,4 @@
-#include "../include/util.h"
+#include "../include/socket_client.h"
 
 int crear_conexion(char *ip, int puerto, t_log* logger)
 {
