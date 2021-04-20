@@ -1,3 +1,5 @@
+# Logs
+*.log
 # Prerequisites
 *.d
 

@@ -1,12 +1,3 @@
-/*
- * seleccionar_restaurante.h
- *
- *  Created on: 16 octubre 2020
- *      Author: jloffredo
- * Description: Serializador y Deserializador para usar con el handshake cuando inicio una conexion a servidor
- */
-
-
 #ifndef HANDSHAKE_H
 #define HANDSHAKE_H
 #include <stdlib.h>
