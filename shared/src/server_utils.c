@@ -42,7 +42,7 @@ int esperar_cliente(int socket_servidor, t_log* logger)
 	
 	int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
 
-	printf("Se conecto un cliente!\n");
+	//printf("Se conecto un cliente!\n");
 	//log_info(logger, "Se conecto un cliente!");
 	
 	return socket_cliente;
