@@ -58,3 +58,7 @@ dkms.conf
 
 #Compilados
 Cliente/Cliente
+
+# otros
+*.cproject
+*.project
