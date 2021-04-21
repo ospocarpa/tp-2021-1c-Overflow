@@ -1,4 +1,4 @@
-#include "log_utils.h"
+/*#include "log_utils.h"
 
 static t_log * logger = NULL;
 
@@ -76,4 +76,4 @@ void log_free(){
 
 t_log * get_log(){
     return logger;
-}
+}*/

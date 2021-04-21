@@ -17,7 +17,9 @@ typedef struct {
 */
 int main(int argc, char **argv)
 {
-    if (argc > 1 && strcmp(argv[1], "-test") == 0)
+    printf(test());printf("\n");
+    return 0;
+    /*if (argc > 1 && strcmp(argv[1], "-test") == 0)
         run_tests();
     else
     {
@@ -74,5 +76,5 @@ int main(int argc, char **argv)
 
         return 1;
         return EXIT_SUCCESS;
-    }
+    }*/
 }

@@ -1,4 +1,4 @@
-#ifndef LOG_UTILS_H
+/*#ifndef LOG_UTILS_H
 #define LOG_UTILS_H
 
 #include <stdio.h>
@@ -26,4 +26,4 @@ void log_free();
 t_log * get_log();
 
 
-#endif
+#endif*/
