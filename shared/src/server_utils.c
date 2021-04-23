@@ -118,3 +118,8 @@ t_list* recibir_paquete(int socket_cliente, t_log* logger)
 	return valores;
 	return NULL;
 }
+
+char *test()
+{
+    return "Hola mundo";
+}

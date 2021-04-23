@@ -17,14 +17,14 @@ typedef struct {
 */
 int main(int argc, char **argv)
 {
-    printf(test());printf("\n");
+    printf(test());
+    printf("\n");
     return 0;
     /*if (argc > 1 && strcmp(argv[1], "-test") == 0)
         run_tests();
     else
     {
         handshake_regreso = malloc(sizeof(t_handshake_output));
-
         g_config = leer_config_file("./cfg/cliente.config");
         config_cliente = leerConfigCliente(g_config);
         logger = log_create("./cfg/Cliente1.log", "CLIENTE", 1, LOG_LEVEL_INFO);
@@ -32,10 +32,8 @@ int main(int argc, char **argv)
         
         int server_fd = iniciar_servidor(cIP, string_itoa(PUERTO), logger);
         log_info(logger, "INICIANDO SERVIDOR %d", server_fd);
-
         //printf("%s %s\n", cIP, string_itoa(PUERTO));
         cCon = conectarOtroModulo(config_cliente, logger);
-
         if (cCon == -1)
         {
             log_error(logger, "Error Conectando al otro Modulo");
@@ -62,18 +60,12 @@ int main(int argc, char **argv)
                 break;
             }
         }
-
         pthread_t thread2_notificaciones;
-
         pthread_create(&thread2_notificaciones, NULL, &recibirNotificaciones, NULL);
-
         pthread_t thread1_id;
-
         pthread_create(&thread1_id, NULL, &iniciarConsola, NULL);
         pthread_join(thread1_id, NULL);
-
         liberar_conexion(cCon);
-
         return 1;
         return EXIT_SUCCESS;
     }*/
