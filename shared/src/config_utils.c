@@ -42,13 +42,9 @@ t_config_app* leerConfigApp(t_config* config)
 t_config_cliente* leerConfigCliente(t_config* config)
 {
 	t_config_cliente* config_cliente = malloc(sizeof(t_config_cliente));
-	config_cliente->IP= config_get_string_value(config,"IP");
 	config_cliente->PUERTO= config_get_int_value(config,"PUERTO");
 	config_cliente->IP_CLIENTE= config_get_string_value(config,"IP_CLIENTE");
-	config_cliente->ID_CLIENTE= config_get_string_value(config,"ID_CLIENTE");
 	config_cliente->ARCHIVO_LOG= config_get_string_value(config,"ARCHIVO_LOG");
-	config_cliente->POSICION_X= config_get_int_value(config,"POSICION_X");
-	config_cliente->POSICION_Y= config_get_int_value(config,"POSICION_Y");
 	return config_cliente;
 }
 t_config_comanda* leerConfigComanda(t_config* config)
@@ -86,6 +82,7 @@ t_config_restaurante* leerConfigRestaurante(t_config* config)
 
 	return config_restaurante;
 }
+
 t_config_sindicato* leerConfigSindicato(t_config* config)
 {	t_config_sindicato* config_sindicato = malloc(sizeof(t_config_sindicato));
 
@@ -94,5 +91,15 @@ t_config_sindicato* leerConfigSindicato(t_config* config)
 	config_sindicato->BLOCK_SIZE= config_get_int_value(config,"BLOCK_SIZE");
 	config_sindicato->BLOCKS= config_get_int_value(config,"BLOCKS");
 	return config_sindicato;
+
+}
+
+t_config_template* leerConfigTemplate(t_config* config)
+{	t_config_template* config_template = malloc(sizeof(t_config_template));
+
+	config_template->PUERTO_ESCUCHA= config_get_int_value(config,"PUERTO_ESCUCHA");
+	config_template->IP_SERVIDOR= config_get_string_value(config,"IP_SERVIDOR");
+	config_template->ARCHIVO_LOG= config_get_string_value(config,"ARCHIVO_LOG");
+	return config_template;
 
 }

@@ -84,9 +84,17 @@ typedef struct {
     char* PUNTO_MONTAJE;
 } t_config_sindicato;
 
+typedef struct {
+    int PUERTO_ESCUCHA;
+    char* IP_SERVIDOR;
+    char* ARCHIVO_LOG;
+} t_config_template;
+
 t_config_app* leerConfigApp(t_config* config);
 t_config_cliente* leerConfigCliente(t_config* config);
 t_config_comanda* leerConfigComanda(t_config* config);
 t_config_restaurante* leerConfigRestaurante(t_config* config);
 t_config_sindicato* leerConfigSindicato(t_config* config);
+t_config_template* leerConfigTemplate(t_config* config);
+
 #endif
