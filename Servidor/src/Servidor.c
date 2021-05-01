@@ -5,15 +5,14 @@ int main(int argc, char **argv)
 {
     //Carga de los archivos de configuracion
     t_config *g_config = leer_config_file("./cfg/servidor.config");
-    config = leerConfigTemplate(g_config);
+    t_config_discordiador* config = leerConfigDiscordiador(g_config);
     
     //Iniciar Log
     logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
     log_info(logger, "CONFIGURACION CARGADA!");
     
-    
     //Iniciar Server
-    int server_fd = iniciar_servidor(config->IP_SERVIDOR, string_itoa(config->PUERTO_ESCUCHA), logger);
+    int server_fd = iniciar_servidor(config->IP_MODULO, string_itoa(config->PUERTO_MODULO), logger);
     log_info(logger, "INICIANDO SERVIDOR");
 
     pthread_t threadMessage;

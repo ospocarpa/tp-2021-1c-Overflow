@@ -6,15 +6,8 @@
 #include <stdbool.h>
 #include "shared_utils.h"
 #include "config_utils.h"
-//#include "TAD.h"
-//#include "TAD_Restaurante.h"
-//#include "handshake.h"
-//#include "Restaurante_Starter.h"
-//#include "RecepcionMensajes.h"
-#include <commons/collections/queue.h>
 #include <semaphore.h>
 
-t_config_template* config;
 t_log* logger;
 
 

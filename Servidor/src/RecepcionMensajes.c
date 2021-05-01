@@ -5,7 +5,7 @@
 void *recepcionMensaje(t_paquete *paquete, int cliente_fd, t_log *logger)
 {
     log_info(logger, "recibo algo");
-
+    //Deserializacion
     t_paquete *new_paquete;
     switch (paquete->codigo_operacion)
     {
