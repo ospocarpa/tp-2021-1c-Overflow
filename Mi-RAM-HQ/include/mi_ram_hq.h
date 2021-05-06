@@ -3,5 +3,6 @@
 
 #include <stdio.h>
 #include <stdbool.h>
+#include "log_utils.h"
 
 #endif

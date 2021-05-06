@@ -1,8 +1,8 @@
-/*#include "log_utils.h"
+#include "log_utils.h"
 
 static t_log * logger = NULL;
 
-void log_create(char * path_log, char * name_log){
+void logger_create(char * path_log, char * name_log){
     if(logger == NULL){
         logger = iniciar_logger(path_log, name_log);
     }
@@ -49,31 +49,31 @@ static void template_log(int type, const char * format, va_list arguments){
     free(leyenda);
 }
 
-void log_info(const char *format, ...){
+void logger_info(const char *format, ...){
 	va_list arguments;
 	va_start(arguments, format);
 	template_log(0, format, arguments);
 	va_end(arguments);
 }
 
-void log_error(const char *format, ...){
+void logger_error(const char *format, ...){
 	va_list arguments;
 	va_start(arguments, format);
 	template_log(ERROR, format, arguments);
 	va_end(arguments);
 }
 
-void log_debug(const char *format, ...){
+void logger_debug(const char *format, ...){
 	va_list arguments;
 	va_start(arguments, format);
 	template_log(DEBUG, format, arguments);
 	va_end(arguments);
 }
 
-void log_free(){
+void logger_free(){
     log_destroy(logger);
 }
 
-t_log * get_log(){
+t_log * get_logger(){
     return logger;
-}*/
+}
