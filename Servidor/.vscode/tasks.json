@@ -1,0 +1,15 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "App Normal",
+            "type": "shell",
+            "command": "./exec"
+        },
+        {
+            "label": "App Valgrind",
+            "type": "shell",
+            "command": "./vexec"
+        }
+    ]
+}
