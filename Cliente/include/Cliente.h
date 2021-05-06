@@ -8,7 +8,6 @@
 #include "shared_utils.h"
 #include "config_utils.h"
 #include "server_utils.h"
-#include "TAD_Restaurante.h"
 #include "serializadorAnexo.h"
 
 // ----------------------------------- INICIO DE DECLARACIONES --------------------------------------
