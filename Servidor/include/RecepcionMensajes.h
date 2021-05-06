@@ -8,10 +8,8 @@
 #include <pthread.h>
 #include <commons/collections/list.h>
 #include "config_utils.h"
-#include "handshake.h"
 #include "server_utils.h"
 #include "shared_utils.h"
-#include "TADAnexo.h"
 #include "TAD.h"
 #include "Servidor.h"
 

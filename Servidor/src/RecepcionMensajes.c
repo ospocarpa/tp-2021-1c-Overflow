@@ -11,9 +11,6 @@ void *recepcionMensaje(t_paquete *paquete, int cliente_fd, t_log *logger)
     {
         case 0:
             exit;
-        case I_OBTENER_RESTAURANTE:
-            printf("Llegó el mensaje\n");
-            break;
         break;
     }
 
