@@ -11,7 +11,7 @@
 #include<commons/log.h>
 #include<commons/string.h>
 #include "TAD.h"
-#include "desearilizador.h"
+
 
 	int crear_conexion(char *ip, int puerto, t_log* logger);
 	void* serializar_paquete(t_paquete* paquete, int* bytes);

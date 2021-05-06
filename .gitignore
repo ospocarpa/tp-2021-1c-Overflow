@@ -1,5 +1,9 @@
 # Logs
 *.log
+
+# Ignorar los ejecutables
+/Discordiador/discordiador
+
 # Prerequisites
 *.d
 
