@@ -13,9 +13,9 @@ int get_tamanio_memoria()
     return config_get_int_value(config, "TAMANIO_MEMORIA");
 }
 
-char *get_puerto()
+int get_puerto()
 {
-    return config_get_string_value(config, "PUERTO");
+    return config_get_int_value(config, "PUERTO");
 }
 
 char *get_ip()

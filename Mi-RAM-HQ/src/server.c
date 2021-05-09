@@ -6,7 +6,7 @@ static void *ejecutar_operacion(int client)
 	//aca van los mensajes que le envia discordiador
 }
 
-void server_mi_ram_iniciar(char *puerto, char *ip, t_log *log)
+void server_mi_ram_iniciar(int puerto, char *ip, t_log *log)
 {
 	int socket_server;
 	int socket_client_tripulante;
@@ -14,15 +14,16 @@ void server_mi_ram_iniciar(char *puerto, char *ip, t_log *log)
 
 	logger_info("Iniciar servidor");
 
-	socket_server = iniciar_servidor(ip, puerto, log);
+	socket_server = iniciar_servidor(puerto, log);
 	log_info(log, "Server MI-RAM-HQ N° [%d] esperando clientes", socket_server);
 
-	while (1)
+	while(1)
 	{
 		socket_client_tripulante = esperar_cliente(socket_server, log);
+		
 		if (socket_client_tripulante != -1)
 		{
-			log_info(log, "Se conecto el cliente [%d]", socket_client_tripulante);
+			log_info(log, "Se conecto el tripulante [%d]", socket_client_tripulante);
 			pthread_create(&hilo_client_tripulante, NULL, (void *)ejecutar_operacion, (void *)socket_client_tripulante);
 			pthread_detach(hilo_client_tripulante);
 		}

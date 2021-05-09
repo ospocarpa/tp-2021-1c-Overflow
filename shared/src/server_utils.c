@@ -1,37 +1,67 @@
 #include "../include/server_utils.h"
 
-int iniciar_servidor(char* IP, char* PUERTO, t_log* logger)
+int iniciar_servidor(int PUERTO, t_log* logger)
 {
 	int socket_servidor;
 
-    struct addrinfo hints, *servinfo, *p;
+    // struct addrinfo hints, *servinfo, *p;
 
-    memset(&hints, 0, sizeof(hints));
-    hints.ai_family = AF_UNSPEC;
-    hints.ai_socktype = SOCK_STREAM;
-    hints.ai_flags = AI_PASSIVE;
+    // memset(&hints, 0, sizeof(hints));
+    // hints.ai_family = AF_UNSPEC;
+    // hints.ai_socktype = SOCK_STREAM;
+    // hints.ai_flags = AI_PASSIVE;
 
 	//IP = NULL;
-    getaddrinfo(NULL, PUERTO, &hints, &servinfo);
+    // getaddrinfo(IP, PUERTO, &hints, &servinfo);
 
-    for (p=servinfo; p != NULL; p = p->ai_next)
-    {
-        if ((socket_servidor = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
-            continue;
+    // for (p=servinfo; p != NULL; p = p->ai_next)
+    // {
+    //     if ((socket_servidor = socket(p->ai_family, p->ai_socktype, p->ai_protocol)) == -1)
+    //         continue;
 
-        if (bind(socket_servidor, p->ai_addr, p->ai_addrlen) == -1) {
-            close(socket_servidor);
-            continue;
-        }
-        break;
-    }
+    //     if (bind(socket_servidor, p->ai_addr, p->ai_addrlen) == -1) {
+    //         close(socket_servidor);
+    //         continue;
+    //     }
+    //     break;
+    // }
 
-	listen(socket_servidor, SOMAXCONN);
+	// listen(socket_servidor, SOMAXCONN);
 
-    freeaddrinfo(servinfo);
+    // freeaddrinfo(servinfo);
 
-    log_trace(logger, "Listo para escuchar a mi cliente");
+    //log_trace(logger, "Listo para escuchar a mi cliente");
 
+	struct sockaddr_in data_server;
+
+	data_server.sin_family = AF_INET;
+	data_server.sin_addr.s_addr = INADDR_ANY; //es para indicar IP, si hay alaguna especifica se puede usar asi inet_addr("127.0.0.1")
+	data_server.sin_port = htons(PUERTO);
+
+	memset(&data_server, 0, sizeof(data_server));
+
+	socket_servidor = socket(AF_INET, SOCK_STREAM, 0);
+
+	if(socket_servidor == -1)
+	{
+		perror("[SERVER] - ERROR: No se pudo crear el socket servidor");
+		return -1;
+	}
+
+	int value_true = 1;
+	setsockopt(socket_servidor,SOL_SOCKET,SO_REUSEADDR,&value_true,sizeof(value_true)); // permite que el bind no falle si se cierra el servidor 
+
+	if (bind(socket_servidor, (void *)&data_server, sizeof(data_server)) != 0)
+	{
+		perror("[SERVER] - ERROR: Fallo bind. Puede que el puerto no este disponible");
+		return -2;
+	}
+
+	if(listen(socket_servidor, SOMAXCONN) == -1){
+		perror("[SERVER] - ERROR: Servidor no escucha");
+		return -3;
+	}
+	
     return socket_servidor;
 }
 
