@@ -1,8 +1,6 @@
 #include "discordiador.h"
 
 int main(){
-
-    printf("hola\n");
-
+    run_tests();
     return 1;
 }
