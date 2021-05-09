@@ -6,7 +6,7 @@
 
 void cfg_create(char * path_config);
 int get_tamanio_memoria();
-int get_puerto();
+char * get_puerto();
 char * get_ip();
 void cfg_free();
 

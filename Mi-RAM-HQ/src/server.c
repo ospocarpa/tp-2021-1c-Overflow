@@ -22,9 +22,9 @@ void server_mi_ram_iniciar(char *puerto, char *ip, t_log *log)
 		socket_client_tripulante = esperar_cliente(socket_server, log);
 		if (socket_client_tripulante != -1)
 		{
-			log_info(log, "Se conecto el cliente [%d]", socket_client);
-			pthread_create(&hilo_client_tripulante, NULL, (void *)ejecutar_operacion, (void *)socket_client);
-			pthread_detach(hilo_client);
+			log_info(log, "Se conecto el cliente [%d]", socket_client_tripulante);
+			pthread_create(&hilo_client_tripulante, NULL, (void *)ejecutar_operacion, (void *)socket_client_tripulante);
+			pthread_detach(hilo_client_tripulante);
 		}
 	}
 
