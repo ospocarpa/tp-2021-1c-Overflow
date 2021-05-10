@@ -5,7 +5,8 @@
 #include <string.h>
 #include "log_utils.h"
 #include "server_utils.h"
+#include <stdlib.h>
 
-void server_mi_ram_iniciar(int puerto, char *ip, t_log *log);
+void server_mi_ram_iniciar(int puerto);
 
 #endif

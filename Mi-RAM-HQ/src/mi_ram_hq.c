@@ -7,14 +7,9 @@ int main()
     logger_create("cfg/mi_ram_hq.log", "MI_RAM_HQ");
     logger_info("Iniciando módulo Mi-RAM-HQ");
 
-    char *ip = get_ip();
     int puerto = get_puerto();
-    t_log *log = get_logger();
 
-    logger_info("IP: %s", ip);
-    logger_info("PUERTO: %d", puerto);
-
-    server_mi_ram_iniciar(puerto, ip, log);
+    server_mi_ram_iniciar(puerto);
 
     // Libero el log y config al final
     cfg_free();

@@ -1,11 +1,11 @@
 #include "../include/socket_client.h"
 
-int crear_conexion(char *ip, int puerto, t_log* logger)
+int crear_conexion(char *ip, int puerto)
 {
 	struct addrinfo hints, *server_info;
 
 	memset(&hints, 0, sizeof(hints));
-	hints.ai_family = AF_UNSPEC;
+	hints.ai_family = AF_INET;
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
@@ -15,7 +15,6 @@ int crear_conexion(char *ip, int puerto, t_log* logger)
 
 	if(connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1){
 		return -1;
-		//log_error(logger,"Error Conectando a Server");
 	}
 	freeaddrinfo(server_info);
 
