@@ -1,6 +1,6 @@
 #include "../include/server_utils.h"
 
-int iniciar_servidor(char* IP, char* PUERTO, t_log* logger)
+int iniciar_servidor(int PUERTO)
 {
 	int socket_servidor;
 
@@ -10,9 +10,8 @@ int iniciar_servidor(char* IP, char* PUERTO, t_log* logger)
     hints.ai_family = AF_UNSPEC;
     hints.ai_socktype = SOCK_STREAM;
     hints.ai_flags = AI_PASSIVE;
-
-	//IP = NULL;
-    getaddrinfo(NULL, PUERTO, &hints, &servinfo);
+;
+    getaddrinfo(NULL, string_itoa(PUERTO) , &hints, &servinfo); // NULL representa la ip local
 
     for (p=servinfo; p != NULL; p = p->ai_next)
     {
@@ -29,21 +28,16 @@ int iniciar_servidor(char* IP, char* PUERTO, t_log* logger)
 	listen(socket_servidor, SOMAXCONN);
 
     freeaddrinfo(servinfo);
-
-    log_trace(logger, "Listo para escuchar a mi cliente");
-
+	
     return socket_servidor;
 }
 
-int esperar_cliente(int socket_servidor, t_log* logger)
+int esperar_cliente(int socket_servidor)
 {
 	struct sockaddr_in dir_cliente;
 	socklen_t tam_direccion = sizeof(struct sockaddr_in);
 	
 	int socket_cliente = accept(socket_servidor, (void*) &dir_cliente, &tam_direccion);
-
-	//printf("Se conecto un cliente!\n");
-	//log_info(logger, "Se conecto un cliente!");
 	
 	return socket_cliente;
 }

@@ -1,5 +1,5 @@
-#ifndef DISCORDIADOR_H
-#define DISCORDIADOE_H
+#ifndef TAD_DISCORDIADOR_H
+#define TAD_DISCORDIADOR_H
 
 #include <stdio.h>
 #include <stdbool.h>

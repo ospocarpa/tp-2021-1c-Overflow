@@ -3,6 +3,7 @@
 
 # Ignorar los ejecutables
 /Discordiador/discordiador
+/Mi-RAM-HQ/mi_ram
 
 # Prerequisites
 *.d
