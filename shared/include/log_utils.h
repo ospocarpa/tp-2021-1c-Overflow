@@ -1,4 +1,4 @@
-/*#ifndef LOG_UTILS_H
+#ifndef LOG_UTILS_H
 #define LOG_UTILS_H
 
 #include <stdio.h>
@@ -7,9 +7,6 @@
 #include <commons/log.h>
 #include <stdbool.h>
 #include "shared_utils.h"
-#include "TAD.h"
-
-#define SIZE_LOG 256
 
 typedef enum
 {
@@ -18,12 +15,12 @@ typedef enum
     ERROR=2
 }type_log;
 
-void log_create(char * path_log, char * name_log);
-void log_info(const char *format, ...);
-void log_error(const char *format, ...);
-void log_debug(const char *format, ...);
-void log_free();
-t_log * get_log();
+void logger_create(char * path_log, char * name_log);
+void logger_info(const char *format, ...);
+void logger_error(const char *format, ...);
+void logger_debug(const char *format, ...);
+void logger_free();
+t_log * get_logger();
 
 
-#endif*/
+#endif

@@ -10,7 +10,7 @@ void iniciar_servidor_main(){
     log_info(logger, "CONFIGURACION CARGADA!");
     
     //Iniciar Server
-    int server_fd = iniciar_servidor(config->IP_MODULO, string_itoa(config->PUERTO_MODULO), logger);
+    int server_fd = iniciar_servidor(config->PUERTO_MODULO);
     log_info(logger, "INICIANDO SERVIDOR");
 
     pthread_t threadConsola;
@@ -19,7 +19,7 @@ void iniciar_servidor_main(){
     int cliente_fd;
     while (1)
     {
-        cliente_fd = esperar_cliente(server_fd, logger);
+        cliente_fd = esperar_cliente(server_fd);
 
         pthread_t threadEscucha;
         pthread_create(&threadEscucha,NULL,(void*)ejecutar_operacion, cliente_fd);
@@ -48,6 +48,40 @@ void ejecutar_operacion(int cliente_fd)
 }
 
 int main(){
+    // t_config * config = leer_config_file("cfg/discordiador.config");
+    // t_config_discordiador* cfg_discordiador = leerConfigDiscordiador(config);
+    logger_create("cfg/discordiador.log", "DISCORDIADOR");
+    logger_info("Iniciando módulo DISCORDIADOR");
+    
+    t_log * log = get_logger();
+
+    int conexion_mi_ram = crear_conexion("127.0.0.1", 5002); 
+
+    if(conexion_mi_ram < 0)
+    {
+        logger_error("Conexion Mi-RAM fallida");
+        liberar_conexion(conexion_mi_ram);
+        //return EXIT_FAILURE;
+    }
+    else
+    {
+        logger_info("Conexion con Mi-RAM-HQ exitosa");
+    }
+    
+
     iniciar_servidor_main();
+
+    while (1)
+    {
+        //aca van los mensaje a enviar a mi-ram
+        send(conexion_mi_ram,"Hola",4,0);//ejemplo, luego eliminar
+    }
+    
+    // Libero el log y config al final 
+    logger_free();
+    liberar_conexion(conexion_mi_ram);
+
+
+    run_tests();
     return 1;
 }

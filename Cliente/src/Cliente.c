@@ -7,7 +7,8 @@ int main(int argc, char **argv)
     
     printf("%s\n", config->ARCHIVO_LOG);
     t_log* logger = iniciar_logger(config->ARCHIVO_LOG, "CLIENTE");
-    int conexion_servidor = crear_conexion(config->IP_MODULO, config->PUERTO_MODULO, logger);
+    printf("%s %d\n", config->IP_MODULO, config->PUERTO_MODULO);
+    int conexion_servidor = crear_conexion(config->IP_MODULO, config->PUERTO_MODULO);
 
     Tarea* tarea = malloc(sizeof(Tarea));
     tarea->patota_id = 1;
