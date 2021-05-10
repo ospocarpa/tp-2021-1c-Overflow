@@ -45,8 +45,6 @@ void* serializar_paquete(t_paquete* paquete, int *bytes)
 
 	memcpy(a_enviar + desplazamiento, &(paquete->codigo_operacion), sizeof(int));
 	desplazamiento+= sizeof(int);
-	memcpy(a_enviar + desplazamiento, &(paquete->from_client), sizeof(bool));
-	desplazamiento+= sizeof(bool);
 	memcpy(a_enviar + desplazamiento, &(paquete->buffer->size), sizeof(uint32_t));
 	desplazamiento+= sizeof(uint32_t);
 	memcpy(a_enviar + desplazamiento, paquete->buffer->stream, paquete->buffer->size);

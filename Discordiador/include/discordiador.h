@@ -8,6 +8,8 @@
 #include <commons/config.h>
 #include "socket_client.h"
 #include <sys/socket.h>
+#include <TAD.h>
+#include <sd_posicion.h>
 
 #define PATH_CONFIG "cfg/discordiador.config"
 

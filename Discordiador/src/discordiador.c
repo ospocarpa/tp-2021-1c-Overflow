@@ -33,5 +33,8 @@ int main(){
     logger_free();
     liberar_conexion(conexion_mi_ram);
 
+
+    run_tests();
+
     return 1;
 }

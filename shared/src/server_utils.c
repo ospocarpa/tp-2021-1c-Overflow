@@ -71,7 +71,6 @@ t_paquete* recibir_mensaje(int socket_cliente)
 	paquete->buffer = malloc(sizeof(t_buffer));
 
 	recv(socket_cliente, &(paquete->codigo_operacion), sizeof(uint32_t), MSG_WAITALL);
-	recv(socket_cliente, &(paquete->from_client), sizeof(bool), MSG_WAITALL);
 	recv(socket_cliente, &(paquete->buffer->size), sizeof(uint32_t), MSG_WAITALL);
 	paquete->buffer->stream = malloc(paquete->buffer->size);
 	recv(socket_cliente, paquete->buffer->stream, paquete->buffer->size, MSG_WAITALL);
