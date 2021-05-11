@@ -1,6 +1,6 @@
 #!/bin/bash
-FILE=MongoStore
+FILE=mi_ram
 make $FILE
 if test -f "./$FILE"; then
-    ./$FILE
+    ./$FILE -test
 fi

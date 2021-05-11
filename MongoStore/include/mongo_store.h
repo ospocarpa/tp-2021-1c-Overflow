@@ -8,6 +8,6 @@
 #include "read_config_mongo_store.h"
 #include "server.h"
 #include "shared_utils.h"
-
+#include "tests.h"
 
 #endif

@@ -7,5 +7,6 @@
 #include "read_config_mi_ram_hq.h"
 #include "server.h"
 #include <commons/log.h>
+#include "tests.h"
 
 #endif

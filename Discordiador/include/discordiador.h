@@ -13,9 +13,10 @@
 #include "shared_utils.h"
 #include "RecepcionMensajes.h"
 #include <consola.h>
+#include "tests.h"
 
-    t_log* logger;
-    void iniciar_servidor_main();
-    void ejecutar_operacion(int cliente_fd);
+t_log *logger;
+void iniciar_servidor_main();
+void ejecutar_operacion(int cliente_fd);
 
 #endif
