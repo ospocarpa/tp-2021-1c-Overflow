@@ -7,7 +7,9 @@
 #include <TAD.h>
 #include <sd_posicion.h>
 #include <consola.h>
+#include <tad_discordiador.h>
 
 void mostrar_consola();
+bool leer_consola(void);
 
 #endif

@@ -8,7 +8,8 @@
 #include <TAD.h>
 #include <tests.h>
 
-typedef enum{
+typedef enum
+{
     NEW,
     READY,
     EXEC,
@@ -18,24 +19,43 @@ typedef enum{
 
 typedef struct
 {
-	t_list* patotas;            //Lista [Patota]
-	char* algoritmo;
+    t_list *patotas; //Lista [Patota]
+    char *algoritmo;
 } Discordiador;
 
 typedef struct
 {
-	int id;
-    t_list* tareas;             //Lista [Tarea]
-    t_list* tripulantes;        //Lista [Tripulante]
+    int id;
+    t_list *tareas;      //Lista [Tarea]
+    t_list *tripulantes; //Lista [Tripulante]
 } Patota;
 
 typedef struct
 {
-	int id;
+    int id;
     status_planificacion status;
-    Posicion* posicion;
-    Tarea* tarea;
+    Posicion *posicion;
+    Tarea *tarea;
     int patota_id;
 } Tripulante;
+
+typedef enum
+{
+    INICIAR_PATOTA,
+    LISTAR_TRIPULANTES,
+    EXPULSAR_TRIPULANTE,
+    INICIAR_PLANIFICACION,
+    PAUSAR_PLANIFICACION,
+    OBTENER_BITACORA,
+    SALIR
+} cod_operacion;
+typedef enum
+{
+
+    SUCCESS = 1,
+    ERROR = 2,
+    ERROR_CONEXION = 3
+
+} estado_request; //estado_peticion
 
 #endif

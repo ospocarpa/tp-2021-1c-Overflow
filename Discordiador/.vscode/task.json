@@ -10,18 +10,22 @@
             ]
         },
         {
-            "label": "Proceso1 Normal",
-
+            "label": "Discordiador Normal",
             "type": "shell",
             "command": "./exec"
         },
         {
-            "label": "Proceso1 Valgrind",
+            "label": "Discordiador Tests",
             "type": "shell",
-            "command": "./vexec" 
+            "command": "./tests"
         },
         {
-            "label": "Proceso1 Helgrind",
+            "label": "Discordiador Valgrind",
+            "type": "shell",
+            "command": "./vexec"
+        },
+        {
+            "label": "Discordiador Helgrind",
             "type": "shell",
             "command": "./hexec"
         }
