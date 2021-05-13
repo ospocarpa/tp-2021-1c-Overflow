@@ -91,38 +91,38 @@ bool leer_consola(void)
     if (string_equals_ignore_case(tokens[0], "INICIAR_PATOTA"))
     {
         printf(">>>>>INICIAR_PATOTA<<<<<\n");
-        parsear_request(INICIAR_PATOTA, tokens);
+        parsear_mensaje(INICIAR_PATOTA, tokens);
         printf("========================\n");
     }
 
     else if (string_equals_ignore_case(tokens[0], "LISTAR_TRIPULANTES"))
     {
         printf(">>>>>LISTAR_TRIPULANTES<<<<<\n");
-        parsear_request(LISTAR_TRIPULANTES, &buffer);
+        parsear_mensaje(LISTAR_TRIPULANTES, &buffer);
         printf("========================\n");
     }
     else if (string_equals_ignore_case(tokens[0], "EXPULSAR_TRIPULANTE"))
     {
         printf(">>>>>EXPULSAR_TRIPULANTE<<<<<\n");
-        parsear_request(EXPULSAR_TRIPULANTE, tokens);
+        parsear_mensaje(EXPULSAR_TRIPULANTE, tokens);
         printf("========================\n");
     }
     else if (string_equals_ignore_case(tokens[0], "INICIAR_PLANIFICACION"))
     {
         printf(">>>>>INICIAR_PLANIFICACION<<<<<\n");
-        parsear_request(INICIAR_PLANIFICACION, tokens);
+        parsear_mensaje(INICIAR_PLANIFICACION, tokens);
         printf("========================\n");
     }
     else if (string_equals_ignore_case(tokens[0], "PAUSAR_PLANIFICACION"))
     {
         printf(">>>>>PAUSAR_PLANIFICACION<<<<<\n");
-        parsear_request(PAUSAR_PLANIFICACION, tokens);
+        parsear_mensaje(PAUSAR_PLANIFICACION, tokens);
         printf("========================\n");
     }
     else if (string_equals_ignore_case(tokens[0], "OBTENER_BITACORA"))
     {
         printf(">>>>>OBTENER_BITACORA<<<<<\n");
-        parsear_request(OBTENER_BITACORA, tokens);
+        parsear_mensaje(OBTENER_BITACORA, tokens);
         printf("========================\n");
     }
     else if (string_starts_with(tokens[0], "SALIR"))
@@ -144,12 +144,12 @@ bool leer_consola(void)
     return false;
 }
 
-void parsear_request(cod_operacion operacion, char **tokens)
+void parsear_mensaje(cod_operacion operacion, char **tokens)
 {
 
     int cantidad_argumentos;
 
-    estado_request estado;
+    // estado_mensaje estado;
 
     cantidad_argumentos = obtener_cantidad_argumentos(tokens);
 
@@ -173,6 +173,16 @@ void parsear_request(cod_operacion operacion, char **tokens)
 
         if (cantidad_argumentos == 1)
         {
+            //completar
+
+            if (!es_un_numero(tokens[1]))
+            { // existe el tripulante ?
+
+                printf("El argumento es invalido\n");
+
+                return;
+            }
+            //completar
         }
         else
         {
@@ -209,6 +219,15 @@ void parsear_request(cod_operacion operacion, char **tokens)
 
         if (cantidad_argumentos == 1)
         {
+            //completar
+            if (!es_un_numero(tokens[1]))
+            { // existe el tripulante?
+
+                printf("El argumento es invalido\n");
+
+                return;
+            }
+            //completar
         }
         else
         {
@@ -221,6 +240,15 @@ void parsear_request(cod_operacion operacion, char **tokens)
 
         if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2)
         {
+
+            //completar
+            if (!es_un_numero(tokens[1]))
+            { //falta verificar coordenadas y la ruta del archivo
+
+                printf("El argumento es invalido\n");
+
+                return;
+            }
         }
         else
         {
@@ -247,4 +275,46 @@ int obtener_cantidad_argumentos(char **tokens)
     }
 
     return cantidad;
+}
+
+bool es_un_numero(char *numero_aux)
+{
+
+    int i = 0;
+
+    if (numero_aux == NULL)
+    {
+
+        return false;
+    }
+
+    char *numero = malloc(strlen(numero_aux) + 1);
+    memcpy(numero, numero_aux, strlen(numero_aux) + 1);
+
+    string_trim_left(&numero);
+
+    if (string_equals_ignore_case(numero, "\n") || string_is_empty(numero))
+    {
+
+        free(numero);
+
+        return false;
+    }
+
+    while (numero[i] != '\0')
+    {
+
+        if (!isdigit(numero[i]))
+        {
+
+            free(numero);
+
+            return false;
+        }
+
+        i++;
+    }
+
+    free(numero);
+    return true;
 }

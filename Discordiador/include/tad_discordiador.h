@@ -49,13 +49,13 @@ typedef enum
     OBTENER_BITACORA,
     SALIR
 } cod_operacion;
-typedef enum
-{
+// typedef enum
+// {
 
-    SUCCESS = 1,
-    ERROR = 2,
-    ERROR_CONEXION = 3
+//     SUCCESS = 1,
+//     ERROR = 2,
+//     ERROR_CONEXION = 3
 
-} estado_request; //estado_peticion
+// } estado_mensaje; //estado del mensaje en consola
 
 #endif
