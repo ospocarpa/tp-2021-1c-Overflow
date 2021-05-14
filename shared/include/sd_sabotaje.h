@@ -1,5 +1,5 @@
-#ifndef SD_SABOTAJE.H
-#define SD_SABOTAJE.H
+#ifndef SD_SABOTAJE_H
+#define SD_SABOTAJE_H
 
 #include<stdio.h>
 #include<stdlib.h>

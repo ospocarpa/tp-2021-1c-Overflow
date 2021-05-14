@@ -1,4 +1,4 @@
-#ifndef TAD_H_j
+#ifndef TAD_H_
 #define TAD_H_
 #include <netdb.h>
 #include <commons/collections/list.h>
@@ -8,13 +8,14 @@
 	typedef enum
 	{
 		SALIDA = 0,
-		TAREA = 1
-		SABOTAJE = 2 
+		TAREA = 1,
+		SABOTAJE = 2,
+		FIN_FSCKa = 3
 	} op_code;
 
 	typedef struct
 	{
-		uint32_t size;jjjjj
+		uint32_t size;
 		void *stream;
 	} t_buffer;
 
@@ -47,6 +48,7 @@
 	typedef struct{
 		int mensaje_length;
 		char* mensaje;
+
 	// bool = false ---> para ver el mensaje que se envia 
 	// puede servir para avisar cuando empezo y termino en todo caso 
 	// Pos 	
@@ -61,8 +63,8 @@
 // 
 // o los tomo todo dentro del mismo ver si tiene la misma logica 
 
-	typedef struct{
+	// typedef struct{
 
-	}Fin_fsck;
+	// }Fin_fsck;
 
 #endif /* TAD_H_ */

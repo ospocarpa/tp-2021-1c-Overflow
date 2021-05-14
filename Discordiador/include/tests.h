@@ -5,5 +5,6 @@
 
 int run_tests();
 void verificarTarea();
+void verificarSabotaje();
 
 #endif
