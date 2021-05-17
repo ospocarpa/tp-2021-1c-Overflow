@@ -13,7 +13,6 @@
 
 void mostrar_consola();
 bool leer_consola(void);
-bool es_un_numero(char *numero);
 int obtener_cantidad_argumentos(char **tokens);
 void parsear_mensaje(cod_operacion operacion, char **tokens);
 

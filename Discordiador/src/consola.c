@@ -149,7 +149,7 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
     case EXPULSAR_TRIPULANTE:
         printf("Entro expulsar tripulante\n");
-        printf("tokens[1]:%s\n", tokens[1]);
+
         if (cantidad_argumentos == 1)
         {
             //completar
@@ -199,7 +199,6 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
     case OBTENER_BITACORA:
         printf("entre a obtener bitacora\n");
-        printf("tokens[1]:%s\n", tokens[1]);
 
         if (cantidad_argumentos == 1)
         {
@@ -224,10 +223,6 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
     case INICIAR_PATOTA:
         printf("entre a iniciar patota\n");
-        for (int i = 1; i < cantidad_argumentos; i++)
-        {
-            printf("tokens[%d]:%s\n", i, tokens[i]);
-        }
 
         if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2)
         {
@@ -266,46 +261,4 @@ int obtener_cantidad_argumentos(char **tokens)
     }
 
     return cantidad;
-}
-//pasar a server_utils
-bool es_un_numero(char *numero_aux)
-{
-
-    int i = 0;
-
-    if (numero_aux == NULL)
-    {
-
-        return false;
-    }
-
-    char *numero = malloc(strlen(numero_aux) + 1);
-    memcpy(numero, numero_aux, strlen(numero_aux) + 1);
-
-    string_trim_left(&numero);
-
-    if (string_equals_ignore_case(numero, "\n") || string_is_empty(numero))
-    {
-
-        free(numero);
-
-        return false;
-    }
-
-    while (numero[i] != '\0')
-    {
-
-        if (!isdigit(numero[i]))
-        {
-
-            free(numero);
-
-            return false;
-        }
-
-        i++;
-    }
-
-    free(numero);
-    return true;
 }
