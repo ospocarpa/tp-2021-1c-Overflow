@@ -2,19 +2,21 @@
 //inline
 void mostrar_consola()
 {
+
     printf(
-        "\n--------------------\n"
+        "\n------------------------------------------\n"
         "BIENVENIDO A LA CONSOLA DEL DISCORDIADOR\n"
         "Lista de comandos: \n"
-        "INICIAR_PATOTA [Cantidad de tripulantes] [Ruta] [Coordenadas]\n  "
-        "LISTAR_TRIPULANTES\n"
-        "EXPULSAR_TRIPULANTE [Numero de tripulante]\n"
         "INICIAR_PLANIFICACION\n"
         "PAUSAR_PLANIFICACION\n"
-        "OBTENER_BITACORA\n"
-        " SALIR\n"
+        "LISTAR_TRIPULANTES\n"
+        "EXPULSAR_TRIPULANTE [Numero de tripulante]\n"
+        "OBTENER_BITACORA [Numero de tripulante]\n"
+        "INICIAR_PATOTA [Cantidad de tripulantes] [Ruta] [Coordenadas]\n"
+        "SALIR\n"
 
     );
+
     //system("clear");
 }
 
@@ -34,81 +36,89 @@ void liberar_puntero_doble(char **puntero_doble)
 
 bool leer_consola(void)
 {
-
-    int tamanio_buffer = 128;
-
-    char *buffer = malloc(tamanio_buffer + 1);
-
-    fgets(buffer, tamanio_buffer, stdin);
-
-    string_trim_right(&buffer);
-
-    *(buffer + tamanio_buffer) = '\0';
-
-    if (string_length(buffer) + 1 >= tamanio_buffer)
+    while (1)
     {
-        printf("Excedistes por mucho los caracteres en la consola\n");
+        mostrar_consola();
+        int tamanio_buffer = 128;
+
+        char *buffer = malloc(tamanio_buffer + 1);
+
+        fgets(buffer, tamanio_buffer, stdin);
+
+        string_trim_right(&buffer);
+
+        *(buffer + string_length(buffer)) = '\0';
+
+        if (string_length(buffer) + 1 >= tamanio_buffer)
+        {
+            printf("Excedistes por mucho los caracteres en la consola\n");
+        }
+
+        buffer = realloc(buffer, string_length(buffer) + 1);
+
+        char **tokens = string_split(buffer, " ");
+
+        string_to_upper(tokens[0]);
+
+        if (string_equals_ignore_case(tokens[0], "INICIAR_PATOTA"))
+        {
+            printf(">>>>>INICIAR_PATOTA<<<<<\n");
+            parsear_mensaje(INICIAR_PATOTA, tokens);
+            printf("========================\n");
+        }
+
+        else if (string_equals_ignore_case(tokens[0], "LISTAR_TRIPULANTES"))
+        {
+            printf(">>>>>LISTAR_TRIPULANTES<<<<<\n");
+            parsear_mensaje(LISTAR_TRIPULANTES, &buffer);
+            printf("========================\n");
+        }
+        else if (string_equals_ignore_case(tokens[0], "EXPULSAR_TRIPULANTE"))
+        {
+            printf(">>>>>EXPULSAR_TRIPULANTE<<<<<\n");
+            parsear_mensaje(EXPULSAR_TRIPULANTE, tokens);
+            printf("========================\n");
+        }
+        else if (string_equals_ignore_case(tokens[0], "INICIAR_PLANIFICACION"))
+        {
+            printf(">>>>>INICIAR_PLANIFICACION<<<<<\n");
+            parsear_mensaje(INICIAR_PLANIFICACION, tokens);
+            printf("========================\n");
+        }
+        else if (string_equals_ignore_case(tokens[0], "PAUSAR_PLANIFICACION"))
+        {
+            printf(">>>>>PAUSAR_PLANIFICACION<<<<<\n");
+            parsear_mensaje(PAUSAR_PLANIFICACION, tokens);
+            printf("========================\n");
+        }
+        else if (string_equals_ignore_case(tokens[0], "OBTENER_BITACORA"))
+        {
+            printf(">>>>>OBTENER_BITACORA<<<<<\n");
+            parsear_mensaje(OBTENER_BITACORA, tokens);
+            printf("========================\n");
+        }
+        else if (string_starts_with(tokens[0], "SALIR"))
+        {
+
+            printf(">>>>>SALIR<<<<<\n");
+            free(buffer);
+            liberar_puntero_doble(tokens);
+            printf("\nTERMINO DE LEER CONSOLA|\n");
+            printf("------------------------------------------\n");
+            return false;
+            //desconexion = true;
+        }
+        else
+        {
+            printf("No es valido lo ingresado\n");
+        }
+
+        free(buffer);
+
+        liberar_puntero_doble(tokens);
     }
-
-    buffer = realloc(buffer, string_length(buffer) + 1);
-
-    char **tokens = string_split(buffer, " ");
-
-    string_to_upper(tokens[0]);
-
-    if (string_equals_ignore_case(tokens[0], "INICIAR_PATOTA"))
-    {
-        printf(">>>>>INICIAR_PATOTA<<<<<\n");
-        parsear_mensaje(INICIAR_PATOTA, tokens);
-        printf("========================\n");
-    }
-
-    else if (string_equals_ignore_case(tokens[0], "LISTAR_TRIPULANTES"))
-    {
-        printf(">>>>>LISTAR_TRIPULANTES<<<<<\n");
-        parsear_mensaje(LISTAR_TRIPULANTES, &buffer);
-        printf("========================\n");
-    }
-    else if (string_equals_ignore_case(tokens[0], "EXPULSAR_TRIPULANTE"))
-    {
-        printf(">>>>>EXPULSAR_TRIPULANTE<<<<<\n");
-        parsear_mensaje(EXPULSAR_TRIPULANTE, tokens);
-        printf("========================\n");
-    }
-    else if (string_equals_ignore_case(tokens[0], "INICIAR_PLANIFICACION"))
-    {
-        printf(">>>>>INICIAR_PLANIFICACION<<<<<\n");
-        parsear_mensaje(INICIAR_PLANIFICACION, tokens);
-        printf("========================\n");
-    }
-    else if (string_equals_ignore_case(tokens[0], "PAUSAR_PLANIFICACION"))
-    {
-        printf(">>>>>PAUSAR_PLANIFICACION<<<<<\n");
-        parsear_mensaje(PAUSAR_PLANIFICACION, tokens);
-        printf("========================\n");
-    }
-    else if (string_equals_ignore_case(tokens[0], "OBTENER_BITACORA"))
-    {
-        printf(">>>>>OBTENER_BITACORA<<<<<\n");
-        parsear_mensaje(OBTENER_BITACORA, tokens);
-        printf("========================\n");
-    }
-    else if (string_starts_with(tokens[0], "SALIR"))
-    {
-
-        printf(">>>>>SALIR<<<<<\n");
-
-        //desconexion = true;
-    }
-    else
-    {
-        printf("No es valido lo ingresado\n");
-    }
-
-    free(buffer);
-
-    liberar_puntero_doble(tokens);
-
+    printf("termino leer consola|\n");
+    printf("\n------------------------------------------\n");
     return false;
 }
 
@@ -138,14 +148,15 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
         break;
 
     case EXPULSAR_TRIPULANTE:
-
+        printf("Entro expulsar tripulante\n");
+        printf("tokens[1]:%s\n", tokens[1]);
         if (cantidad_argumentos == 1)
         {
             //completar
 
             if (!es_un_numero(tokens[1]))
-            { // existe el tripulante ?
-
+            {
+                // se podria analizar solo hasta tokens[1]
                 printf("El argumento es invalido\n");
 
                 return;
@@ -160,9 +171,11 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
         break;
 
     case INICIAR_PLANIFICACION:
+        printf("Entro a iniciar planificacion\n");
 
         if (cantidad_argumentos == 0)
         {
+            //completar
         }
         else
         {
@@ -172,6 +185,7 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
         break;
 
     case PAUSAR_PLANIFICACION:
+        printf("Entro a pausar planificacion\n");
 
         if (cantidad_argumentos == 0)
         {
@@ -184,9 +198,12 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
         break;
 
     case OBTENER_BITACORA:
+        printf("entre a obtener bitacora\n");
+        printf("tokens[1]:%s\n", tokens[1]);
 
         if (cantidad_argumentos == 1)
         {
+            printf("cantidad de argumentos correctos\n");
             //completar
             if (!es_un_numero(tokens[1]))
             { // existe el tripulante?
@@ -195,6 +212,7 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 return;
             }
+            printf("argumentos correctos\n");
             //completar
         }
         else
@@ -205,6 +223,11 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
         break;
 
     case INICIAR_PATOTA:
+        printf("entre a iniciar patota\n");
+        for (int i = 1; i < cantidad_argumentos; i++)
+        {
+            printf("tokens[%d]:%s\n", i, tokens[i]);
+        }
 
         if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2)
         {
@@ -244,7 +267,7 @@ int obtener_cantidad_argumentos(char **tokens)
 
     return cantidad;
 }
-
+//pasar a server_utils
 bool es_un_numero(char *numero_aux)
 {
 
