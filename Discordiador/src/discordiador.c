@@ -15,17 +15,20 @@ void iniciar_servidor_main()
     log_info(logger, "INICIANDO SERVIDOR");
 
     pthread_t threadConsola;
-    pthread_create(&threadConsola, NULL, (void *)mostrar_consola, NULL);
+    pthread_create(&threadConsola, NULL, (void *)leer_consola, NULL);
     pthread_detach(threadConsola);
     int cliente_fd;
+
     while (1)
     {
+
         cliente_fd = esperar_cliente(server_fd);
 
         pthread_t threadEscucha;
-        pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
+        // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
         pthread_detach(threadEscucha);
     }
+
     //run_tests();
 }
 
@@ -77,9 +80,12 @@ int main(int argc, char **argv)
         }
 
         iniciar_servidor_main();
+        printf("sali de  inciar servidor\n");
 
         while (1)
+
         {
+
             //aca van los mensaje a enviar a mi-ram
             send(conexion_mi_ram, "Hola", 4, 0); //ejemplo, luego eliminar
         }
@@ -87,8 +93,8 @@ int main(int argc, char **argv)
         // Libero el log y config al final
         logger_free();
         liberar_conexion(conexion_mi_ram);
-
-        run_tests();
+        printf("termino la ejecucion de discordiador\n");
+        //run_tests();
         return 1;
     }
 }
