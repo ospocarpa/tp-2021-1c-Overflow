@@ -8,7 +8,7 @@ void cfg_create(char *path_config)
         config = config_create(path_config);
 }
 
-char * get_punto_de_montaje()
+char* get_punto_de_montaje()
 {
     return config_get_string_value(config, "PUNTO_MONTAJE");
 }
@@ -18,9 +18,9 @@ char* get_ip()
     return "127.0.0.1";
 }
 
-char* get_puerto()
+int get_puerto()
 {
-    return config_get_string_value(config, "PUERTO");
+    return config_get_int_value(config, "PUERTO");
 }
 
 int get_tiempo_sincronizacion()

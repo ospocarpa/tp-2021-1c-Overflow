@@ -3,9 +3,10 @@
 
 #include <pthread.h>
 #include <string.h>
-#include <log_utils.h>
-#include <server_utils.h>
+#include "log_utils.h"
+#include "server_utils.h"
+#include <stdlib.h>
 
-void server_mongo_store_iniciar(char *puerto, char *ip, t_log *log);
+void server_mongo_store_iniciar(int puerto);
 
 #endif
