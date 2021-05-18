@@ -6,6 +6,8 @@
 #include "log_utils.h"
 #include "read_config_mongo_store.h"
 #include "server.h"
+#include "shared_utils.h"
+#include "tests.h"
 #include <commons/log.h>
 
 #endif

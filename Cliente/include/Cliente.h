@@ -8,6 +8,7 @@
 #include "shared_utils.h"
 #include "config_utils.h"
 #include "server_utils.h"
+#include "TAD.h"
 
 // ----------------------------------- INICIO DE DECLARACIONES --------------------------------------
 
