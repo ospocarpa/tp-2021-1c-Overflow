@@ -29,7 +29,17 @@ typedef struct {
     char* ARCHIVO_LOG;
 } t_config_discordiador;
 
+typedef struct {
+    char* IP_MODULO;
+    int PUERTO;
+    char* PUNTO_MONTAJE;
+    int TIEMPO_SINCRONIZACION;
+    char* POSICIONES_SABOTAJE;
+    char* ARCHIVO_LOG;
+} t_config_mongo_store;
+
 t_config * leer_config_file(char*);
 t_config_discordiador* leerConfigDiscordiador(t_config* config);
+t_config_mongo_store* leer_config_mongo_store(t_config* config);
 
 #endif

@@ -6,6 +6,19 @@ t_config * leer_config_file(char* configName)
 	return g_config;
 }
 
+t_config_mongo_store* leer_config_mongo_store(t_config* config){
+	t_config_mongo_store* config_mongo_store = malloc(sizeof(t_config_mongo_store));
+
+	config_mongo_store->IP_MODULO = config_get_string_value(config,"IP_MODULO");
+	config_mongo_store->PUERTO = config_get_int_value(config,"PUERTO");
+	config_mongo_store->PUNTO_MONTAJE = config_get_string_value(config,"PUNTO_MONTAJE");
+	config_mongo_store->TIEMPO_SINCRONIZACION = config_get_int_value(config,"TIEMPO_SINCRONIZACION");
+	config_mongo_store->POSICIONES_SABOTAJE = config_get_string_value(config,"POSICIONES_SABOTAJE");
+	config_mongo_store->ARCHIVO_LOG = config_get_string_value(config,"ARCHIVO_LOG");
+
+	return config_mongo_store;
+}
+
 t_config_discordiador* leerConfigDiscordiador(t_config* config)
 {	t_config_discordiador* config_discordiador = malloc(sizeof(t_config_discordiador));
 
