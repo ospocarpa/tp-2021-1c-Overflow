@@ -10,7 +10,12 @@
 		SALIDA = 0,
 		TAREA = 1,
 		SABOTAJE = 2,
-		FIN_FSCKa = 3
+		FIN_FSCKa = 3,
+		INICIAR_PATOTA = 4,
+		LISTAR_TRIPULANTES = 5,
+		EXPULSAR_TRIPULANTE = 6,
+		INFORMAR_TAREA_TRIPULANTE = 7,
+		INFORMAR_POSICION_TRIPULANTE = 8
 	} op_code;
 
 	typedef struct
@@ -41,6 +46,16 @@
 		int tiempo;
 		Posicion* posicion;
 	} Tarea;
+
+	typedef struct 
+	{
+		int cant_tripulantes;
+		int long_path_tareas;
+		char * path_tareas;
+		int long_posicion;
+		char * posiciones;
+	}t_iniciar_patota;
+	
 
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
