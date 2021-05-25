@@ -55,6 +55,25 @@
 		int long_posicion;
 		char * posiciones;
 	}t_iniciar_patota;
+
+	// Es necesario crear esto?
+	// typedef struct{
+		
+	// }t_listar_tripulantes;
+
+	typedef struct{
+		int cant_tripulantes;
+		
+	}t_expulsar_tripulante;
+
+	typedef struct{
+		int patota_id; // es necesario esto ? ya q cada tripulante es unico?
+		int numero_tripulante;
+		
+		Posicion* posicion;
+		
+	}t_informar_tarea_tripulante;
+
 	
 
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
