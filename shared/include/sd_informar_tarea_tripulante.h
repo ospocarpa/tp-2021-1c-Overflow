@@ -11,8 +11,8 @@
 #include<sd_posicion.h>
 
 
-t_paquete* serializar_informar_tarea_tripulante(t_informar_tarea_tripulante* data_buffer);
-t_informar_tarea_tripulante* deserializar_informar_tarea_tripulante(t_paquete* paquete);
+t_paquete* serializar_informar_tarea_tripulante(t_informar_tarea_tripulante data_buffer);
+t_informar_tarea_tripulante deserializar_informar_tarea_tripulante(t_paquete* paquete);
 
 
 #endif  

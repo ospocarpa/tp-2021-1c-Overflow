@@ -11,8 +11,8 @@
 #include<sd_posicion.h>
 
 
-t_paquete* serializar_listar_tripulantes(t_listar_tripulantes* data_buffer);
-t_listar_tripulantes* deserializar_listar_tripulantes(t_paquete* paquete);
+t_paquete* serializar_listar_tripulantes(t_listar_tripulantes data_buffer);
+t_listar_tripulantes deserializar_listar_tripulantes(t_paquete* paquete);
 
 
 #endif  

@@ -18,6 +18,15 @@
 		INFORMAR_POSICION_TRIPULANTE = 8
 	} op_code;
 
+	typedef enum
+	{
+		NEW,
+		READY,
+		EXEC,
+		BOCK,
+		EXIT	
+	} status_tripulante;
+
 	typedef struct
 	{
 		uint32_t size;
@@ -56,10 +65,17 @@
 		char * posiciones;
 	}t_iniciar_patota;
 
-	// Es necesario crear esto?
-	// typedef struct{
-		
-	// }t_listar_tripulantes;
+	typedef struct 
+	{
+		int patota_id;
+		int tripulante_id;
+		Posicion posicion;
+		status_tripulante status;
+	}t_tripulante;
+	
+	typedef struct{
+		t_list * tripulantes; //estructura de tripulantes
+	}t_listar_tripulantes;
 
 	typedef struct{
 		int cant_tripulantes;

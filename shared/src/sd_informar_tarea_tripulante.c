@@ -1,8 +1,9 @@
-#include "../include/sd_informar_tarea_tripulante"
+#include "../include/sd_informar_tarea_tripulante.h"
 
-t_paquete* serializar_informar_tarea_tripulante(t_informar_tarea_tripulante* data_buffer){
+t_paquete* serializar_informar_tarea_tripulante(t_informar_tarea_tripulante data_buffer){
 
     t_paquete * paquete =malloc(sizeof(t_paquete));
+    /* 
     int tam_buffer = sizeof(int) * 3 
     t_buffer * new_buffer =malloc(sizeof(t_buffer));
     void * stream = malloc(tam_buffer);
@@ -20,16 +21,19 @@ t_paquete* serializar_informar_tarea_tripulante(t_informar_tarea_tripulante* dat
 
     paquete->codigo_operacion= INFORMAR_TAREA_TRIPULANTE;
     paquete->buffer =new_buffer;
+    */
     
     return paquete;
 
 }
 
-t_listar_tripulantes deserializar_listar_tripulantes(t_paquete* paquete){
-    t_listar_tripulantes* respuesta = malloc(sizeof(t_listar_tripulantes));
+t_informar_tarea_tripulante  deserializar_informar_tarea_tripulante(t_paquete* paquete){
+    t_informar_tarea_tripulante respuesta ;
+    /* 
     t_buffer* buffer = paquete->buffer;
 
     memcpy(&respuesta->patota_id, buffer->stream, sizeof(uint32_t));
 	buffer->stream += sizeof(uint32_t);
-    return data;
+    */
+    return respuesta;
 }

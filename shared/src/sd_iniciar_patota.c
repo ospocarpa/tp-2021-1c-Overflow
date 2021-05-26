@@ -26,6 +26,8 @@ t_paquete * serializar_iniciar_patota(t_iniciar_patota data)
     new_buffer->stream = stream;
     paquete->codigo_operacion = INICIAR_PATOTA;
     paquete->buffer = new_buffer;
+
+    free(stream);
     
     return paquete;
 }
@@ -53,12 +55,16 @@ t_iniciar_patota deserializar_iniciar_patota(t_paquete * paquete)
     data.posiciones = malloc(size_posiciones);
     memcpy(data.posiciones, paquete->buffer->stream, size_posiciones);
     paquete->buffer->stream += size_posiciones;
-     data.posiciones[size_posiciones] = '\0';
+    data.posiciones[size_posiciones] = '\0';
+
+    free(paquete->buffer->stream);
+    free(paquete->buffer);
+    free(paquete);
 
     return data;
 }
 
-t_list * convertir_a_list_psiciones(char * posiciones_string){
+t_list * convertir_a_list_posiciones(char * posiciones_string){
     t_list * posiciones = list_create();
 
     return posiciones;

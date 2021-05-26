@@ -1,8 +1,9 @@
-#include "../include/sd_expulsar/tripulante"
+#include "../include/sd_expulsar_tripulante.h"
 
-t_paquete* serializar_expulsar_tripulante(t_expulsar_tripulante* data_buffer){
+t_paquete* serializar_expulsar_tripulante(t_expulsar_tripulante data_buffer){
 
     t_paquete * paquete =malloc(sizeof(t_paquete));
+    /* 
     int tam_buffer = sizeof(int) * 3 
     t_buffer * new_buffer =malloc(sizeof(t_buffer));
     void * stream = malloc(tam_buffer);
@@ -14,12 +15,12 @@ t_paquete* serializar_expulsar_tripulante(t_expulsar_tripulante* data_buffer){
 
     paquete->codigo_operacion= EXPULSAR_TRIPULANTE;
     paquete->buffer =new_buffer;
-    
+    */
     return paquete;
 
 }
 
-t_listar_tripulantes deserializar_expulsar_tripulante(t_paquete* paquete){
-
+t_expulsar_tripulante deserializar_expulsar_tripulante(t_paquete* paquete){
+    t_expulsar_tripulante data;
     return data;
 }
