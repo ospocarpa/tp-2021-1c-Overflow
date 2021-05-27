@@ -43,7 +43,23 @@ void validar_sd_iniciar_patota()
     free(paquete);
 }
 
+void validar_sd_expulsar_tripulante(){
 
+    t_expulsar_tripulante data_input;
+    t_expulsar_tripulante data_res;
+    t_paquete * paquete = malloc(sizeof(t_paquete));
+
+    data_input.cant_tripulante = 2 ;
+
+    paquete = serializar_expulsar_tripulante(data_input);
+    data_res = deserializar_expulsar_tripulante(paquete);
+    CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
+
+
+    free(paquete->buffer->stream);
+    free(paquete->buffer);
+    free(paquete);
+}
  
   
 
