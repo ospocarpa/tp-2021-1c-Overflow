@@ -14,6 +14,4 @@
 #include "controller.h"
 #include <signal.h>
 
-    t_config_mongo_store *config;
-
 #endif
