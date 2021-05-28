@@ -1,14 +1,14 @@
 #include "tests.h"
 
-static void validar_sd_iniciar_patota();
+void validar_sd_iniciar_patota();
+void validar_sd_expulsar_tripulante();
 
 int run_tests(){
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite",NULL,NULL);
 
- 
-    CU_add_test(tests,"Suma2+2", suma);
     CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
+    CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -16,15 +16,11 @@ int run_tests(){
     return CU_get_error();
 }
 
-void suma(){
-    CU_ASSERT_EQUAL(2+2, 4);
-}
-
 void validar_sd_iniciar_patota()
 {
     t_iniciar_patota data_input;
     t_iniciar_patota data_res;
-    t_paquete * paquete = malloc(sizeof(t_paquete));
+    t_paquete * paquete;
 
     data_input.cant_tripulantes = 2;
     data_input.path_tareas = "/home/utnso/tareas/tareas.txt";
@@ -36,27 +32,33 @@ void validar_sd_iniciar_patota()
 
     data_res = deserializar_iniciar_patota(paquete);
 
-    CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
+    printf("path tareas: %d \n", data_res.long_posicion);
 
-    free(paquete->buffer->stream);
+    CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
+    CU_ASSERT_EQUAL(data_input.long_path_tareas, data_res.long_path_tareas);
+    CU_ASSERT_STRING_EQUAL(data_input.path_tareas, data_res.path_tareas);
+    CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
+    CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
+
+    //free(paquete->buffer.stream);
     free(paquete->buffer);
     free(paquete);
+    free(data_res.path_tareas);
+    free(data_res.posiciones);
 }
 
 void validar_sd_expulsar_tripulante(){
 
     t_expulsar_tripulante data_input;
     t_expulsar_tripulante data_res;
-    t_paquete * paquete = malloc(sizeof(t_paquete));
+    t_paquete * paquete ;
 
-    data_input.cant_tripulante = 2 ;
+    data_input.cant_tripulantes = 2 ;
 
     paquete = serializar_expulsar_tripulante(data_input);
     data_res = deserializar_expulsar_tripulante(paquete);
     CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
 
-
-    free(paquete->buffer->stream);
     free(paquete->buffer);
     free(paquete);
 }

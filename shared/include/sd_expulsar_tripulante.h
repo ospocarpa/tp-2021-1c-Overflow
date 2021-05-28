@@ -11,8 +11,8 @@
 #include<sd_posicion.h>
 
 
-t_paquete* serializar_expulsar_tripulante(t_expulsar_tripulante data_buffer);
-t_expulsar_tripulante deserializar_expulsar_tripulante(t_paquete* paquete);
+t_paquete * serializar_expulsar_tripulante(t_expulsar_tripulante data_buffer);
+t_expulsar_tripulante deserializar_expulsar_tripulante(t_paquete * paquete);
 
 
 #endif  

@@ -4,9 +4,9 @@
 #include <TAD.h>
 #include <string.h>
 #include "sd_iniciar_patota.h"
+#include "sd_expulsar_tripulante.h"
 
 
 int run_tests();
-void suma();
 
 #endif
