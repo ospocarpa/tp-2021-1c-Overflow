@@ -2,6 +2,7 @@
 
 void validar_sd_iniciar_patota();
 void validar_sd_expulsar_tripulante();
+void validar_sd_listar_tripulante();
 
 int run_tests(){
     CU_initialize_registry();
@@ -61,9 +62,33 @@ void validar_sd_expulsar_tripulante(){
 
     free(paquete->buffer);
     free(paquete);
+
 }
  
-  
+/*
+void validar_sd_listar_tripulante(){
 
+    t_listar_tripulantes data_input;
+    t_listar_tripulantes data_res;
+    data_input.patota_id = 0
+    data_input.numero_tripulante = 1 
+    data_input.posicion.posx = 0
+    data_input.posicion.posy = 1  o data_input.posicion->posy = 1
+
+    paquete = serializar_informar_tarea_tripulante(data_input);
+
+    data_res = deserializar_informar_tarea_tripulante(paquete);
+
+    CU_ASSERT_EQUAL(data_input.patota_id, data_res.patota_id);
+    CU_ASSERT_EQUAL(data_input.numero_tripulante, data_res.numero_tripulante);
+// Como la voy a recibir? las pos 
+    CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
+    CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
+
+    
+    free(paquete->buffer);
+    free(paquete);
+
+}*/
   
 
