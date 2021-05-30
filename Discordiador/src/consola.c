@@ -242,20 +242,11 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 logger_error("No se encontro el archivo %s ", tokens[2]);
             }
-
-            //Lectura y envío del archivoDeTareas
-            FILE *arch = fopen(tokens[2], "r");
-
-            char *contenido = NULL;
-            long int bytes;
-
-            fseek(arch, 0, SEEK_END);
-            bytes = ftell(arch);
-            fseek(arch, 0, SEEK_SET);
-            contenido = malloc(bytes);
-            fread(contenido, 1, bytes, arch);
-            fclose(arch);
-            printf("%s\n", contenido);
+            printf("llegue aqui\n");
+            //podria serializar contenido y bytesContenido
+            char *contenido;
+            int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
+            //aca podria enviarlo a miram
         }
 
         else
@@ -298,4 +289,18 @@ int existe_archivo(const char *ruta)
 
     fclose(archivo);
     return true;
+}
+int guardar_contenido_archivo(const char *ruta, char **contenido)
+{
+
+    FILE *arch = fopen(ruta, "r");
+    int bytes;
+    *contenido = NULL;
+    fseek(arch, 0, SEEK_END);
+    bytes = ftell(arch);
+    fseek(arch, 0, SEEK_SET);
+    *contenido = malloc(bytes);
+    fread(*contenido, 1, bytes, arch);
+    fclose(arch);
+    return bytes;
 }
