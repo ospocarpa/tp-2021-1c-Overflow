@@ -16,4 +16,6 @@ bool leer_consola(void);
 int obtener_cantidad_argumentos(char **tokens);
 void parsear_mensaje(cod_operacion operacion, char **tokens);
 
+int existe_archivo(const char *); // en la shared ?
+
 #endif

@@ -235,7 +235,14 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 return;
             }
+
+            if (!existe_archivo(tokens[2]))
+            {
+
+                logger_error("No se encontro el archivo %s ", tokens[2]);
+            }
         }
+
         else
         {
             printf("Cantidad de argumentos invalido\n");
@@ -261,4 +268,19 @@ int obtener_cantidad_argumentos(char **tokens)
     }
 
     return cantidad;
+}
+
+// deberia ir a la shared ?
+int existe_archivo(const char *ruta)
+{
+    FILE *archivo = fopen(ruta, "r+");
+
+    if (archivo == NULL)
+    {
+
+        return false;
+    }
+
+    fclose(archivo);
+    return true;
 }
