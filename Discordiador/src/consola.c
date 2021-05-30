@@ -116,6 +116,7 @@ bool leer_consola(void)
         free(buffer);
 
         liberar_puntero_doble(tokens);
+        sleep(2);
     }
     printf("termino leer consola|\n");
     printf("\n------------------------------------------\n");
@@ -241,6 +242,20 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 logger_error("No se encontro el archivo %s ", tokens[2]);
             }
+
+            //Lectura y envío del archivoDeTareas
+            FILE *arch = fopen(tokens[2], "r");
+
+            char *contenido = NULL;
+            long int bytes;
+
+            fseek(arch, 0, SEEK_END);
+            bytes = ftell(arch);
+            fseek(arch, 0, SEEK_SET);
+            contenido = malloc(bytes);
+            fread(contenido, 1, bytes, arch);
+            fclose(arch);
+            printf("%s\n", contenido);
         }
 
         else
