@@ -14,4 +14,6 @@
 #include "controller.h"
 #include <signal.h>
 
+    void lectura_file();
+
 #endif

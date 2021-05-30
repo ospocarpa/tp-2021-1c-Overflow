@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "global.h"
+#include "TAD.h"
 #include "config_utils.h"
 #include "filesystem.h"
 #include <fcntl.h>
@@ -18,6 +19,6 @@
     void create_file_super_bloque(t_config_mongo_store* config_mongo_store);
     void create_file_blocks(t_config_mongo_store* config_mongo_store);
     void create_dir_files(t_config_mongo_store* config_mongo_store);
-    void create_bitacoras(t_config_mongo_store* config_mongo_store);
+    void init_protocolo_fsck();
 
 #endif

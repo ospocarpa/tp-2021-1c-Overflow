@@ -2,6 +2,26 @@
 
 void method_sigusr1(){
     printf("Cuando reciba sigusr1\n");
+    Sabotaje* sabotaje = malloc(sizeof(Sabotaje));
+
+    sabotaje->mensaje = "Test";
+    sabotaje->mensaje_length = strlen(sabotaje->mensaje);
+    Posicion* posicion = malloc(sizeof(Posicion));
+
+    posicion->posx = 1;
+    posicion->posy = 1;
+    sabotaje->posicion = posicion;
+
+    int conexion_a_discordiador = crear_conexion(config_global_mongo_store->IP_DISCORDIADOR, config_global_mongo_store->PUERTO_DISCORDIADOR);
+    printf("Ini: %d\n", conexion_a_discordiador);
+    /*paquete = serializar_I_PLATO_LISTO(plato_listo);
+    conexion_sindicato = crear_conexion(config_restaurante->IP_SINDICATO, config_restaurante->PUERTO_SINDICATO, restaurante_logger);
+
+    if(conexion_sindicato>0){
+        sendMessage(paquete, conexion_sindicato);
+        paquete = recibir_mensaje(conexion_sindicato);
+        respuesta_bool = deserializar_respuesta_bool(paquete);
+    }*/
 }
 
 void init_mongo_store(){
@@ -62,15 +82,16 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
     
     int fd = open(path_super_bloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
 
-    //char* block_size = "32";
-    int block_size = 32;
-    int blocks = 1000;
+    //printf("Block size: %d Blocks: %d\n", config_mongo_store->BLOCK_SIZE, config_mongo_store->BLOCKS);
+    int block_size = config_mongo_store->BLOCK_SIZE;
+    int blocks = config_mongo_store->BLOCKS;
+
+    //PENDIENTE: crear bitmap
     int bitmap = 2000;
 
     int offset = 0;
-    //int file_size = sizeof(uint32_t) * 2 + strlen(block_size);
     int file_size = sizeof(uint32_t) * 3;
-    printf("%d\n", file_size);
+    printf("File size: %d\n", file_size);
     ftruncate(fd, file_size);
 
     void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
@@ -113,4 +134,6 @@ void create_dir_bitacoras(t_config_mongo_store* config_mongo_store){
     if(debug) printf("Status bitacoras: %d\n", status);
 }
 
-void create_bitacoras(t_config_mongo_store* config_mongo_store){}
+void init_protocolo_fsck(){
+
+}

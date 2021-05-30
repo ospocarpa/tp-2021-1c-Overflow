@@ -2,25 +2,6 @@
 
 int main(int argc, char **argv)
 {
-    int block_size = 0;
-    int blocks = 0;
-    int bitmap = 0;
-
-    int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
-    int file_size = sizeof(uint32_t) * 3;
-    void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-
-
-    memcpy(&block_size, stream, sizeof(uint32_t));
-	stream += sizeof(uint32_t);
-	memcpy(&blocks, stream, sizeof(uint32_t));
-	stream += sizeof(uint32_t);
-    memcpy(&bitmap, stream, sizeof(uint32_t));
-	stream += sizeof(uint32_t);
-
-    printf("%d %d %d\n", block_size, blocks, bitmap);
-
-    return 1;
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
@@ -42,6 +23,28 @@ int main(int argc, char **argv)
 
     int puerto = config_global_mongo_store->PUERTO;
     server_mongo_store_iniciar(puerto);
+
+    return 1;
+}
+
+void lectura_file(){
+    int block_size = 0;
+    int blocks = 0;
+    int bitmap = 0;
+
+    int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    int file_size = sizeof(uint32_t) * 3;
+    void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+
+
+    memcpy(&block_size, stream, sizeof(uint32_t));
+	stream += sizeof(uint32_t);
+	memcpy(&blocks, stream, sizeof(uint32_t));
+	stream += sizeof(uint32_t);
+    memcpy(&bitmap, stream, sizeof(uint32_t));
+	stream += sizeof(uint32_t);
+
+    printf("%d %d %d\n", block_size, blocks, bitmap);
 
     return 1;
 }
