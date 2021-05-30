@@ -15,6 +15,8 @@ t_config_mongo_store* leer_config_mongo_store(t_config* config){
 	config_mongo_store->TIEMPO_SINCRONIZACION = config_get_int_value(config,"TIEMPO_SINCRONIZACION");
 	config_mongo_store->POSICIONES_SABOTAJE = config_get_string_value(config,"POSICIONES_SABOTAJE");
 	config_mongo_store->ARCHIVO_LOG = config_get_string_value(config,"ARCHIVO_LOG");
+	config_mongo_store->BLOCK_SIZE = config_get_int_value(config,"BLOCK_SIZE");
+    config_mongo_store->BLOCKS = config_get_int_value(config,"BLOCKS");
 
 	return config_mongo_store;
 }

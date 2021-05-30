@@ -35,6 +35,10 @@ typedef struct {
     char* PUNTO_MONTAJE;
     int TIEMPO_SINCRONIZACION;
     char* POSICIONES_SABOTAJE;
+    int BLOCK_SIZE;
+    int BLOCKS;
+    char* IP_DISCORDIADOR;
+    int PUERTO_DISCORDIADOR;
     char* ARCHIVO_LOG;
 } t_config_mongo_store;
 
