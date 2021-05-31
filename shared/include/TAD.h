@@ -43,7 +43,8 @@
 	{
 		int posx;
 		int posy;
-	} Posicion;
+	}__attribute__((packed))
+	Posicion;
 
 	typedef struct
 	{
@@ -71,19 +72,20 @@
 		int tripulante_id;
 		Posicion posicion;
 		status_tripulante status;
-	}t_tripulante;
+	}__attribute__((packed))
+	t_tripulante;
 	
 	typedef struct{
+		int cant_tripulantes;
 		t_list * tripulantes; //estructura de tripulantes
 	}t_listar_tripulantes;
 
 	typedef struct{
-		int cant_tripulantes;
-		
+		int id_tripulante;
 	}t_expulsar_tripulante;
 
 	typedef struct{
-		int patota_id; // es necesario esto ? ya q cada tripulante es unico?
+		int patota_id;
 		int numero_tripulante;
 		
 		Posicion* posicion;

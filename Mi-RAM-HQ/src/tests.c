@@ -10,6 +10,7 @@ int run_tests(){
 
     CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
     CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
+    CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
     
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -41,7 +42,7 @@ void validar_sd_iniciar_patota()
     CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
     CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
 
-    //free(paquete->buffer.stream);
+    //free((*(*paquete).buffer).stream);
     free(paquete->buffer);
     free(paquete);
     free(data_res.path_tareas);
@@ -54,41 +55,70 @@ void validar_sd_expulsar_tripulante(){
     t_expulsar_tripulante data_res;
     t_paquete * paquete ;
 
-    data_input.cant_tripulantes = 2 ;
+    data_input.id_tripulante = 2 ;
 
     paquete = serializar_expulsar_tripulante(data_input);
     data_res = deserializar_expulsar_tripulante(paquete);
-    CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
+    CU_ASSERT_EQUAL(data_input.id_tripulante, data_res.id_tripulante);
 
+    free(paquete->buffer->stream);
     free(paquete->buffer);
     free(paquete);
 
 }
  
-/*
+
 void validar_sd_listar_tripulante(){
 
     t_listar_tripulantes data_input;
     t_listar_tripulantes data_res;
-    data_input.patota_id = 0
-    data_input.numero_tripulante = 1 
-    data_input.posicion.posx = 0
-    data_input.posicion.posy = 1  o data_input.posicion->posy = 1
+    t_paquete * paquete;
 
-    paquete = serializar_informar_tarea_tripulante(data_input);
+    t_tripulante * t1 = malloc(sizeof(t_tripulante));
+    t_tripulante * t2 = malloc(sizeof(t_tripulante));
 
-    data_res = deserializar_informar_tarea_tripulante(paquete);
+    t1->patota_id = 1;
+    t1->tripulante_id = 1;
+    t1->posicion.posx = 0;
+    t1->posicion.posy = 1;
+    t1->status = NEW;
 
-    CU_ASSERT_EQUAL(data_input.patota_id, data_res.patota_id);
-    CU_ASSERT_EQUAL(data_input.numero_tripulante, data_res.numero_tripulante);
-// Como la voy a recibir? las pos 
-    CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
-    CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
+    t2->patota_id = 1;
+    t2->tripulante_id = 2;
+    t2->posicion.posx = 1;
+    t2->posicion.posy = 1;
+    t2->status = NEW;
 
+    data_input.cant_tripulantes = 2;
+    data_input.tripulantes = list_create();
+
+    list_add(data_input.tripulantes, t1);
+    list_add(data_input.tripulantes, t2);
+
+    paquete = serializar_listar_tripulantes(data_input);
+
+    data_res = deserializar_listar_tripulantes(paquete);
+
+    t_tripulante * tripulante1 = list_get(data_res.tripulantes, 0);
+    t_tripulante * tripulante2 = list_get(data_res.tripulantes, 1);
+
+    printf("Patota id: %d", tripulante1->patota_id);
+
+    CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
+    CU_ASSERT_EQUAL(t1->patota_id, tripulante1->patota_id);
+    CU_ASSERT_EQUAL(t1->tripulante_id, tripulante1->tripulante_id);
+    CU_ASSERT_EQUAL(t1->posicion.posx, tripulante1->posicion.posx);
+    CU_ASSERT_EQUAL(t1->posicion.posy, tripulante1->posicion.posy);
+    CU_ASSERT_EQUAL(t1->status, tripulante1->status);
     
     free(paquete->buffer);
     free(paquete);
 
-}*/
+    free(t1);
+    free(t2);
+
+    list_remove_and_destroy_element(data_res.tripulantes, 0, free);
+    list_remove_and_destroy_element(data_res.tripulantes, 1, free);
+}
   
 
