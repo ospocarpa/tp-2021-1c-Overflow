@@ -2,6 +2,8 @@
 
 void iniciar_servidor_main()
 {
+    //Dato: posiblemente mapear con '\ņ'
+
     //Carga de los archivos de configuracion
     t_config *g_config = leer_config_file("./cfg/discordiador.config");
     t_config_discordiador *config = leerConfigDiscordiador(g_config);
