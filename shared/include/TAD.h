@@ -10,8 +10,22 @@
 		SALIDA = 0,
 		TAREA = 1,
 		SABOTAJE = 2,
-		FIN_FSCKa = 3
+		FIN_FSCKa = 3,
+		INICIAR_PATOTA = 4,
+		LISTAR_TRIPULANTES = 5,
+		EXPULSAR_TRIPULANTE = 6,
+		INFORMAR_TAREA_TRIPULANTE = 7,
+		INFORMAR_POSICION_TRIPULANTE = 8
 	} op_code;
+
+	typedef enum
+	{
+		NEW,
+		READY,
+		EXEC,
+		BOCK,
+		EXIT	
+	} status_tripulante;
 
 	typedef struct
 	{
@@ -22,14 +36,15 @@
 	typedef struct
 	{
 		op_code codigo_operacion;
-		t_buffer *buffer;
+		t_buffer* buffer;
 	} t_paquete;
 
 	typedef struct
 	{
 		int posx;
 		int posy;
-	} Posicion;
+	}__attribute__((packed))
+	Posicion;
 
 	typedef struct
 	{
@@ -41,6 +56,43 @@
 		int tiempo;
 		Posicion* posicion;
 	} Tarea;
+
+	typedef struct 
+	{
+		int cant_tripulantes;
+		int long_path_tareas;
+		char * path_tareas;
+		int long_posicion;
+		char * posiciones;
+	}t_iniciar_patota;
+
+	typedef struct 
+	{
+		int patota_id;
+		int tripulante_id;
+		Posicion posicion;
+		status_tripulante status;
+	}__attribute__((packed))
+	t_tripulante;
+	
+	typedef struct{
+		int cant_tripulantes;
+		t_list * tripulantes; //estructura de tripulantes
+	}t_listar_tripulantes;
+
+	typedef struct{
+		int id_tripulante;
+	}t_expulsar_tripulante;
+
+	typedef struct{
+		int patota_id;
+		int numero_tripulante;
+		
+		Posicion* posicion;
+		
+	}t_informar_tarea_tripulante;
+
+	
 
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
