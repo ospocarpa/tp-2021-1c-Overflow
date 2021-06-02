@@ -71,7 +71,7 @@ bool leer_consola(void)
         else if (string_equals_ignore_case(tokens[0], "LISTAR_TRIPULANTES"))
         {
             printf(">>>>>LISTAR_TRIPULANTES<<<<<\n");
-            parsear_mensaje(LISTAR_TRIPULANTES, &buffer);
+            parsear_mensaje(LISTAR_TRIPULANTES, tokens);
             printf("========================\n");
         }
         else if (string_equals_ignore_case(tokens[0], "EXPULSAR_TRIPULANTE"))
@@ -124,7 +124,7 @@ bool leer_consola(void)
     return false;
 }
 
-void parsear_mensaje(cod_operacion operacion, char **tokens)
+void parsear_mensaje(op_code operacion, char **tokens)
 {
 
     int cantidad_argumentos;
@@ -237,24 +237,22 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 return;
             }
-
+            //tokens[2]: path del archivo
             if (!existe_archivo(tokens[2]))
             {
 
                 logger_error("No se encontro el archivo %s ", tokens[2]);
             }
 
-            //podria serializar contenido y bytesContenido
-            char *contenido;
-            //tokens[2]: path del archivo
-            int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
-            //aca podria enviarlo a miram
+            t_iniciar_patota datosPatota;
+
+            cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
+            t_paquete *paquete = serializar_iniciar_patota(datosPatota);
 
             crearHilosTripulantes(atoi(tokens[1]));
-            free(contenido);
+
             /*
-            t_iniciar_patota dato = map_to_iniciarpatota();
-            t_paquete* paquete = serializar(dato); //Usar método correspondiente
+            
             int socket_cliente = crear_conexion(ip, puerto);
             sendMessage(paquete, socket_cliente);
             */
