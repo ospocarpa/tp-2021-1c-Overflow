@@ -10,7 +10,9 @@
 #include <tad_discordiador.h>
 #include <commons/string.h>
 #include <ctype.h>
-
+#include "tripulantes.h"
+extern int cantidadTripulantes;
+extern int cantidadDePatotas;
 void mostrar_consola();
 bool leer_consola(void);
 int obtener_cantidad_argumentos(char **tokens);

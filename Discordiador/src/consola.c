@@ -1,5 +1,6 @@
 #include "consola.h"
 //inline
+
 void mostrar_consola()
 {
 
@@ -242,13 +243,15 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 logger_error("No se encontro el archivo %s ", tokens[2]);
             }
-            printf("llegue aqui\n");
+
             //podria serializar contenido y bytesContenido
             char *contenido;
             //tokens[2]: path del archivo
             int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
             //aca podria enviarlo a miram
 
+            crearHilosTripulantes(atoi(tokens[1]));
+            free(contenido);
             /*
             t_iniciar_patota dato = map_to_iniciarpatota();
             t_paquete* paquete = serializar(dato); //Usar método correspondiente
@@ -256,14 +259,15 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
             sendMessage(paquete, socket_cliente);
             */
 
-            int cant_tripulantes = 0;
-            for(int c=0; c<cant_tripulantes; c++){
-                Tripulante* tripulante = malloc(sizeof(Tripulante));//tripulantes[c];
+            /* int cant_tripulantes = 0;
+            for (int c = 0; c < cant_tripulantes; c++)
+            {
+                Tripulante *tripulante = malloc(sizeof(Tripulante)); //tripulantes[c];
                 pthread_t thread_tripulante;
-                //tripulante->thread = thread_tripulante; // Si necesitan que el tripulante conozca el hilo que lo ejecuta 
-                pthread_create(&thread_tripulante, NULL, (void *) ejecutar_operacion, tripulante);
+                //tripulante->thread = thread_tripulante; // Si necesitan que el tripulante conozca el hilo que lo ejecuta
+                pthread_create(&thread_tripulante, NULL, (void *)ejecutar_operacion, tripulante);
                 pthread_detach(thread_tripulante);
-            }
+            } */
         }
 
         else
@@ -278,9 +282,10 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
     }
 }
 
-void ejecutar_operacion(Tripulante* tripulante){
-    //new
-    /*
+// void ejecutar_operacion(Tripulante *tripulante)
+// {
+//new
+/*
     Estado inicial: bloqueado
     alistate();
     
@@ -314,7 +319,7 @@ void ejecutar_operacion(Tripulante* tripulante){
         }
     }
     //finish*/
-}
+// }
 
 int obtener_cantidad_argumentos(char **tokens)
 {

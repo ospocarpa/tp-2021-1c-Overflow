@@ -16,6 +16,8 @@
 #include "tests.h"
 
 t_log *logger;
+int numeroTripulante = 0;
+int numeroPatota = 0;
 void iniciar_servidor_main();
 void ejecutar_operacion(int cliente_fd);
 #define PATH_CONFIG "cfg/discordiador.config"
