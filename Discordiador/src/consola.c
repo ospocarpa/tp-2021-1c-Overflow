@@ -243,7 +243,15 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
                 logger_error("No se encontro el archivo %s ", tokens[2]);
             }
-
+            for (int i = 0; i < cantidad_argumentos - 2; i++)
+            {
+                char **coordenada = string_split(tokens[3 + i], "|");
+                if (!es_un_numero(coordenada[0]) || !es_un_numero(coordenada[1]))
+                {
+                    logger_error("Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
+                    return;
+                }
+                        }
             t_iniciar_patota datosPatota;
 
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
