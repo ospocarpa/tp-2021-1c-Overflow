@@ -251,12 +251,12 @@ void parsear_mensaje(op_code operacion, char **tokens)
                     logger_error("Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
                     return;
                 }
-                        }
+            }
             t_iniciar_patota datosPatota;
 
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
             t_paquete *paquete = serializar_iniciar_patota(datosPatota);
-
+            //no uso variable paquete
             crearHilosTripulantes(atoi(tokens[1]));
 
             /*

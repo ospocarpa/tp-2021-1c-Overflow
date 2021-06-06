@@ -3,7 +3,10 @@
 
 #include <stdio.h>
 #include <commons/log.h>
+#include <commons/string.h>
 #include <stdbool.h>
+#include <stdlib.h>
+#include <ctype.h>
 
 //Funcion de ejemplo del git de VSCODE
 char *mi_funcion_compartida();

@@ -1,0 +1,30 @@
+{
+	"folders": [
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/so-commons-library"
+		},
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/shared"
+		},
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/MongoStore"
+		},
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/Mi-RAM-HQ"
+		},
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/Discordiador"
+		},
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/Servidor"
+		},
+		{
+			"path": "/home/utnso/tp-2021-1c-Overflow/Cliente"
+		}
+	],
+	"settings": {
+		"files.associations": {
+			"server.h": "c"
+		}
+	}
+}

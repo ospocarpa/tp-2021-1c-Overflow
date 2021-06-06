@@ -28,7 +28,9 @@ void iniciar_servidor_main()
 
         pthread_t threadEscucha;
         // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
-        pthread_detach(threadEscucha);
+        pthread_detach(threadEscucha); //corregir esto
+        //mandar a este hilo a ejecutar las accione pertinentes
+        //consola debe ser mas de mostrar mensajes
     }
 
     //run_tests();
@@ -44,7 +46,7 @@ void ejecutar_operacion(int cliente_fd)
 
             recepcionMensaje(paquete, cliente_fd, logger);
             if (paquete->codigo_operacion == 0)
-                exit;
+                exit; //exit sin efecto
         }
         else
         {
@@ -66,7 +68,7 @@ int main(int argc, char **argv)
         logger_create("cfg/discordiador.log", "DISCORDIADOR");
         logger_info("Iniciando módulo DISCORDIADOR");
 
-        t_log *log = get_logger();
+        t_log *log = get_logger(); //no lo estoy usando
 
         int conexion_mi_ram = crear_conexion("127.0.0.1", 5002);
 

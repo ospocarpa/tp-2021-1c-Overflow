@@ -11,6 +11,9 @@
 #include <commons/string.h>
 #include <ctype.h>
 #include <consola.h>
+#include <pthread.h>
+#include <commons/process.h>
+
 extern int numeroTripulante;
 extern int numeroPatota;
 pthread_mutex_t MXTRIPULANTE;
