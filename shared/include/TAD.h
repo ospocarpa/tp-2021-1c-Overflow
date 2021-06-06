@@ -27,6 +27,16 @@
 		EXIT	
 	} status_tripulante;
 
+	typedef enum
+	{
+		GENERAR_OXIGENO,
+		GENERAR_COMIDA,
+		CONSUMIR_COMIDA,
+		GENERAR_BASURA,
+		DESCARTAR_BASURA,
+		OTRA_TAREA
+	} type_task;
+
 	typedef struct
 	{
 		uint32_t size;
@@ -85,12 +95,17 @@
 	}t_expulsar_tripulante;
 
 	typedef struct{
-		int patota_id;
-		int numero_tripulante;
-		
-		Posicion* posicion;
-		
-	}t_informar_tarea_tripulante;
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+	}__attribute__((packed))
+	t_short_info_tripulante;
+
+	typedef struct{
+		type_task tarea;
+		int parametro;
+		Posicion posicion;
+		int tiempo;	
+	}t_info_tarea;
 
 	
 
