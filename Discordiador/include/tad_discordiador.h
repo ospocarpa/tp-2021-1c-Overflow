@@ -23,12 +23,12 @@ typedef struct
     char *algoritmo;
 } Discordiador;
 
-typedef struct
-{
-    int id;
-    t_list *tareas;      //Lista [Tarea]
-    t_list *tripulantes; //Lista [Tripulante]
-} Patota;
+// typedef struct
+// {
+//     int id;
+//     t_list *tareas;      //Lista [Tarea]
+//     t_list *tripulantes; //Lista [Tripulante]
+// } Patota;
 
 typedef struct
 {
@@ -49,8 +49,6 @@ typedef struct
 //     OBTENER_BITACORA,
 //     SALIR
 // } cod_operacion;
-
-
 
 // typedef enum
 // {
