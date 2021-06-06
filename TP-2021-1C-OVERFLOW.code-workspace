@@ -6,7 +6,17 @@
 	],
 	"settings": {
 		"files.associations": {
-			"sd_expulsar_tripulante.h": "c"
+			"sd_expulsar_tripulante.h": "c",
+			"tripulantes.h": "c",
+			"pthread.h": "c",
+			"stdio.h": "c",
+			"sd_tarea.h": "c",
+			"tests.h": "c",
+			"log_utils.h": "c",
+			"consola.h": "c",
+			"sd_posicion.h": "c",
+			"server.h": "c",
+			"tad.h": "c"
 		}
 	}
 }

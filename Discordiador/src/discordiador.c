@@ -21,17 +21,17 @@ void iniciar_servidor_main()
     pthread_detach(threadConsola);
     int cliente_fd;
 
-    while (1)
-    {
+    // while (1)
+    // {
 
-        cliente_fd = esperar_cliente(server_fd);
+    //     cliente_fd = esperar_cliente(server_fd);
 
-        pthread_t threadEscucha;
-        // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
-        pthread_detach(threadEscucha); //corregir esto
-        //mandar a este hilo a ejecutar las accione pertinentes
-        //consola debe ser mas de mostrar mensajes
-    }
+    //     pthread_t threadEscucha;
+    //     // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
+    //     pthread_detach(threadEscucha); //corregir esto
+    //     //mandar a este hilo a ejecutar las accione pertinentes
+    //     //consola debe ser mas de mostrar mensajes
+    // }
 
     //run_tests();
 }
@@ -67,7 +67,8 @@ int main(int argc, char **argv)
         // t_config_discordiador* cfg_discordiador = leerConfigDiscordiador(config);
         logger_create("cfg/discordiador.log", "DISCORDIADOR");
         logger_info("Iniciando módulo DISCORDIADOR");
-
+        // pthread_mutex_init(&MXMENSAJE, NULL);
+        // pthread_mutex_lock(&MXMENSAJE);
         t_log *log = get_logger(); //no lo estoy usando
 
         int conexion_mi_ram = crear_conexion("127.0.0.1", 5002);
@@ -76,7 +77,7 @@ int main(int argc, char **argv)
         {
             logger_error("Conexion Mi-RAM fallida");
             liberar_conexion(conexion_mi_ram);
-            //return EXIT_FAILURE;
+            // return EXIT_FAILURE; //despues descomitear
         }
         else
         {
@@ -90,8 +91,9 @@ int main(int argc, char **argv)
 
         {
 
+            //mutex bloqueado
             //aca van los mensaje a enviar a mi-ram
-            send(conexion_mi_ram, "Hola", 4, 0); //ejemplo, luego eliminar
+            //send(conexion_mi_ram, "Hola", 4, 0); //ejemplo, luego eliminar
         }
 
         // Libero el log y config al final

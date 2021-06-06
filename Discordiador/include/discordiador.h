@@ -16,10 +16,15 @@
 #include "tests.h"
 
 t_log *logger;
+
+// pthread_mutex_t MXMENSAJE;
 int numeroTripulante = 0;
 int numeroPatota = 0;
+//_Bool planificacion_activa = false;
+
 void iniciar_servidor_main();
 void ejecutar_operacion(int cliente_fd);
+
 #define PATH_CONFIG "cfg/discordiador.config"
 
 #endif

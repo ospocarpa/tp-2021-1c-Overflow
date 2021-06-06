@@ -1,6 +1,6 @@
 #include "consola.h"
 //inline
-
+_Bool planificacion_activa = false;
 void mostrar_consola()
 {
 
@@ -177,7 +177,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
-            //completar
+            activar_planificacion();
         }
         else
         {
@@ -191,6 +191,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
+            detener();
         }
         else
         {
@@ -241,26 +242,34 @@ void parsear_mensaje(op_code operacion, char **tokens)
             if (!existe_archivo(tokens[2]))
             {
 
-                logger_error("No se encontro el archivo %s ", tokens[2]);
+                logger_info("No se encontro el archivo %s ", tokens[2]);
+                return;
             }
             for (int i = 0; i < cantidad_argumentos - 2; i++)
             {
                 char **coordenada = string_split(tokens[3 + i], "|");
                 if (!es_un_numero(coordenada[0]) || !es_un_numero(coordenada[1]))
                 {
-                    logger_error("Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
+                    logger_info("Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
                     return;
                 }
+                liberar_puntero_doble(coordenada);
             }
             t_iniciar_patota datosPatota;
 
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
             t_paquete *paquete = serializar_iniciar_patota(datosPatota);
             //no uso variable paquete
+            int socket_cliente = crear_conexion("127.0.0.1", 5002);
             crearHilosTripulantes(atoi(tokens[1]));
-
+            sendMessage(paquete, socket_cliente);
+            //falto esperar respuesta de confirmacion de carga de los pcb
+            liberar_conexion(socket_cliente);
+            free(paquete->buffer->stream);
+            free(paquete->buffer);
+            free(paquete);
             /*
-            
+    
             int socket_cliente = crear_conexion(ip, puerto);
             sendMessage(paquete, socket_cliente);
             */
@@ -369,4 +378,45 @@ int guardar_contenido_archivo(const char *ruta, char **contenido)
     fread(*contenido, 1, bytes, arch);
     fclose(arch);
     return bytes;
+}
+
+void detener()
+{
+
+    if (planificacion_activa)
+    {
+        planificacion_activa = false;
+        logger_info("[Planificacion detenida]");
+    }
+    else
+    {
+        logger_info("[La planificacion ya está desactivada]");
+    }
+}
+
+void activar_planificacion()
+{
+    if (!planificacion_activa)
+    {
+        planificacion_activa = true;
+        logger_info("[Planificacion activada]");
+        planificar();
+    }
+    else
+    {
+        logger_info("[La planificacion ya está activada]");
+    }
+}
+void planificar()
+{
+
+    if (planificacion_activa)
+    {
+
+        //TODO
+    }
+    else
+    {
+        logger_info("La planificación está desactivada");
+    }
 }
