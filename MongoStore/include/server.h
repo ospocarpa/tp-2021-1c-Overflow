@@ -7,6 +7,7 @@
 #include "log_utils.h"
 #include "server_utils.h"
 #include <stdlib.h>
+#include "controller.h"
 
 void *recepcionMensaje(t_paquete *paquete, int cliente_fd, t_log *logger);
 void server_mongo_store_iniciar(int puerto);

@@ -9,6 +9,8 @@ t_config * leer_config_file(char* configName)
 t_config_mongo_store* leer_config_mongo_store(t_config* config){
 	t_config_mongo_store* config_mongo_store = malloc(sizeof(t_config_mongo_store));
 
+	config_mongo_store->IP_DISCORDIADOR = config_get_string_value(config,"IP_DISCORDIADOR");
+	config_mongo_store->PUERTO_DISCORDIADOR = config_get_int_value(config,"PUERTO_DISCORDIADOR");
 	config_mongo_store->IP_MODULO = config_get_string_value(config,"IP_MODULO");
 	config_mongo_store->PUERTO = config_get_int_value(config,"PUERTO");
 	config_mongo_store->PUNTO_MONTAJE = config_get_string_value(config,"PUNTO_MONTAJE");

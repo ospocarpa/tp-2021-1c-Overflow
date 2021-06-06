@@ -8,20 +8,19 @@ void method_sigusr1(){
     sabotaje->mensaje_length = strlen(sabotaje->mensaje);
     Posicion* posicion = malloc(sizeof(Posicion));
 
+    //Retirar de la lista del config
     posicion->posx = 1;
     posicion->posy = 1;
     sabotaje->posicion = posicion;
 
     int conexion_a_discordiador = crear_conexion(config_global_mongo_store->IP_DISCORDIADOR, config_global_mongo_store->PUERTO_DISCORDIADOR);
-    printf("Ini: %d\n", conexion_a_discordiador);
-    /*paquete = serializar_I_PLATO_LISTO(plato_listo);
-    conexion_sindicato = crear_conexion(config_restaurante->IP_SINDICATO, config_restaurante->PUERTO_SINDICATO, restaurante_logger);
+    
+    //printf("Ini: %d\n", conexion_a_discordiador);
 
-    if(conexion_sindicato>0){
-        sendMessage(paquete, conexion_sindicato);
-        paquete = recibir_mensaje(conexion_sindicato);
-        respuesta_bool = deserializar_respuesta_bool(paquete);
-    }*/
+    t_paquete* paquete = serializar_I_SABOTAJE(sabotaje);
+    if(conexion_a_discordiador>0){
+        sendMessage(paquete, conexion_a_discordiador);
+    }
 }
 
 void init_mongo_store(){
@@ -81,6 +80,7 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
     string_append_with_format(&path_super_bloque, "%s", "/SuperBloque.ims");
     
     int fd = open(path_super_bloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    printf("State fd: %d", fd);
 
     //printf("Block size: %d Blocks: %d\n", config_mongo_store->BLOCK_SIZE, config_mongo_store->BLOCKS);
     int block_size = config_mongo_store->BLOCK_SIZE;
@@ -94,13 +94,15 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
     printf("File size: %d\n", file_size);
     ftruncate(fd, file_size);
 
-    void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-    memcpy(punteroBits+offset, &block_size, sizeof(uint32_t));
-    offset+=sizeof(uint32_t);
-    memcpy(punteroBits+offset, &blocks, sizeof(uint32_t));
-    offset+=sizeof(uint32_t);
-    memcpy(punteroBits+offset, &bitmap, sizeof(uint32_t));
-    offset+=sizeof(uint32_t);
+    if(fd){
+        void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+        memcpy(punteroBits+offset, &block_size, sizeof(uint32_t));
+        offset+=sizeof(uint32_t);
+        memcpy(punteroBits+offset, &blocks, sizeof(uint32_t));
+        offset+=sizeof(uint32_t);
+        memcpy(punteroBits+offset, &bitmap, sizeof(uint32_t));
+        offset+=sizeof(uint32_t);
+    }
     printf("Fin\n");
 }
 

@@ -15,6 +15,13 @@ void *recepcionMensaje(t_paquete *paquete, int cliente_fd, t_log *logger)
             tarea2 = deserializar_I_TAREA(paquete);
             mostrarTarea(tarea2);
             break;
+        case INICIO_FSCK: //Inicio de fsck 
+            init_protocolo_fsck();
+            break;
+        case 4: //Preguntar archivo y devolver 
+            break;
+        case 5: //Preguntar bitacora y devolver 
+            break;
     }
 
     return NULL;
