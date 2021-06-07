@@ -6,7 +6,7 @@ void iniciar_servidor_main()
 
     //Carga de los archivos de configuracion
     t_config *g_config = leer_config_file("./cfg/discordiador.config");
-    t_config_discordiador *config = leerConfigDiscordiador(g_config);
+    config = leerConfigDiscordiador(g_config);
 
     //Iniciar Log
     logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
@@ -67,6 +67,17 @@ int main(int argc, char **argv)
         // t_config_discordiador* cfg_discordiador = leerConfigDiscordiador(config);
         logger_create("cfg/discordiador.log", "DISCORDIADOR");
         logger_info("Iniciando módulo DISCORDIADOR");
+
+        //mejorar en metodo la iniciliazicion del semaforo
+        pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
+        printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
+
+        // mutex_unlock (semafor) --> 0
+
+        /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
+        printf("%d\n", SEM_PAUSAR_PLANIFICACION);
+        pthread_mutex_lock(&SEM_PAUSAR_PLANIFICACION);
+        printf("%d\n", SEM_PAUSAR_PLANIFICACION); */
         // pthread_mutex_init(&MXMENSAJE, NULL);
         // pthread_mutex_lock(&MXMENSAJE);
         t_log *log = get_logger(); //no lo estoy usando

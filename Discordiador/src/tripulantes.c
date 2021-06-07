@@ -29,31 +29,82 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     printf("pathTareas: %s\n", datosPatota->path_tareas); */
 }
 
-void imprime_mensaje()
+void ejecucion_dispatcher()
 {
-    pthread_mutex_lock(&MXTRIPULANTE);
+    //son todos los tripulantes listos
+    t_list *tripulantes_all = list_create();
 
-    numeroTripulante++;
+    switch (config->ALGORITMO)
+
+    {
+    case FIFO:
+
+        break;
+    case RR:
+
+        break;
+    default:
+        break;
+    }
+
+    //tripulantes.listos a tripulanes.exec
+}
+
+void hilo_tripulante(t_tripulante *tripulante)
+{
+
+    //pthread_mutex_lock(&MXTRIPULANTE);
+
+    //numeroTripulante++;
+    /*  
+        1 tiene q llamar a mi_ram  para pedir siguiente tarea
+          nota: si tiene tarea pasa a estado listo
+          2 creamos semaforo planificacion "PAUSAR_PLANIFICACION"
+          3 Cuando se pause la planificacion ,a todos los semaforos
+          de los tripulantes se bloquea 
+          4 si se desbloquea (por iniciar_planificacion de consola)
+         5 otro semaforo arrancar (seleccionado para cada tripulante)?
+        wait (tripulante ->activo)  
+         wait (tripulante->seleccionado)
+
+         --------------------------------------
+         PENDIENTES
+ 
+         1 Pensar como arranca  dispacher ejecuta :
+               
+         2 hacer que este metodo sea ciclico 
+          
+        3 Pensar transicicon listo ->bloqueado 
+                    
+        
+
+
+     */
 
     printf("tripulante %d\t patota %d\thilo:%d\n", numeroTripulante, numeroPatota, process_get_thread_id());
     pthread_mutex_unlock(&MXTRIPULANTE);
 
     return;
 }
-
-void crearHilosTripulantes(int cantidad)
+//reemplazar cantidad por datos
+void crearHilosTripulantes(Patota *una_patota)
 {
 
     // Inicializo semaforo
     pthread_mutex_init(&MXTRIPULANTE, NULL);
 
-    numeroPatota++;
+    //numeroPatota++;
+    int cantidad = list_size(una_patota->tripulantes);
+
+    t_tripulante *un_tripulante;
 
     for (int i = 0; i < cantidad; i++)
     {
         pthread_t hilo;
 
-        pthread_create(&hilo, NULL, (void *)&imprime_mensaje, NULL);
+        un_tripulante = list_get(una_patota->tripulantes, i);
+
+        pthread_create(&hilo, NULL, (void *)&hilo_tripulante, un_tripulante);
         pthread_detach(hilo);
     }
 }

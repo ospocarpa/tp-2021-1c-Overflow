@@ -15,8 +15,10 @@
 #include "log_utils.h"
 #include "sd_iniciar_patota.h"
 #include "../include/socket_client.h"
+#include "config_utils.h"
 extern int conexion_mi_ram;
 
+extern t_config_discordiador *config;
 void mostrar_consola();
 bool leer_consola(void);
 void detener();

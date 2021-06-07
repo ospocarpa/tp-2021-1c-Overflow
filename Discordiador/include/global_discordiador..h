@@ -1,5 +1,5 @@
-#ifndef DISCORDIADOR_H
-#define DISCORDIADOR_H
+#ifndef GLOBALDISCORDIADOR_H
+#define GLOBALDISCORDIADOR_H
 
 #include <stdio.h>
 #include <stdbool.h>
@@ -16,11 +16,10 @@
 #include "tests.h"
 
 t_log *logger;
-t_config_discordiador *config;
+
 // pthread_mutex_t MXMENSAJE;
 int numeroTripulante = 0;
 int numeroPatota = 0;
-pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 //_Bool planificacion_activa = false;
 
 void iniciar_servidor_main();

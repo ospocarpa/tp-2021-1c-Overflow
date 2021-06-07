@@ -17,7 +17,10 @@
 extern int numeroTripulante;
 extern int numeroPatota;
 pthread_mutex_t MXTRIPULANTE;
-void crearHilosTripulantes(int);
+pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
+
+void crearHilosTripulantes(Patota *);
+void hilo_tripulante(t_tripulante *);
 
 void cargarTripulante(t_iniciar_patota *, char **, int);
 

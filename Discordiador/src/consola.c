@@ -260,8 +260,9 @@ void parsear_mensaje(op_code operacion, char **tokens)
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
             t_paquete *paquete = serializar_iniciar_patota(datosPatota);
             //no uso variable paquete
+            printf("config %s\n", config->IP_MODULO);
             int socket_cliente = crear_conexion("127.0.0.1", 5002);
-            crearHilosTripulantes(atoi(tokens[1]));
+            // crearHilosTripulantes(datosPatota);
             sendMessage(paquete, socket_cliente);
             //falto esperar respuesta de confirmacion de carga de los pcb
             liberar_conexion(socket_cliente);

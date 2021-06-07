@@ -23,12 +23,12 @@ typedef struct
     char *algoritmo;
 } Discordiador;
 
-// typedef struct
-// {
-//     int id;
-//     t_list *tareas;      //Lista [Tarea]
-//     t_list *tripulantes; //Lista [Tripulante]
-// } Patota;
+typedef struct
+{
+    int id;
+    t_list *tareas;      //Lista [Tarea]
+    t_list *tripulantes; //Lista [Tripulante]
+} Patota;
 
 typedef struct
 {
@@ -37,6 +37,12 @@ typedef struct
     Posicion *posicion;
     Tarea *tarea;
     int patota_id;
+    pthread_mutex_t activo; //mutex o binario ?? implementar binario
+                            //desabilitado por defecto
+
+    pthread_mutex_t seleccionado; //desahibiliado por defecto
+                                  //habilitado por dispatcher
+
 } Tripulante;
 
 // typedef enum
