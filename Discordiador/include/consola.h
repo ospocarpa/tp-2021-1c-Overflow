@@ -16,6 +16,7 @@
 #include "sd_iniciar_patota.h"
 #include "../include/socket_client.h"
 #include "config_utils.h"
+#include "util_discordiador.h"
 extern int conexion_mi_ram;
 
 extern t_config_discordiador *config;

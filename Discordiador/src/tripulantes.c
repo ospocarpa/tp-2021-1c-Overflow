@@ -13,20 +13,14 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
 
         // printf("cadena parcial:%s\n", posiciones);
     }
+
     string_trim_right(&posiciones);
     datosPatota->long_posicion = strlen(posiciones);
     datosPatota->posiciones = posiciones;
     int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
     datosPatota->long_path_tareas = bytesContenido,
     datosPatota->path_tareas = contenido;
-    free(contenido);
-    free(posiciones);
-
-    /*   printf("tripulantes: %d\n", datosPatota->cant_tripulantes);
-    printf("long path tares: %d\n", datosPatota->long_path_tareas);
-    printf("long posiciones: %d\n", datosPatota->long_posicion);
-    printf("posiciones: %s\n", datosPatota->posiciones);
-    printf("pathTareas: %s\n", datosPatota->path_tareas); */
+    //mostrar_datos_patota(datosPatota);
 }
 
 void ejecucion_dispatcher()
@@ -89,7 +83,8 @@ void hilo_tripulante(t_tripulante *tripulante)
 //reemplazar cantidad por datos
 void crearHilosTripulantes(Patota *una_patota)
 {
-
+    printf("Iniciando\n");
+    return;
     // Inicializo semaforo
     pthread_mutex_init(&MXTRIPULANTE, NULL);
 

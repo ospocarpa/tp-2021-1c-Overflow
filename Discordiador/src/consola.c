@@ -258,12 +258,16 @@ void parsear_mensaje(op_code operacion, char **tokens)
             t_iniciar_patota datosPatota;
 
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
+            mostrar_datos_patota(&datosPatota);
+            
             t_paquete *paquete = serializar_iniciar_patota(datosPatota);
             //no uso variable paquete
-            printf("config %s\n", config->IP_MODULO);
-            int socket_cliente = crear_conexion("127.0.0.1", 5002);
-            // crearHilosTripulantes(datosPatota);
-            sendMessage(paquete, socket_cliente);
+            int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+            
+            Patota* patota_new = map_to_patota(datosPatota);
+            mostrar_t_patota(patota_new);
+            crearHilosTripulantes(patota_new);
+            //sendMessage(paquete, socket_cliente);
             //falto esperar respuesta de confirmacion de carga de los pcb
             liberar_conexion(socket_cliente);
             free(paquete->buffer->stream);

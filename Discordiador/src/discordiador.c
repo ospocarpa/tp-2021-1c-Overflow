@@ -57,6 +57,18 @@ void ejecutar_operacion(int cliente_fd)
 
 int main(int argc, char **argv)
 {
+    /*t_list* lista = list_create();
+    t_iniciar_patota datosPatota;
+    datosPatota.cant_tripulantes = 12;
+    t_iniciar_patota datosPatota1;
+    datosPatota1.cant_tripulantes = 15;
+    list_add(lista, &datosPatota);
+    list_add(lista, &datosPatota1);
+
+    t_iniciar_patota* result = list_get(lista, 0);
+    printf("HOla mundo: %d\n", result->cant_tripulantes);
+    return 1;*/
+
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
