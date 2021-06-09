@@ -137,5 +137,5 @@ void create_dir_bitacoras(t_config_mongo_store* config_mongo_store){
 }
 
 void init_protocolo_fsck(){
-
+    //Avisar a discordiador la finalización del fsck
 }
