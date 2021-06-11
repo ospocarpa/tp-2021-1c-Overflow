@@ -43,14 +43,54 @@ void ejecucion_dispatcher()
 
     //tripulantes.listos a tripulanes.exec
 }
-
-void hilo_tripulante(t_tripulante *tripulante)
+void pedirTarea(Tripulante *tripulante)
 {
+    tripulante->tarea = NULL;
+}
+void hilo_tripulante(Tripulante *tripulante)
+{
+    printf("Hilo tripulante:%d\n", tripulante->id);
+    /*  int sval;
+    sem_getvalue(&grado_multiprocesamiento, &sval);
+    printf("multiTarea:%d\n", sval); */
 
+    _Bool finalizo_tarea = false;
+    pthread_mutex_init(&tripulante->activo, 0);
+    pthread_mutex_init(&tripulante->seleccionado, 0);
+    pthread_mutex_lock(&tripulante->activo);
+    while (1)
+    {
+        if (!finalizo_tarea)
+        {
+            pedirTarea(tripulante);
+            if (tripulante->tarea == NULL)
+            {
+                printf("Hilo tripulante:%d bye bye\n", tripulante->id);
+                break;
+            }
+
+            sem_post(&listos); //listos++
+            pthread_mutex_lock(&tripulante->seleccionado);
+
+            //   ir_a_la_posicion(tripulante->tarea->posicion->posx,tripulante->tarea->posicion->posy);
+            sem_post(&grado_multiprocesamiento);
+
+            //   if(tripulante->tarea.bloqueado == true) {
+            //      bloqueate();
+        }
+    }
+
+    //tripulane pasa a cola de exit ;
+    /// -------------------------------------------------
     //pthread_mutex_lock(&MXTRIPULANTE);
 
-    //numeroTripulante++;
-    /*  
+    /*  printf("hilo:%d\n", process_get_thread_id());
+    pthread_mutex_unlock(&MXTRIPULANTE);
+ */
+    return;
+}
+
+/*  
         1 tiene q llamar a mi_ram  para pedir siguiente tarea
           nota: si tiene tarea pasa a estado listo
           2 creamos semaforo planificacion "PAUSAR_PLANIFICACION"
@@ -75,28 +115,22 @@ void hilo_tripulante(t_tripulante *tripulante)
 
      */
 
-    printf("tripulante %d\t patota %d\thilo:%d\n", numeroTripulante, numeroPatota, process_get_thread_id());
-    pthread_mutex_unlock(&MXTRIPULANTE);
-
-    return;
-}
 //reemplazar cantidad por datos
 void crearHilosTripulantes(Patota *una_patota)
 {
     printf("Iniciando\n");
-    return;
     // Inicializo semaforo
     pthread_mutex_init(&MXTRIPULANTE, NULL);
 
     //numeroPatota++;
     int cantidad = list_size(una_patota->tripulantes);
 
-    t_tripulante *un_tripulante;
+    //  Tripulante *un_tripulante;
 
     for (int i = 0; i < cantidad; i++)
     {
         pthread_t hilo;
-
+        Tripulante *un_tripulante;
         un_tripulante = list_get(una_patota->tripulantes, i);
 
         pthread_create(&hilo, NULL, (void *)&hilo_tripulante, un_tripulante);

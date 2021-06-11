@@ -14,6 +14,7 @@
 #include "shared_utils.h"
 #include "RecepcionMensajes.h"
 #include <consola.h>
+#include <semaphore.h>
 #include "tests.h"
 
 t_log *logger;
@@ -22,6 +23,8 @@ t_config_discordiador *config;
 int numeroTripulante = 0;
 int numeroPatota = 0;
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
+sem_t listos;
+sem_t grado_multiprocesamiento;
 //_Bool planificacion_activa = false;
 
 void iniciar_servidor_main();

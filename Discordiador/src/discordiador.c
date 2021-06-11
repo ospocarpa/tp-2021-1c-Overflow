@@ -7,7 +7,7 @@ void iniciar_servidor_main()
     //Carga de los archivos de configuracion
     t_config *g_config = leer_config_file("./cfg/discordiador.config");
     config = leerConfigDiscordiador(g_config);
-
+    sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
     //Iniciar Log
     logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
     log_info(logger, "CONFIGURACION CARGADA!");
@@ -83,7 +83,7 @@ int main(int argc, char **argv)
         //mejorar en metodo la iniciliazicion del semaforo
         pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
         printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
-
+        sem_init(&listos, 0, 0); // contador de listos =0
         // mutex_unlock (semafor) --> 0
 
         /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
