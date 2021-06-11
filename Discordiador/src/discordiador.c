@@ -5,7 +5,7 @@ void iniciar_servidor_main()
     //Dato: posiblemente mapear con '\ņ'
 
     //Carga de los archivos de configuracion
-    t_config *g_config = leer_config_file("./cfg/discordiador.config");
+    g_config = leer_config_file("./cfg/discordiador.config");
     config = leerConfigDiscordiador(g_config);
     sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
     //Iniciar Log
@@ -124,8 +124,11 @@ int main(int argc, char **argv)
 
         // Libero el log y config al final
         logger_free();
+
         liberar_conexion(conexion_mi_ram);
         printf("termino la ejecucion de discordiador\n");
+        config_destroy(config);
+        config_destroy(g_config);
         //run_tests();
         return 1;
     }

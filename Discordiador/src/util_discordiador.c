@@ -1,4 +1,4 @@
-#include "util_discordiador.h"
+#include "../include/util_discordiador.h"
 
 Patota *map_to_patota(t_iniciar_patota datosPatota)
 {
@@ -45,6 +45,10 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
     }
 
     //Falta mapeo de tareas para patota
+    //list_clean(posiciones_lista);
+    list_destroy(posiciones_lista);
+
+    liberar_puntero_doble(posiciones_string);
     return patota_new;
 }
 

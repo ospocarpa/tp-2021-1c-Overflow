@@ -52,9 +52,9 @@ void hilo_tripulante(Tripulante *tripulante)
 {
     pthread_mutex_lock(&MXTRIPULANTE);
     list_add(lista_tripulantes, tripulante);
-    Tripulante *otroTripulante = list_get(lista_tripulantes, 0);
+    Tripulante *otroTripulante = list_get(lista_tripulantes, (tripulante->id) - 1);
     pthread_mutex_unlock(&MXTRIPULANTE);
-    //printf("Posicione %d esta el tripulante%d\n", tripulante->id, otroTripulante->id);
+    printf("Posicione %d esta el tripulante%d\n", (tripulante->id) - 1, otroTripulante->id);
     printf("Hilo tripulante:%d\n", tripulante->id);
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);

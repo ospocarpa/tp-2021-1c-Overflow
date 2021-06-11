@@ -19,6 +19,7 @@
 
 t_log *logger;
 t_config_discordiador *config;
+t_config *g_config;
 // pthread_mutex_t MXMENSAJE;
 int numeroTripulante = 0;
 int numeroPatota = 0;

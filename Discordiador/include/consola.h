@@ -30,5 +30,6 @@ void parsear_mensaje(op_code operacion, char **tokens);
 int guardar_contenido_archivo(const char *, char **);
 
 int existe_archivo(const char *); // en la shared ?
+void liberar_puntero_doble(char **);
 
 #endif
