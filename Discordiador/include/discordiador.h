@@ -25,6 +25,9 @@ int numeroPatota = 0;
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 sem_t listos;
 sem_t grado_multiprocesamiento;
+//t_list *lista_NEW;
+t_list *lista_tripulantes;
+t_list *lista_EXIT;
 //_Bool planificacion_activa = false;
 
 void iniciar_servidor_main();

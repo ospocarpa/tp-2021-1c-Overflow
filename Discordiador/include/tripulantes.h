@@ -21,6 +21,9 @@ pthread_mutex_t MXTRIPULANTE;
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 extern sem_t listos;
 extern sem_t grado_multiprocesamiento;
+//extern t_list *lista_NEW;
+extern t_list *lista_tripulantes; //Dentro van a estar los tripulantes en estado READY/EXEC/BLOCKED
+extern t_list *lista_EXIT;
 
 void crearHilosTripulantes(Patota *);
 void hilo_tripulante(Tripulante *);

@@ -11,11 +11,14 @@ void iniciar_servidor_main()
     //Iniciar Log
     logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
     log_info(logger, "CONFIGURACION CARGADA!");
+    //Iniciando listas
+    //list_create(lista_NEW);
+    lista_tripulantes = list_create();
+    lista_EXIT = list_create();
 
     //Iniciar Server
     int server_fd = iniciar_servidor(config->PUERTO_MODULO);
     log_info(logger, "INICIANDO SERVIDOR");
-
     pthread_t threadConsola;
     pthread_create(&threadConsola, NULL, (void *)leer_consola, NULL);
     pthread_detach(threadConsola);

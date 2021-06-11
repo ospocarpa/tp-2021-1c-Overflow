@@ -20,6 +20,7 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
     datosPatota->long_path_tareas = bytesContenido,
     datosPatota->path_tareas = contenido;
+    free(contenido);
     //mostrar_datos_patota(datosPatota);
 }
 
@@ -49,6 +50,11 @@ void pedirTarea(Tripulante *tripulante)
 }
 void hilo_tripulante(Tripulante *tripulante)
 {
+    pthread_mutex_lock(&MXTRIPULANTE);
+    list_add(lista_tripulantes, tripulante);
+    Tripulante *otroTripulante = list_get(lista_tripulantes, 0);
+    pthread_mutex_unlock(&MXTRIPULANTE);
+    //printf("Posicione %d esta el tripulante%d\n", tripulante->id, otroTripulante->id);
     printf("Hilo tripulante:%d\n", tripulante->id);
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
@@ -63,9 +69,15 @@ void hilo_tripulante(Tripulante *tripulante)
         if (!finalizo_tarea)
         {
             pedirTarea(tripulante);
-            if (tripulante->tarea == NULL)
+            if (tripulante->status == NEW)
             {
-                printf("Hilo tripulante:%d bye bye\n", tripulante->id);
+                tripulante->status = READY;
+            }
+            if (tripulante->tarea == NULL)
+            { //linea 77 rompe
+                //list_remove(lista_tripulantes, tripulante->id - 1);
+                list_add(lista_EXIT, tripulante);
+                printf("Hilo tripulante :%d bye bye\n", tripulante->id);
                 break;
             }
 
@@ -130,6 +142,7 @@ void crearHilosTripulantes(Patota *una_patota)
     for (int i = 0; i < cantidad; i++)
     {
         pthread_t hilo;
+
         Tripulante *un_tripulante;
         un_tripulante = list_get(una_patota->tripulantes, i);
 
