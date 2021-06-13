@@ -29,5 +29,6 @@ void crearHilosTripulantes(Patota *);
 void hilo_tripulante(Tripulante *);
 
 void cargarTripulante(t_iniciar_patota *, char **, int);
+void ir_a_la_posicion(Tripulante*, Posicion);
 
 #endif
