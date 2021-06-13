@@ -18,7 +18,7 @@
 extern int numeroTripulante;
 extern int numeroPatota;
 pthread_mutex_t MXTRIPULANTE;
-pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
+extern pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 extern sem_t listos;
 extern sem_t grado_multiprocesamiento;
 //extern t_list *lista_NEW;

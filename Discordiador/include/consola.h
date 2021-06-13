@@ -28,7 +28,7 @@ void planificar();
 int obtener_cantidad_argumentos(char **tokens);
 void parsear_mensaje(op_code operacion, char **tokens);
 int guardar_contenido_archivo(const char *, char **);
-
+pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 int existe_archivo(const char *); // en la shared ?
 void liberar_puntero_doble(char **);
 

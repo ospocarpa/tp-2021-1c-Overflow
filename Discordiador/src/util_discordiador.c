@@ -1,5 +1,12 @@
 #include "../include/util_discordiador.h"
 
+//funcion agregada
+bool esBloqueante(Tarea *tarea)
+{
+    //pendiente
+    return true;
+}
+
 Patota *map_to_patota(t_iniciar_patota datosPatota)
 {
     numeroPatota++;
@@ -27,6 +34,9 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         tripulante->posicion->posx = 0;
         tripulante->posicion->posy = 0;
         tripulante->patota_id = numeroPatota;
+        //se inicializan los semaforos de los tripulantes
+        pthread_mutex_init(&tripulante->activo, 0);
+        pthread_mutex_init(&tripulante->seleccionado, 0);
         list_add(patota_new->tripulantes, tripulante);
     }
 
@@ -102,6 +112,23 @@ char *get_status_string(status_tripulante status)
 t_list *get_tripulantes_all()
 {
     //Retorna todos los tripulantes del sistema
+    // opcines retorne una lista global        //agregado
+    //
     t_list *tripulantes = list_create();
-    return tripulantes;
+    return lista_tripulantes;
+}
+//agregado funcion
+Tripulante *tripulante_segun_id(int id)
+{
+    _Bool mismo_id(void *param)
+    {
+        Tripulante *tripulante = param;
+        return tripulante->id == id;
+    }
+    return (Tripulante *)list_find(get_tripulantes_all(), &mismo_id);
+}
+//lista_tripulante= get
+int existe_tripulante(int id)
+{
+    return tripulante_segun_id(id) == NULL ? false : true;
 }
