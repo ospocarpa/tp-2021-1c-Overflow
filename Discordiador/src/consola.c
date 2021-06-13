@@ -37,6 +37,8 @@ void liberar_puntero_doble(char **puntero_doble)
 
 bool leer_consola(void)
 {
+    pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
+
     while (1)
     {
         mostrar_consola();
@@ -259,12 +261,12 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
             mostrar_datos_patota(&datosPatota);
-            
+
             t_paquete *paquete = serializar_iniciar_patota(datosPatota);
             //no uso variable paquete
             int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
-            
-            Patota* patota_new = map_to_patota(datosPatota);
+
+            Patota *patota_new = map_to_patota(datosPatota);
             mostrar_t_patota(patota_new);
             crearHilosTripulantes(patota_new);
             //sendMessage(paquete, socket_cliente);

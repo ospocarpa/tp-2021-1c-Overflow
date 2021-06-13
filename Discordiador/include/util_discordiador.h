@@ -14,10 +14,12 @@
 #include <pthread.h>
 #include <commons/process.h>
 
-    Patota* map_to_patota(t_iniciar_patota);
-    void mostrar_t_patota(Patota* patota);
-    void mostrar_datos_patota(t_iniciar_patota*);
-    char* get_status_string(status_tripulante);
-    t_list* get_tripulantes_all();
+Patota *map_to_patota(t_iniciar_patota);
+void mostrar_t_patota(Patota *patota);
+void mostrar_datos_patota(t_iniciar_patota *);
+char *get_status_string(status_tripulante);
+t_list *get_tripulantes_all();
+Tripulante *tripulante_segun_id(int); //
+int existe_tripulante(int);           //
 
 #endif

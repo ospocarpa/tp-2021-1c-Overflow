@@ -44,33 +44,40 @@ void ejecucion_dispatcher()
 
     //tripulantes.listos a tripulanes.exec
 }
-void pedirTarea(Tripulante *tripulante)
+//
+Tarea *pedirTarea(Tripulante *tripulante)
 {
-    tripulante->tarea = NULL;
+    //Despues tendra que llamar a miram?
+    return NULL;
 }
 void hilo_tripulante(Tripulante *tripulante)
 {
     pthread_mutex_lock(&MXTRIPULANTE);
     list_add(lista_tripulantes, tripulante);
-    Tripulante *otroTripulante = list_get(lista_tripulantes, (tripulante->id) - 1);
+
+    //Tripulante *otroTripulante = list_get(lista_tripulantes, (tripulante->id) - 1);
     pthread_mutex_unlock(&MXTRIPULANTE);
-    printf("Posicione %d esta el tripulante%d\n", (tripulante->id) - 1, otroTripulante->id);
+    //usar estructura patota id
+    //devolver un metodo tarea por default(por ahora)
+    //getTarea(Tar)
+    //printf("Posicione %d esta el tripulante%d\n", (tripulante->id) - 1, otroTripulante->id);
     printf("Hilo tripulante:%d\n", tripulante->id);
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
     printf("multiTarea:%d\n", sval); */
 
-    _Bool finalizo_tarea = false;
-    pthread_mutex_init(&tripulante->activo, 0);
-    pthread_mutex_init(&tripulante->seleccionado, 0);
+    _Bool finalizo_tarea = false; //chequear
+                                  //mutex_init de los semaforos esta en la creacion de los tripulantes(mapToPatota)
     pthread_mutex_lock(&tripulante->activo);
     while (1)
     {
         if (!finalizo_tarea)
         {
-            pedirTarea(tripulante);
+            Tarea *tarea = pedirTarea(tripulante); //agregado
             if (tripulante->status == NEW)
             {
+
+                // 1era iter
                 tripulante->status = READY;
             }
             if (tripulante->tarea == NULL)
