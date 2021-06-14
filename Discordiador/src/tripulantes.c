@@ -157,3 +157,41 @@ void crearHilosTripulantes(Patota *una_patota)
         pthread_detach(hilo);
     }
 }
+
+
+void ir_a_la_posicion(Tripulante* tripulante, Posicion posicion_tarea){
+
+    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for 
+
+    while(tripulante->posicion->posx != posicion_tarea.posx)
+    {
+        /*if(esta_pausado){
+            pthread_mutex_lock(tripulante->activo);
+        }
+        */
+       
+        if (tripulante->posicion->posx < posicion_tarea.posx )
+        {
+            tripulante->posicion->posx++;
+        }
+        else{
+            tripulante->posicion->posx--;
+        }
+    }
+
+    while (tripulante->posicion->posy != posicion_tarea.posy)
+    {
+        /*if(esta_pausado){
+            pthread_mutex_lock(tripulante->activo);
+        }
+        */
+        if (tripulante->posicion->posy < posicion_tarea.posy )
+        {
+            tripulante->posicion->posy++;
+        }
+        else{
+            tripulante->posicion->posy--;
+        }
+    }
+    
+}
