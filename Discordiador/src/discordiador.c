@@ -4,18 +4,6 @@ void iniciar_servidor_main()
 {
     //Dato: posiblemente mapear con '\ņ'
 
-    //Carga de los archivos de configuracion
-    g_config = leer_config_file("./cfg/discordiador.config");
-    config = leerConfigDiscordiador(g_config);
-    sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
-    //Iniciar Log
-    logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
-    log_info(logger, "CONFIGURACION CARGADA!");
-    //Iniciando listas
-    //list_create(lista_NEW);
-    lista_tripulantes = list_create();
-    lista_EXIT = list_create();
-
     //Iniciar Server
     int server_fd = iniciar_servidor(config->PUERTO_MODULO);
     log_info(logger, "INICIANDO SERVIDOR");
@@ -58,50 +46,50 @@ void ejecutar_operacion(int cliente_fd)
     }
 }
 
+void inicializacion_recursos(){
+    //mejorar en metodo la iniciliazicion del semaforo
+    pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
+    printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
+    sem_init(&listos, 0, 0); // contador de listos =0
+    sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
+    
+    // mutex_unlock (semafor) --> 0
+    /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
+    printf("%d\n", SEM_PAUSAR_PLANIFICACION);
+    pthread_mutex_lock(&SEM_PAUSAR_PLANIFICACION);
+    printf("%d\n", SEM_PAUSAR_PLANIFICACION); */
+    // pthread_mutex_init(&MXMENSAJE, NULL);
+    // pthread_mutex_lock(&MXMENSAJE);
+
+    //Iniciando listas
+    //list_create(lista_NEW);
+    lista_tripulantes = list_create();
+    lista_EXIT = list_create();
+}
+
 int main(int argc, char **argv)
 {
-    /*t_list* lista = list_create();
-    t_iniciar_patota datosPatota;
-    datosPatota.cant_tripulantes = 12;
-    t_iniciar_patota datosPatota1;
-    datosPatota1.cant_tripulantes = 15;
-    list_add(lista, &datosPatota);
-    list_add(lista, &datosPatota1);
-
-    t_iniciar_patota* result = list_get(lista, 0);
-    printf("HOla mundo: %d\n", result->cant_tripulantes);
-    return 1;*/
-
+    //init_dispatcher();
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
     }
     else
     {
-        // t_config * config = leer_config_file("cfg/discordiador.config");
-        // t_config_discordiador* cfg_discordiador = leerConfigDiscordiador(config);
-        logger_create("cfg/discordiador.log", "DISCORDIADOR");
-        logger_info("Iniciando módulo DISCORDIADOR");
+        //Carga de los archivos de configuracion
+        g_config = leer_config_file(PATH_CONFIG);
+        config = leerConfigDiscordiador(g_config);
 
-        //mejorar en metodo la iniciliazicion del semaforo
-        pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
-        printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
-        sem_init(&listos, 0, 0); // contador de listos =0
-        // mutex_unlock (semafor) --> 0
+        //Iniciar Log
+        logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
+        log_info(logger, "CONFIGURACION CARGADA!");   
+        inicializacion_recursos();
+        
 
-        /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
-        printf("%d\n", SEM_PAUSAR_PLANIFICACION);
-        pthread_mutex_lock(&SEM_PAUSAR_PLANIFICACION);
-        printf("%d\n", SEM_PAUSAR_PLANIFICACION); */
-        // pthread_mutex_init(&MXMENSAJE, NULL);
-        // pthread_mutex_lock(&MXMENSAJE);
-        t_log *log = get_logger(); //no lo estoy usando
-
-        int conexion_mi_ram = crear_conexion("127.0.0.1", 5002);
-
+        int conexion_mi_ram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
         if (conexion_mi_ram < 0)
         {
-            logger_error("Conexion Mi-RAM fallida");
+            log_error(logger, "Conexion Mi-RAM fallida");
             liberar_conexion(conexion_mi_ram);
             // return EXIT_FAILURE; //despues descomitear
         }
@@ -111,16 +99,8 @@ int main(int argc, char **argv)
         }
 
         iniciar_servidor_main();
+        while(1){}
         printf("sali de  inciar servidor\n");
-
-        while (1)
-
-        {
-
-            //mutex bloqueado
-            //aca van los mensaje a enviar a mi-ram
-            //send(conexion_mi_ram, "Hola", 4, 0); //ejemplo, luego eliminar
-        }
 
         // Libero el log y config al final
         logger_free();

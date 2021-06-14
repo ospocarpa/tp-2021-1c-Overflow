@@ -16,6 +16,7 @@
 #include <consola.h>
 #include <semaphore.h>
 #include "tests.h"
+#include "dispatcher.h"
 
 t_log *logger;
 t_config_discordiador *config;
@@ -33,7 +34,8 @@ t_list *lista_EXIT;
 
 void iniciar_servidor_main();
 void ejecutar_operacion(int cliente_fd);
+void inicializacion_recursos();
 
-#define PATH_CONFIG "cfg/discordiador.config"
+#define PATH_CONFIG "./cfg/discordiador.config"
 
 #endif

@@ -1,31 +1,16 @@
 #include "dispatcher.h"
 
-void init_dispatcher(){
-    /*sem_t prueba; // Hacerlo global
-    sem_init(&prueba, 0, 2);
-    
-    int aux;
-    sem_getvalue(&prueba, &aux);
-    printf(" sem : %d\n", aux);
 
-    sem_wait(&prueba);
-    sem_getvalue(&prueba, &aux);
-    printf(" sem : %d\n", aux);
-    
-    sem_wait(&prueba);
-    sem_getvalue(&prueba, &aux);
-    printf(" sem : %d\n", aux);
-    
-    //sem_wait(&prueba);
-    printf("Prueba\n");*/
+void init_dispatcher(){
     while(1){
-        //wait(listos);
-        //id =
-        //wait(grados multiprocesamiento);
-        //sign(activar tripulante)
+        sem_wait(&listos);
+        Tripulante* tripulante_seleccionado = busqueda_algoritmo(FIFO);
+        sem_wait(&grado_multiprocesamiento);
+        sem_post(&tripulante_seleccionado->seleccionado); //mutex
     }
 }
 
-void busqueda_algoritmo(alg_planificacion tipo_planificacion){
-
+Tripulante* busqueda_algoritmo(alg_planificacion tipo_planificacion){
+    //t_list* tripulantes = 
+    return NULL;
 }

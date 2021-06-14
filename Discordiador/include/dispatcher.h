@@ -17,6 +17,6 @@
 #include <semaphore.h>
 
 void init_dispatcher();
-void busqueda_algoritmo(alg_planificacion tipo_planificacion);
+Tripulante* busqueda_algoritmo(alg_planificacion);
 
 #endif
