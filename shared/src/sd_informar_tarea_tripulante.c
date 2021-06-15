@@ -51,6 +51,7 @@ t_package ser_res_informar_tarea_tripulante(t_info_tarea data_buffer)
     paquete.buffer = malloc(tam_buffer);
     int offset = 0;
     paquete.cod_operacion = INFORMAR_TAREA_TRIPULANTE;
+    paquete.tam_buffer = tam_buffer;
 
     memcpy(paquete.buffer, &data_buffer.tarea, sizeof(type_task));
     offset += sizeof(type_task);

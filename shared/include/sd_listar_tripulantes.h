@@ -10,9 +10,11 @@
 #include<TAD.h>
 #include<sd_posicion.h>
 
+/* ******* MI RAM HQ ******* */
+t_package ser_res_listar_tripulantes(t_listar_tripulantes data_buffer);
 
-t_paquete* serializar_listar_tripulantes(t_listar_tripulantes data_buffer);
-t_listar_tripulantes deserializar_listar_tripulantes(t_paquete* paquete);
+/* ******* DISCORDIADOR ******* */
+t_listar_tripulantes des_res_listar_tripulantes(t_package paquete);
 
 
 #endif  
