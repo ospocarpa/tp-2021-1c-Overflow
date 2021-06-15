@@ -4,6 +4,7 @@ void validar_sd_iniciar_patota();
 void validar_sd_expulsar_tripulante();
 void validar_sd_listar_tripulante();
 void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram();
+void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador();
 
 int run_tests(){
     CU_initialize_registry();
@@ -12,7 +13,8 @@ int run_tests(){
     // CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
     // CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     //CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
-    CU_add_test(tests, "Valido serializacion y deserializacion msj discordiador", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
+    CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
+    CU_add_test(tests, "Valido informar tarea msj mi ram a discordiador", validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador);
     
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -122,9 +124,10 @@ void validar_sd_listar_tripulante(){
     // list_remove_and_destroy_element(data_res.tripulantes, 0, free);
     // list_remove_and_destroy_element(data_res.tripulantes, 1, free);
 }
-  
+
 void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram(){
 
+    t_short_info_tripulante tripulante;
     t_short_info_tripulante tripulante_res;
     uint32_t tripulante_id_input;
     uint32_t patota_id_input;
@@ -132,16 +135,40 @@ void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram(){
     uint32_t patota_id_res;
     t_package paquete;
 
-    patota_id_input = 1;
-    tripulante_id_input = 2;
+    tripulante.patota_id = 1;
+    tripulante.tripulante_id = 2;
 
-    paquete = ser_cod_informar_tarea_tripulante(patota_id_input, tripulante_id_input);
-    des_cod_informar_tarea_tripulante(paquete.buffer, &patota_id_res, &tripulante_id_res);
+    paquete = ser_cod_informar_tarea_tripulante(tripulante);
+    tripulante_res = des_cod_informar_tarea_tripulante(paquete);
 
-    printf("Tripulante id: %d \n", tripulante_id_res);
-    printf("Tripulante id: %d \n", patota_id_res);
-    CU_ASSERT_EQUAL(patota_id_input, patota_id_res);
-    CU_ASSERT_EQUAL(tripulante_id_input, tripulante_id_res);
+    CU_ASSERT_EQUAL(tripulante.patota_id, tripulante_res.patota_id);
+    CU_ASSERT_EQUAL(tripulante.tripulante_id, tripulante_res.tripulante_id);
+
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador(){
+    t_info_tarea tarea;
+    Posicion pos;
+    t_package paquete;
+    t_info_tarea tarea_res;
+
+    pos.posx = 1;
+    pos.posy = 0;
+
+    tarea.tarea = GENERAR_OXIGENO;
+    tarea.posicion = pos;
+    tarea.parametro = 3;
+    tarea.tiempo = 4;
+
+    paquete = ser_res_informar_tarea_tripulante(tarea);
+    tarea_res = des_res_informacion_tarea_tripulante(paquete);
+
+    CU_ASSERT_EQUAL(GENERAR_OXIGENO, tarea_res.tarea);
+    CU_ASSERT_EQUAL(tarea.parametro, tarea_res.parametro);
+    CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
+    CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
+    CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
 
     free(paquete.buffer);
 }
