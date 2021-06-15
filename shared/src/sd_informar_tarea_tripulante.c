@@ -2,22 +2,22 @@
 
 /* ******* DISCORDIADOR ******* */
 // es el mensaje que envia discordiador a mi ram
-t_paquete * ser_cod_informar_tarea_tripulante(int patota_id, int tripulante_id)
+t_package ser_cod_informar_tarea_tripulante(int patota_id, int tripulante_id)
 {
 
-    t_paquete * paquete =malloc(sizeof(t_paquete));
-    
-    int tam_buffer = sizeof(int) * 2; 
-    paquete->buffer =malloc(sizeof(t_buffer));
-    paquete->buffer->stream = malloc(tam_buffer);
-    paquete->codigo_operacion= INFORMAR_TAREA_TRIPULANTE;
+    t_package paquete;
+    int tam_buffer = sizeof(int) * 2;
+    //void * stream = malloc(tam_buffer);
+    paquete.buffer =malloc(tam_buffer);
+    paquete.cod_operacion= INFORMAR_TAREA_TRIPULANTE;
+    paquete.tam_buffer = tam_buffer;
     int offset = 0;
 
-    memcpy(paquete->buffer->stream + offset, &patota_id, sizeof(uint32_t));
+    memcpy(paquete.buffer, &patota_id, sizeof(uint32_t));
 	offset += sizeof(uint32_t);
 
-    memcpy(paquete->buffer->stream + offset, &tripulante_id, sizeof(uint32_t));
-	offset += sizeof(uint32_t);
+    memcpy(paquete.buffer + offset, &tripulante_id, sizeof(uint32_t));
+	
   
     return paquete;
 }
@@ -73,11 +73,10 @@ t_paquete* ser_res_informar_tarea_tripulante(t_info_tarea data_buffer)
 }
 
 // es la deserializacion del mensaje enviado por discordiador a mi ram
-void des_cod_informar_tarea_tripulante(t_paquete* paquete, int * patota_id, int * tripulante_id)
+void des_cod_informar_tarea_tripulante(void * buffer, uint32_t * patota_id, uint32_t * tripulante_id)
 {
-    memcpy(patota_id, paquete->buffer->stream, sizeof(uint32_t));
-    paquete->buffer->stream += sizeof(uint32_t);
+    memcpy(patota_id, buffer, sizeof(uint32_t));
+    buffer += sizeof(uint32_t);
 
-    memcpy(tripulante_id, paquete->buffer->stream, sizeof(uint32_t));
-    paquete->buffer->stream += sizeof(uint32_t);
+    memcpy(tripulante_id, buffer, sizeof(uint32_t));
 }

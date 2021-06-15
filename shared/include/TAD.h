@@ -51,6 +51,13 @@
 
 	typedef struct
 	{
+		op_code cod_operacion;
+		int tam_buffer;
+		void * buffer;
+	} t_package;
+
+	typedef struct
+	{
 		int posx;
 		int posy;
 	}__attribute__((packed))

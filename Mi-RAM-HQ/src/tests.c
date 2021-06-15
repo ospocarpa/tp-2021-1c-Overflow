@@ -9,8 +9,8 @@ int run_tests(){
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite",NULL,NULL);
 
-    CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
-    CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
+    // CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
+    // CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     //CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
     CU_add_test(tests, "Valido serializacion y deserializacion msj discordiador", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
     
@@ -125,23 +125,23 @@ void validar_sd_listar_tripulante(){
   
 void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram(){
 
-    t_short_info_tripulante tripulante_input;
-    int tripulante_id_input;
-    int patota_id_input;
-    int tripulante_id_res;
-    int patota_id_res;
-    t_paquete * paquete;
+    t_short_info_tripulante tripulante_res;
+    uint32_t tripulante_id_input;
+    uint32_t patota_id_input;
+    uint32_t tripulante_id_res;
+    uint32_t patota_id_res;
+    t_package paquete;
 
     patota_id_input = 1;
     tripulante_id_input = 2;
 
     paquete = ser_cod_informar_tarea_tripulante(patota_id_input, tripulante_id_input);
-    des_cod_informar_tarea_tripulante(paquete, &patota_id_res, &tripulante_id_res);
+    des_cod_informar_tarea_tripulante(paquete.buffer, &patota_id_res, &tripulante_id_res);
 
+    printf("Tripulante id: %d \n", tripulante_id_res);
+    printf("Tripulante id: %d \n", patota_id_res);
     CU_ASSERT_EQUAL(patota_id_input, patota_id_res);
     CU_ASSERT_EQUAL(tripulante_id_input, tripulante_id_res);
 
-    free(paquete->buffer);
-    free(paquete);
-
+    free(paquete.buffer);
 }
