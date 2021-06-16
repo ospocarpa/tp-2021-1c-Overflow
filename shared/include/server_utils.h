@@ -22,10 +22,5 @@ int esperar_cliente(int socket_servidor);
 t_list *recibir_paquete(int, t_log *);
 t_paquete *recibir_mensaje(int socket_cliente);
 int recibir_operacion(int, t_log *);
-char *test();
-/*char *test()
-{
-    return "Hola mundo";
-}
-*/
+
 #endif

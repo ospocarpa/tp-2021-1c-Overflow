@@ -10,7 +10,8 @@
 		SALIDA = 0,
 		TAREA = 1,
 		SABOTAJE = 2,
-		FIN_FSCKa = 3
+		INICIO_FSCK = 3,
+		FIN_FSCK = 4
 	} op_code;
 
 	typedef struct
@@ -57,7 +58,7 @@
 	// 2 sabotaje en files 
 	// 3 Sabotaje en bloques 
 		Posicion*  posicion;	 
-	}Sabotaje; 
+	} Sabotaje; 
 
 // Son un struct cada tipo de sabotaje??
 // 

@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <commons/log.h>
+#include <config_utils.h>
 #include <commons/collections/list.h>
 
 typedef struct
@@ -27,6 +28,8 @@ typedef struct
     char caracter_llenado;
     char* md5_archivo;
 } File;
+
+t_config_mongo_store *config;
 
 
 #endif
