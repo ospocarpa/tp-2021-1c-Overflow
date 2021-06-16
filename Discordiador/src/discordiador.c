@@ -80,6 +80,8 @@ int main(int argc, char **argv)
         g_config = leer_config_file(PATH_CONFIG);
         config = leerConfigDiscordiador(g_config);
 
+        init_dispatcher();
+        return 1;
         //Iniciar Log
         logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
         log_info(logger, "CONFIGURACION CARGADA!");   
