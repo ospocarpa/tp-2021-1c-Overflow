@@ -20,7 +20,7 @@ Tripulante* busqueda_algoritmo(alg_planificacion tipo_planificacion){
             tripulante = NULL;
             break;
         case RR: 
-            gt//Retornar la cola de listos
+            //Retornar la cola de listos
             tripulante = NULL;
             break;
     } 
