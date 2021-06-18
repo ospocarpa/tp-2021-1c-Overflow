@@ -86,13 +86,28 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
     int block_size = config_mongo_store->BLOCK_SIZE;
     int blocks = config_mongo_store->BLOCKS;
 
-    //PENDIENTE: crear bitmap
+    //Bitmap
     int bitmap = 2000;
+    void* punteroBits = mmap(NULL, block_size/8, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    bitarray = bitarray_create_with_mode(punteroBits, block_size, LSB_FIRST);
+    //
+    /*
+    int fd = open(path_bit_map, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+	int block_size = atoi(config_get_string_value(metadata, "BLOCKS"))/8;
+	ftruncate(fd, block_size);
+
+	void* punteroBits = mmap(NULL, block_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+	bitarray = bitarray_create_with_mode(punteroBits, block_size, LSB_FIRST);
+
+	uint32_t bits = bitarray_get_max_bit(bitarray);
+    */
+
 
     int offset = 0;
     int file_size = sizeof(uint32_t) * 3;
     printf("File size: %d\n", file_size);
     ftruncate(fd, file_size);
+
 
     if(fd){
         void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);

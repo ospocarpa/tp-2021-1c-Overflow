@@ -11,6 +11,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <sys/mman.h>
+#include <commons/bitarray.h>
 #include <commons/collections/list.h>
 
     void method_sigusr1();
