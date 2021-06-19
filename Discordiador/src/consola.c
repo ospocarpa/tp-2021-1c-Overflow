@@ -1,6 +1,5 @@
 #include "consola.h"
-//inline
-_Bool planificacion_activa = false;
+
 void mostrar_consola()
 {
 

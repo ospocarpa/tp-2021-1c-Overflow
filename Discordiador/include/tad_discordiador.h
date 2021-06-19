@@ -42,6 +42,7 @@ typedef struct
 
     pthread_mutex_t seleccionado; //desahibiliado por defecto
                                   //habilitado por dispatcher
+    pthread_mutex_t sabotaje; 
 
 } Tripulante;
 

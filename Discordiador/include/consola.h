@@ -18,6 +18,7 @@
 #include "config_utils.h"
 #include "util_discordiador.h"
 extern int conexion_mi_ram;
+extern bool planificacion_activa;
 
 extern t_config_discordiador *config;
 void mostrar_consola();

@@ -49,9 +49,10 @@ void ejecutar_operacion(int cliente_fd)
 void inicializacion_recursos(){
     //mejorar en metodo la iniciliazicion del semaforo
     pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
-    printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
+    //printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
     sem_init(&listos, 0, 0); // contador de listos =0
     sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
+    sem_init(&activados, 0, 0);
     
     // mutex_unlock (semafor) --> 0
     /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
@@ -64,6 +65,10 @@ void inicializacion_recursos(){
     //Iniciando listas
     //list_create(lista_NEW);
     lista_tripulantes = list_create();
+    lista_READY = list_create();
+    lista_EXEC = list_create();
+    lista_BLOCKIO = list_create();
+    lista_BLOCKEMERGENCIA = list_create();
     lista_EXIT = list_create();
 }
 
@@ -77,7 +82,7 @@ int main(int argc, char **argv)
     else
     {
         //Carga de los archivos de configuracion
-        g_config = leer_config_file(PATH_CONFIG);
+        t_config *g_config = leer_config_file(PATH_CONFIG);
         config = leerConfigDiscordiador(g_config);
 
         /*init_dispatcher();

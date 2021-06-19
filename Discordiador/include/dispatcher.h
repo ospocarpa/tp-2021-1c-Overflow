@@ -15,6 +15,7 @@
 #include "RecepcionMensajes.h"
 #include <consola.h>
 #include <semaphore.h>
+//#include "discordiador.h"
 
 void init_dispatcher();
 Tripulante* busqueda_algoritmo(alg_planificacion);
