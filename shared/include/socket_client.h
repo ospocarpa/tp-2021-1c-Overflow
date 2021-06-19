@@ -16,9 +16,9 @@
 #include <sys/socket.h>
 
 
-	int crear_conexion(char *ip, int puerto);
-	void* serializar_paquete(t_paquete* paquete, int* bytes);
-	void liberar_conexion(int socket_cliente);
-	void sendMessage(t_paquete* paquete, int socket_cliente);
+int crear_conexion(char *ip, int puerto);
+void* serializar_paquete(t_package paquete, int* bytes);
+void liberar_conexion(int socket_cliente);
+void sendMessage(t_package paquete, int socket_cliente);
 
 #endif /* SOCKET_CLIENT_H_ */
