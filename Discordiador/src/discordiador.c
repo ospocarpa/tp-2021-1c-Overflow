@@ -2,32 +2,27 @@
 
 void iniciar_servidor_main()
 {
-    //Carga de los archivos de configuracion
-    t_config *g_config = leer_config_file("./cfg/discordiador.config");
-    t_config_discordiador *config = leerConfigDiscordiador(g_config);
-
-    //Iniciar Log
-    logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
-    log_info(logger, "CONFIGURACION CARGADA!");
+    //Dato: posiblemente mapear con '\ņ'
 
     //Iniciar Server
     int server_fd = iniciar_servidor(config->PUERTO_MODULO);
     log_info(logger, "INICIANDO SERVIDOR");
-
     pthread_t threadConsola;
     pthread_create(&threadConsola, NULL, (void *)leer_consola, NULL);
     pthread_detach(threadConsola);
     int cliente_fd;
 
-    while (1)
-    {
+    // while (1)
+    // {
 
-        cliente_fd = esperar_cliente(server_fd);
+    //     cliente_fd = esperar_cliente(server_fd);
 
-        pthread_t threadEscucha;
-        // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
-        pthread_detach(threadEscucha);
-    }
+    //     pthread_t threadEscucha;
+    //     // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
+    //     pthread_detach(threadEscucha); //corregir esto
+    //     //mandar a este hilo a ejecutar las accione pertinentes
+    //     //consola debe ser mas de mostrar mensajes
+    // }
 
     //run_tests();
 }
@@ -42,7 +37,7 @@ void ejecutar_operacion(int cliente_fd)
 
             recepcionMensaje(paquete, cliente_fd, logger);
             if (paquete->codigo_operacion == 0)
-                exit;
+                exit; //exit sin efecto
         }
         else
         {
@@ -51,28 +46,60 @@ void ejecutar_operacion(int cliente_fd)
     }
 }
 
+void inicializacion_recursos(){
+    //mejorar en metodo la iniciliazicion del semaforo
+    pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
+    //printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
+    sem_init(&listos, 0, 0); // contador de listos =0
+    sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
+    sem_init(&activados, 0, 0);
+    
+    // mutex_unlock (semafor) --> 0
+    /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
+    printf("%d\n", SEM_PAUSAR_PLANIFICACION);
+    pthread_mutex_lock(&SEM_PAUSAR_PLANIFICACION);
+    printf("%d\n", SEM_PAUSAR_PLANIFICACION); */
+    // pthread_mutex_init(&MXMENSAJE, NULL);
+    // pthread_mutex_lock(&MXMENSAJE);
+
+    //Iniciando listas
+    //list_create(lista_NEW);
+    lista_tripulantes = list_create();
+    lista_READY = list_create();
+    lista_EXEC = list_create();
+    lista_BLOCKIO = list_create();
+    lista_BLOCKEMERGENCIA = list_create();
+    lista_EXIT = list_create();
+}
+
 int main(int argc, char **argv)
 {
+    //init_dispatcher();
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
     }
     else
     {
-        // t_config * config = leer_config_file("cfg/discordiador.config");
-        // t_config_discordiador* cfg_discordiador = leerConfigDiscordiador(config);
-        logger_create("cfg/discordiador.log", "DISCORDIADOR");
-        logger_info("Iniciando módulo DISCORDIADOR");
+        //Carga de los archivos de configuracion
+        t_config *g_config = leer_config_file(PATH_CONFIG);
+        config = leerConfigDiscordiador(g_config);
 
-        t_log *log = get_logger();
+        /*init_dispatcher();
+        return 1;*/
 
-        int conexion_mi_ram = crear_conexion("127.0.0.1", 5002);
+        //Iniciar Log
+        logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
+        log_info(logger, "CONFIGURACION CARGADA!");   
+        inicializacion_recursos();
+        
 
+        int conexion_mi_ram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
         if (conexion_mi_ram < 0)
         {
-            logger_error("Conexion Mi-RAM fallida");
+            log_error(logger, "Conexion Mi-RAM fallida");
             liberar_conexion(conexion_mi_ram);
-            //return EXIT_FAILURE;
+            // return EXIT_FAILURE; //despues descomitear
         }
         else
         {
@@ -80,20 +107,16 @@ int main(int argc, char **argv)
         }
 
         iniciar_servidor_main();
+        while(1){}
         printf("sali de  inciar servidor\n");
-
-        while (1)
-
-        {
-
-            //aca van los mensaje a enviar a mi-ram
-            send(conexion_mi_ram, "Hola", 4, 0); //ejemplo, luego eliminar
-        }
 
         // Libero el log y config al final
         logger_free();
+
         liberar_conexion(conexion_mi_ram);
         printf("termino la ejecucion de discordiador\n");
+        config_destroy(config);
+        config_destroy(g_config);
         //run_tests();
         return 1;
     }
