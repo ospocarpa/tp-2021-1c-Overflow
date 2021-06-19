@@ -10,7 +10,7 @@ typedef enum
 	SALIR = 0, //SALIDA
 	TAREA = 1,
 	SABOTAJE = 2,
-	FIN_FSCKa = 3,
+	FIN_FSCK = 3,
 	INICIAR_PATOTA = 4,
 	LISTAR_TRIPULANTES = 5,
 	EXPULSAR_TRIPULANTE = 6,
@@ -19,7 +19,6 @@ typedef enum
 	INICIAR_PLANIFICACION = 9,
 	PAUSAR_PLANIFICACION = 10,
 	OBTENER_BITACORA = 11,
-
 } op_code;
 
 typedef enum
@@ -33,22 +32,21 @@ typedef enum
 
 typedef struct
 {
-	uint32_t size;
-	void *stream;
+  uint32_t size;
+  void *stream;
 } t_buffer;
 
 typedef struct
 {
-	op_code codigo_operacion;
-	t_buffer *buffer;
+  op_code codigo_operacion;
+  t_buffer *buffer;
 } t_paquete;
 
 typedef struct
 {
-	int posx;
-	int posy;
-} __attribute__((packed))
-Posicion;
+  int posx;
+  int posy;
+} Posicion;
 
 typedef struct
 {
@@ -98,7 +96,6 @@ typedef struct
 	Posicion *posicion;
 
 } t_informar_tarea_tripulante;
-
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
 // Sabotaje
@@ -112,10 +109,10 @@ typedef struct
 	// Pos
 	// La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ?
 	// 1 sabotaje de superbloque
-	// 2 sabotaje en files
+  // 2 sabotaje en files
 	// 3 Sabotaje en bloques
 	Posicion *posicion;
-} Sabotaje;
+} Sabotaje
 
 // Son un struct cada tipo de sabotaje??
 //
