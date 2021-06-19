@@ -3,7 +3,7 @@
 #include <CUnit/Basic.h>
 #include <TAD.h>
 
-int run_tests();
 void suma();
+int run_tests();
 
 #endif

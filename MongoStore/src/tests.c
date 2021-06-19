@@ -13,7 +13,6 @@ int run_tests(){
     return CU_get_error();
 }
 
-
 void suma(){
     CU_ASSERT_EQUAL(2+2, 4);
 }
