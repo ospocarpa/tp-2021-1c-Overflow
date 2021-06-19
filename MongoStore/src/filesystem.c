@@ -28,3 +28,20 @@ char* get_path_bitacoras(){
     string_append_with_format(&path_bitacoras, "%s", "/Bitacoras");
     return path_bitacoras;
 }
+
+void print_bit_map(t_bitarray* bitarray){
+    //bitarray_set_bit(bitarray, 3);
+    //bitarray_set_bit(bitarray, 10);
+
+    uint32_t bits = bitarray_get_max_bit(bitarray);
+    printf("Bits: %d\n", bits);
+    /*for(int c=0; c<bits; c++){
+		bitarray_clean_bit(bitarray, c);
+	}*/
+
+    for(int c=0; c<bits; c++){
+        bool bit = bitarray_test_bit(bitarray, c);
+        printf("%d ", bit);
+    }
+    printf("\n");
+}

@@ -1,7 +1,8 @@
 #include "mongo_store.h"
 
 int main(int argc, char **argv)
-{
+{   
+    return 1;
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
@@ -33,18 +34,18 @@ void lectura_file(){
     int bitmap = 0;
 
     int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
-    int file_size = sizeof(uint32_t) * 3;
+    int file_size = sizeof(uint32_t) * 2 + 4;
     void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-
+    t_bitarray* bitarray = 
 
     memcpy(&block_size, stream, sizeof(uint32_t));
 	stream += sizeof(uint32_t);
 	memcpy(&blocks, stream, sizeof(uint32_t));
 	stream += sizeof(uint32_t);
-    memcpy(&bitmap, stream, sizeof(uint32_t));
-	stream += sizeof(uint32_t);
+    memcpy(&bitmap, stream, 4);
+	stream += 4;
 
-    printf("%d %d %d\n", block_size, blocks, bitmap);
-
+    printf("%d %d\n", block_size, blocks, bitmap);
+    print_bit_map(bitarray);
     return 1;
 }
