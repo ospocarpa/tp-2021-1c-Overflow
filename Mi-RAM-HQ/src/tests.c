@@ -10,8 +10,8 @@ int run_tests(){
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite",NULL,NULL);
 
-    // CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
-    // CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
+    CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
+    CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
     CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
     CU_add_test(tests, "Valido informar tarea msj mi ram a discordiador", validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador);
@@ -26,30 +26,28 @@ void validar_sd_iniciar_patota()
 {
     t_iniciar_patota data_input;
     t_iniciar_patota data_res;
-    t_paquete * paquete;
+    t_package paquete;
 
     data_input.cant_tripulantes = 2;
-    data_input.path_tareas = "/home/utnso/tareas/tareas.txt";
-    data_input.long_path_tareas = strlen("/home/utnso/tareas/tareas.txt");
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
     data_input.posiciones = "0|3 0|0";
     data_input.long_posicion= strlen("0|3 0|0");
 
-    paquete = serializar_iniciar_patota(data_input);
+    paquete = ser_cod_iniciar_patota(data_input);
 
-    data_res = deserializar_iniciar_patota(paquete);
+    data_res = des_cod_iniciar_patota(paquete);
 
     printf("path tareas: %d \n", data_res.long_posicion);
 
     CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
-    CU_ASSERT_EQUAL(data_input.long_path_tareas, data_res.long_path_tareas);
-    CU_ASSERT_STRING_EQUAL(data_input.path_tareas, data_res.path_tareas);
+    CU_ASSERT_EQUAL(data_input.long_tareas, data_res.long_tareas);
+    CU_ASSERT_STRING_EQUAL(data_input.tareas, data_res.tareas);
     CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
     CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
 
-    //free((*(*paquete).buffer).stream);
-    free(paquete->buffer);
-    free(paquete);
-    free(data_res.path_tareas);
+    free(paquete.buffer);
+    free(data_res.tareas);
     free(data_res.posiciones);
 }
 
@@ -57,18 +55,15 @@ void validar_sd_expulsar_tripulante(){
 
     t_expulsar_tripulante data_input;
     t_expulsar_tripulante data_res;
-    t_paquete * paquete ;
+    t_package paquete ;
 
     data_input.id_tripulante = 2 ;
 
-    paquete = serializar_expulsar_tripulante(data_input);
-    data_res = deserializar_expulsar_tripulante(paquete);
+    paquete = ser_cod_expulsar_tripulante(data_input);
+    data_res = des_cod_expulsar_tripulante(paquete);
     CU_ASSERT_EQUAL(data_input.id_tripulante, data_res.id_tripulante);
 
-    free(paquete->buffer->stream);
-    free(paquete->buffer);
-    free(paquete);
-
+    free(paquete.buffer);
 }
  
 
