@@ -2,15 +2,15 @@
 
 //COMENTARIO: POR AHORA TIENE DATOS DUMMY PARA TESTING, HAY QUE PONER
 //            LO QUE HACE CADA MODULO PARA CARGAR LOS VALORES
-void *recepcionMensaje(t_paquete *paquete, int cliente_fd, t_log *logger)
+void *recepcionMensaje(t_package *paquete, int cliente_fd, t_log *logger)
 {
     log_info(logger, "recibo algo");
     //Deserializacion
-    t_paquete *new_paquete;
+    t_package *new_paquete;
     switch (paquete->codigo_operacion)
     {
-        case 0:
-            exit;
+    case 0:
+        exit;
         break;
     }
 

@@ -261,7 +261,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
             cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
             mostrar_datos_patota(&datosPatota);
 
-            t_paquete *paquete = serializar_iniciar_patota(datosPatota);
+            t_package paquete = ser_cod_iniciar_patota(datosPatota);
             //no uso variable paquete
             int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
 
@@ -271,9 +271,8 @@ void parsear_mensaje(op_code operacion, char **tokens)
             //sendMessage(paquete, socket_cliente);
             //falto esperar respuesta de confirmacion de carga de los pcb
             liberar_conexion(socket_cliente);
-            free(paquete->buffer->stream);
-            free(paquete->buffer);
-            free(paquete);
+            free(paquete.buffer);
+
             /*
     
             int socket_cliente = crear_conexion(ip, puerto);

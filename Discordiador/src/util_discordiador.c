@@ -79,10 +79,10 @@ void mostrar_t_patota(Patota *patota)
 void mostrar_datos_patota(t_iniciar_patota *datosPatota)
 {
     printf("tripulantes: %d\n", datosPatota->cant_tripulantes);
-    printf("long path tares: %d\n", datosPatota->long_path_tareas);
+    printf("long path tares: %d\n", datosPatota->long_tareas);
     printf("long posiciones: %d\n", datosPatota->long_posicion);
     printf("posiciones: %s\n", datosPatota->posiciones);
-    printf("pathTareas: %s\n", datosPatota->path_tareas);
+    printf("pathTareas: %s\n", datosPatota->tareas);
 }
 
 char *get_status_string(status_tripulante status)

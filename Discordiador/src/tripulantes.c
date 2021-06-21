@@ -18,8 +18,8 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     datosPatota->long_posicion = strlen(posiciones);
     datosPatota->posiciones = posiciones;
     int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
-    datosPatota->long_path_tareas = bytesContenido,
-    datosPatota->path_tareas = contenido;
+    datosPatota->long_tareas = bytesContenido,
+    datosPatota->tareas = contenido;
     free(contenido);
     //mostrar_datos_patota(datosPatota);
 }
@@ -158,23 +158,24 @@ void crearHilosTripulantes(Patota *una_patota)
     }
 }
 
+void ir_a_la_posicion(Tripulante *tripulante, Posicion posicion_tarea)
+{
 
-void ir_a_la_posicion(Tripulante* tripulante, Posicion posicion_tarea){
+    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for
 
-    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for 
-
-    while(tripulante->posicion->posx != posicion_tarea.posx)
+    while (tripulante->posicion->posx != posicion_tarea.posx)
     {
         /*if(esta_pausado){
             pthread_mutex_lock(tripulante->activo);
         }
         */
-       
-        if (tripulante->posicion->posx < posicion_tarea.posx )
+
+        if (tripulante->posicion->posx < posicion_tarea.posx)
         {
             tripulante->posicion->posx++;
         }
-        else{
+        else
+        {
             tripulante->posicion->posx--;
         }
     }
@@ -185,13 +186,13 @@ void ir_a_la_posicion(Tripulante* tripulante, Posicion posicion_tarea){
             pthread_mutex_lock(tripulante->activo);
         }
         */
-        if (tripulante->posicion->posy < posicion_tarea.posy )
+        if (tripulante->posicion->posy < posicion_tarea.posy)
         {
             tripulante->posicion->posy++;
         }
-        else{
+        else
+        {
             tripulante->posicion->posy--;
         }
     }
-    
 }
