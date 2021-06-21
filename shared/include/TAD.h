@@ -85,8 +85,8 @@
 
 	typedef struct 
 	{
-		int patota_id;
-		int tripulante_id;
+		uint32_t patota_id;
+		uint32_t tripulante_id;
 		Posicion posicion;
 		status_tripulante status;
 	}__attribute__((packed))

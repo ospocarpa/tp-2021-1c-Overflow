@@ -6,7 +6,7 @@ t_package ser_res_listar_tripulantes(t_listar_tripulantes data_buffer){
 
     t_package paquete;
     int tam_tripulante = 20;
-    int tam_buffer = data_buffer.cant_tripulantes * tam_tripulante;
+    int tam_buffer = data_buffer.cant_tripulantes * tam_tripulante + sizeof(int);
     paquete.buffer = malloc(tam_buffer);
     paquete.tam_buffer = tam_buffer;
     paquete.cod_operacion= LISTAR_TRIPULANTES;
@@ -16,20 +16,26 @@ t_package ser_res_listar_tripulantes(t_listar_tripulantes data_buffer){
     offset+= sizeof(int);
 
     void agregar_tripulante_a_stream(t_tripulante * tripulante){
-        memcpy(paquete.buffer+offset, &tripulante->patota_id, sizeof(int));
+
+        uint32_t patotaid = tripulante->patota_id;
+        memcpy(paquete.buffer+offset, &patotaid, sizeof(uint32_t));
+        offset+= sizeof(uint32_t);
+
+        uint32_t tripulanteid = tripulante->tripulante_id;
+        memcpy(paquete.buffer+offset, &tripulanteid, sizeof(uint32_t));
+        offset+= sizeof(uint32_t);
+
+        int posx = tripulante->posicion.posx;
+        memcpy(paquete.buffer+offset, &posx, sizeof(int));
         offset+= sizeof(int);
 
-        memcpy(paquete.buffer+offset, &tripulante->tripulante_id, sizeof(int));
+        int posy = tripulante->posicion.posy;
+        memcpy(paquete.buffer+offset, &posy, sizeof(int));
         offset+= sizeof(int);
 
-        memcpy(paquete.buffer+offset, &tripulante->posicion.posx, sizeof(int));
+        status_tripulante estado = tripulante->status;
+        memcpy(paquete.buffer+offset, &estado, sizeof(int));
         offset+= sizeof(int);
-
-        memcpy(paquete.buffer+offset, &tripulante->posicion.posy, sizeof(int));
-        offset+= sizeof(int);
-
-        memcpy(paquete.buffer+offset, &tripulante->status, sizeof(status_tripulante));
-        offset+= sizeof(status_tripulante);
 
     }
 
