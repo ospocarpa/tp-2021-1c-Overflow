@@ -5,18 +5,21 @@
 #include <commons/log.h>
 #include <semaphore.h>
 
-	typedef enum
-	{
-		SALIDA = 0,
-		TAREA = 1,
-		SABOTAJE = 2,
-		FIN_FSCKa = 3,
-		INICIAR_PATOTA = 4,
-		LISTAR_TRIPULANTES = 5,
-		EXPULSAR_TRIPULANTE = 6,
-		INFORMAR_TAREA_TRIPULANTE = 7,
-		INFORMAR_POSICION_TRIPULANTE = 8
-	} op_code;
+typedef enum
+{
+	SALIR = 0, //SALIDA
+	TAREA = 1,
+	SABOTAJE = 2,
+	FIN_FSCK = 3,
+	INICIAR_PATOTA = 4,
+	LISTAR_TRIPULANTES = 5,
+	EXPULSAR_TRIPULANTE = 6,
+	INFORMAR_TAREA_TRIPULANTE = 7,
+	INFORMAR_POSICION_TRIPULANTE = 8,
+	INICIAR_PLANIFICACION = 9,
+	PAUSAR_PLANIFICACION = 10,
+	OBTENER_BITACORA = 11,
+} op_code;
 
 	typedef enum
 	{
@@ -121,31 +124,30 @@
 	}__attribute__((packed))
 	t_informar_posicion_tripulante;
 
-	
-
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
-	// Sabotaje 
-	typedef struct{
-		int mensaje_length;
-		char* mensaje;
+// Sabotaje
+typedef struct
+{
+	int mensaje_length;
+	char *mensaje;
 
-	// bool = false ---> para ver el mensaje que se envia 
-	// puede servir para avisar cuando empezo y termino en todo caso 
-	// Pos 	
-	// La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ? 	
+	// bool = false ---> para ver el mensaje que se envia
+	// puede servir para avisar cuando empezo y termino en todo caso
+	// Pos
+	// La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ?
 	// 1 sabotaje de superbloque
-	// 2 sabotaje en files 
-	// 3 Sabotaje en bloques 
-		Posicion*  posicion;	 
-	}Sabotaje; 
+  // 2 sabotaje en files
+	// 3 Sabotaje en bloques
+	Posicion *posicion;
+} Sabotaje;
 
 // Son un struct cada tipo de sabotaje??
-// 
-// o los tomo todo dentro del mismo ver si tiene la misma logica 
+//
+// o los tomo todo dentro del mismo ver si tiene la misma logica
 
-	// typedef struct{
+// typedef struct{
 
-	// }Fin_fsck;
+// }Fin_fsck;
 
 #endif /* TAD_H_ */

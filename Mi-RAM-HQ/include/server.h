@@ -11,6 +11,7 @@
 #include "sd_iniciar_patota.h"
 #include "sd_listar_tripulantes.h"
 #include "socket_client.h"
+#include <TAD.h>
 
 void server_mi_ram_iniciar(int puerto);
 

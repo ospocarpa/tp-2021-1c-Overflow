@@ -9,15 +9,18 @@ int crear_conexion(char *ip, int puerto)
 	hints.ai_socktype = SOCK_STREAM;
 	hints.ai_flags = AI_PASSIVE;
 
-	getaddrinfo(ip, string_itoa(puerto), &hints, &server_info);
+	char *port = string_itoa(puerto);
+	getaddrinfo(ip, port, &hints, &server_info);
 
 	int socket_cliente = socket(server_info->ai_family, server_info->ai_socktype, server_info->ai_protocol);
 
-	if(connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1){
+	if (connect(socket_cliente, server_info->ai_addr, server_info->ai_addrlen) == -1)
+	{
 		return -1;
 	}
-	freeaddrinfo(server_info);
 
+	freeaddrinfo(server_info);
+	free(port);
 	return socket_cliente;
 }
 
@@ -26,9 +29,11 @@ void liberar_conexion(int socket_cliente)
 	close(socket_cliente);
 }
 
+
 void sendMessage(t_package paquete, int socket_cliente){
 	int bytes = 0;
-	void* a_enviar = serializar_paquete(paquete, &bytes);
+	void *a_enviar = malloc(sizeof(t_paquete));
+	a_enviar = serializar_paquete(paquete, &bytes);
 	send(socket_cliente, a_enviar, bytes, 0);
 	free(a_enviar);
 }

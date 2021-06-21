@@ -1,5 +1,6 @@
 #include "sd_iniciar_patota.h"
 
+
 /* ******* DISCORDIADOR ******* */
 t_package ser_cod_iniciar_patota(t_iniciar_patota data)
 {
@@ -38,6 +39,7 @@ t_iniciar_patota des_cod_iniciar_patota(t_package paquete)
     memcpy(&data.long_tareas, paquete.buffer, sizeof(int));
     paquete.buffer += sizeof(int);
 
+
     int size_path= data.long_tareas;
     data.tareas = malloc(size_path+1);
     memcpy(data.tareas, paquete.buffer, size_path);
@@ -65,6 +67,5 @@ t_list * convertir_a_list_posiciones(char * posiciones_string){
         /* code */
     }
     
-
     return posiciones;
 }

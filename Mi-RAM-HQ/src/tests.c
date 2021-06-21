@@ -1,5 +1,5 @@
-#include "tests.h"
 
+#include "../include/tests.h"
 void validar_sd_iniciar_patota();
 void validar_sd_expulsar_tripulante();
 void validar_sd_listar_tripulante();
@@ -8,9 +8,10 @@ void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador();
 void validar_sd_informar_posicion_msj_disc_mi_ram();
 void validar_sd_informar_posicion_msj_mi_ram_disc();
 
-int run_tests(){
+int run_tests()
+{
     CU_initialize_registry();
-    CU_pSuite tests = CU_add_suite("Cliente Suite",NULL,NULL);
+    CU_pSuite tests = CU_add_suite("Cliente Suite", NULL, NULL);
 
     CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
     CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
@@ -37,7 +38,7 @@ void validar_sd_iniciar_patota()
     data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
     data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
     data_input.posiciones = "0|3 0|0";
-    data_input.long_posicion= strlen("0|3 0|0");
+    data_input.long_posicion = strlen("0|3 0|0");
 
     paquete = ser_cod_iniciar_patota(data_input);
 
@@ -56,13 +57,14 @@ void validar_sd_iniciar_patota()
     free(data_res.posiciones);
 }
 
-void validar_sd_expulsar_tripulante(){
+void validar_sd_expulsar_tripulante()
+{
 
     t_expulsar_tripulante data_input;
     t_expulsar_tripulante data_res;
     t_package paquete ;
 
-    data_input.id_tripulante = 2 ;
+    data_input.id_tripulante = 2;
 
     paquete = ser_cod_expulsar_tripulante(data_input);
     data_res = des_cod_expulsar_tripulante(paquete);
@@ -70,16 +72,16 @@ void validar_sd_expulsar_tripulante(){
 
     free(paquete.buffer);
 }
- 
 
-void validar_sd_listar_tripulante(){
+void validar_sd_listar_tripulante()
+{
 
     t_listar_tripulantes data_input;
     t_listar_tripulantes data_res;
     t_package paquete;
 
-    t_tripulante * t1 = malloc(sizeof(t_tripulante));
-    t_tripulante * t2 = malloc(sizeof(t_tripulante));
+    t_tripulante *t1 = malloc(sizeof(t_tripulante));
+    t_tripulante *t2 = malloc(sizeof(t_tripulante));
 
     t1->patota_id = 1;
     t1->tripulante_id = 1;
@@ -103,8 +105,8 @@ void validar_sd_listar_tripulante(){
 
     data_res = des_res_listar_tripulantes(paquete);
 
-    t_tripulante * tripulante1 = list_get(data_res.tripulantes, 0);
-    t_tripulante * tripulante2 = list_get(data_res.tripulantes, 1);
+    t_tripulante *tripulante1 = list_get(data_res.tripulantes, 0);
+    t_tripulante *tripulante2 = list_get(data_res.tripulantes, 1);
 
     printf("Patota id: %d \n", tripulante1->patota_id);
 
@@ -126,10 +128,6 @@ void validar_sd_listar_tripulante(){
     void tripulante_destroy(t_tripulante * un_tripulante) {
         free(un_tripulante);
     }
-
-    // tripulante_destroy(t1);
-    // tripulante_destroy(t2);
-
     
     list_destroy_and_destroy_elements(data_input.tripulantes, tripulante_destroy);
     list_destroy_and_destroy_elements(data_res.tripulantes, tripulante_destroy);
