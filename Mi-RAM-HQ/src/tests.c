@@ -125,8 +125,8 @@ void validar_sd_listar_tripulante(){
     tripulante_destroy(t1);
     tripulante_destroy(t2);
 
-    list_destroy_and_destroy_elements(data_res.tripulantes, tripulante_destroy);
-    list_destroy_and_destroy_elements(data_input.tripulantes, tripulante_destroy);
+    // list_destroy_and_destroy_elements(data_res.tripulantes, tripulante_destroy);
+    // list_destroy_and_destroy_elements(data_input.tripulantes, tripulante_destroy);
     free(paquete.buffer);
     
 }
@@ -175,6 +175,53 @@ void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador(){
     CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
     CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
     CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
+
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_posicion_msj_disc_mi_ram(){
+    t_short_info_tripulante tripulante;
+    t_short_info_tripulante tripulante_res;
+    uint32_t tripulante_id_input;
+    uint32_t patota_id_input;
+    uint32_t tripulante_id_res;     
+    uint32_t patota_id_res;
+    t_package paquete;
+
+    tripulante.patota_id = 1;
+    tripulante.tripulante_id = 2;
+
+    paquete = ser_cod_informar_posicion_tripulante(tripulante);
+    tripulante_res = des_cod_informar_posicion_tripulante(paquete);
+
+    CU_ASSERT_EQUAL(tripulante.patota_id, tripulante_res.patota_id);
+    CU_ASSERT_EQUAL(tripulante.tripulante_id, tripulante_res.tripulante_id);
+
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_posicion_msj_mi_ram_disc(){
+    t_informar_posicion_tripulante data;
+    Posicion pos;
+    t_package paquete;
+    t_informar_posicion_tripulante data_res;
+
+    pos.posx = 1;
+    pos.posy = 0;
+
+    data.patota_id=1;
+    data.tripulante_id=2;
+    data.posicion = pos;
+
+    paquete = ser_res_informar_posicion_tripulante(data);
+    data_res = des_res_informar_posicion_tripulante(paquete);
+
+    CU_ASSERT_EQUAL(data.patota_id, data_res.patota_id);
+    CU_ASSERT_EQUAL(data.tripulante_id, data_res.tripulante_id);
+
+    CU_ASSERT_EQUAL(data.posicion.posx, data_res.posicion.posx);
+    CU_ASSERT_EQUAL(data.posicion.posy, data_res.posicion.posy);
+    
 
     free(paquete.buffer);
 }

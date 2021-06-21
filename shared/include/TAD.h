@@ -113,6 +113,13 @@
 		Posicion posicion;
 		int tiempo;	
 	}t_info_tarea;
+	
+	typedef struct{
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+		Posicion posicion;
+	}__attribute__((packed))
+	t_informar_posicion_tripulante;
 
 	
 
