@@ -30,23 +30,41 @@ typedef enum
 	EXIT
 } status_tripulante;
 
+typedef enum
+{
+	GENERAR_OXIGENO,
+	GENERAR_COMIDA,
+	CONSUMIR_COMIDA,
+	GENERAR_BASURA,
+	DESCARTAR_BASURA,
+	OTRA_TAREA
+} type_task;
+
 typedef struct
 {
-  uint32_t size;
-  void *stream;
+	uint32_t size;
+	void *stream;
 } t_buffer;
 
 typedef struct
 {
-  op_code codigo_operacion;
-  t_buffer *buffer;
+	op_code codigo_operacion;
+	t_buffer *buffer;
 } t_paquete;
 
 typedef struct
 {
-  int posx;
-  int posy;
-} Posicion;
+	op_code cod_operacion;
+	int tam_buffer;
+	void *buffer;
+} t_package;
+
+typedef struct
+{
+	int posx;
+	int posy;
+} __attribute__((packed))
+Posicion;
 
 typedef struct
 {
@@ -90,12 +108,19 @@ typedef struct
 
 typedef struct
 {
-	int patota_id;
-	int numero_tripulante;
+	uint32_t patota_id;
+	uint32_t tripulante_id;
+} __attribute__((packed))
+t_short_info_tripulante;
 
-	Posicion *posicion;
+typedef struct
+{
+	type_task tarea;
+	int parametro;
+	Posicion posicion;
+	int tiempo;
+} t_info_tarea;
 
-} t_informar_tarea_tripulante;
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
 // Sabotaje
@@ -109,7 +134,7 @@ typedef struct
 	// Pos
 	// La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ?
 	// 1 sabotaje de superbloque
-  // 2 sabotaje en files
+	// 2 sabotaje en files
 	// 3 Sabotaje en bloques
 	Posicion *posicion;
 } Sabotaje;

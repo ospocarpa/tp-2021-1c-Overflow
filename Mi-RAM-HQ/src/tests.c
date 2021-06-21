@@ -1,8 +1,10 @@
-
 #include "../include/tests.h"
+
 void validar_sd_iniciar_patota();
 void validar_sd_expulsar_tripulante();
 void validar_sd_listar_tripulante();
+void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram();
+void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador();
 
 int run_tests()
 {
@@ -12,6 +14,8 @@ int run_tests()
     CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
     CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
+    CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
+    CU_add_test(tests, "Valido informar tarea msj mi ram a discordiador", validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -23,17 +27,17 @@ void validar_sd_iniciar_patota()
 {
     t_iniciar_patota data_input;
     t_iniciar_patota data_res;
-    t_paquete *paquete;
+    t_package paquete;
 
     data_input.cant_tripulantes = 2;
-    data_input.path_tareas = "/home/utnso/tareas/tareas.txt";
-    data_input.long_path_tareas = strlen("/home/utnso/tareas/tareas.txt");
+    data_input.path_tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_path_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
     data_input.posiciones = "0|3 0|0";
     data_input.long_posicion = strlen("0|3 0|0");
 
-    paquete = serializar_iniciar_patota(data_input);
+    paquete = ser_cod_iniciar_patota(data_input);
 
-    data_res = deserializar_iniciar_patota(paquete);
+    data_res = des_cod_iniciar_patota(paquete);
 
     printf("path tareas: %d \n", data_res.long_posicion);
 
@@ -43,9 +47,7 @@ void validar_sd_iniciar_patota()
     CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
     CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
 
-    //free((*(*paquete).buffer).stream);
-    free(paquete->buffer);
-    free(paquete);
+    free(paquete.buffer);
     free(data_res.path_tareas);
     free(data_res.posiciones);
 }
@@ -55,17 +57,15 @@ void validar_sd_expulsar_tripulante()
 
     t_expulsar_tripulante data_input;
     t_expulsar_tripulante data_res;
-    t_paquete *paquete;
+    t_package paquete;
 
     data_input.id_tripulante = 2;
 
-    paquete = serializar_expulsar_tripulante(data_input);
-    data_res = deserializar_expulsar_tripulante(paquete);
+    paquete = ser_cod_expulsar_tripulante(data_input);
+    data_res = des_cod_expulsar_tripulante(paquete);
     CU_ASSERT_EQUAL(data_input.id_tripulante, data_res.id_tripulante);
 
-    free(paquete->buffer->stream);
-    free(paquete->buffer);
-    free(paquete);
+    free(paquete.buffer);
 }
 
 void validar_sd_listar_tripulante()
@@ -73,7 +73,7 @@ void validar_sd_listar_tripulante()
 
     t_listar_tripulantes data_input;
     t_listar_tripulantes data_res;
-    t_paquete *paquete;
+    t_package paquete;
 
     t_tripulante *t1 = malloc(sizeof(t_tripulante));
     t_tripulante *t2 = malloc(sizeof(t_tripulante));
@@ -96,9 +96,9 @@ void validar_sd_listar_tripulante()
     list_add(data_input.tripulantes, t1);
     list_add(data_input.tripulantes, t2);
 
-    paquete = serializar_listar_tripulantes(data_input);
+    paquete = ser_res_listar_tripulantes(data_input);
 
-    data_res = deserializar_listar_tripulantes(paquete);
+    data_res = des_res_listar_tripulantes(paquete);
 
     t_tripulante *tripulante1 = list_get(data_res.tripulantes, 0);
     t_tripulante *tripulante2 = list_get(data_res.tripulantes, 1);
@@ -112,12 +112,73 @@ void validar_sd_listar_tripulante()
     CU_ASSERT_EQUAL(t1->posicion.posy, tripulante1->posicion.posy);
     CU_ASSERT_EQUAL(t1->status, tripulante1->status);
 
-    free(paquete->buffer);
-    free(paquete);
+    CU_ASSERT_EQUAL(t2->patota_id, tripulante2->patota_id);
+    CU_ASSERT_EQUAL(t2->tripulante_id, tripulante2->tripulante_id);
+    CU_ASSERT_EQUAL(t2->posicion.posx, tripulante2->posicion.posx);
+    CU_ASSERT_EQUAL(t2->posicion.posy, tripulante2->posicion.posy);
+    CU_ASSERT_EQUAL(t2->status, tripulante2->status);
 
-    free(t1);
-    free(t2);
+    //libero memoria
 
-    list_remove_and_destroy_element(data_res.tripulantes, 0, free);
-    list_remove_and_destroy_element(data_res.tripulantes, 1, free);
+    void tripulante_destroy(t_tripulante * un_tripulante)
+    {
+        free(un_tripulante);
+    }
+
+    tripulante_destroy(t1);
+    tripulante_destroy(t2);
+
+    list_destroy_and_destroy_elements(data_res.tripulantes, tripulante_destroy);
+    list_destroy_and_destroy_elements(data_input.tripulantes, tripulante_destroy);
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram()
+{
+
+    t_short_info_tripulante tripulante;
+    t_short_info_tripulante tripulante_res;
+    uint32_t tripulante_id_input;
+    uint32_t patota_id_input;
+    uint32_t tripulante_id_res;
+    uint32_t patota_id_res;
+    t_package paquete;
+
+    tripulante.patota_id = 1;
+    tripulante.tripulante_id = 2;
+
+    paquete = ser_cod_informar_tarea_tripulante(tripulante);
+    tripulante_res = des_cod_informar_tarea_tripulante(paquete);
+
+    CU_ASSERT_EQUAL(tripulante.patota_id, tripulante_res.patota_id);
+    CU_ASSERT_EQUAL(tripulante.tripulante_id, tripulante_res.tripulante_id);
+
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador()
+{
+    t_info_tarea tarea;
+    Posicion pos;
+    t_package paquete;
+    t_info_tarea tarea_res;
+
+    pos.posx = 1;
+    pos.posy = 0;
+
+    tarea.tarea = GENERAR_OXIGENO;
+    tarea.posicion = pos;
+    tarea.parametro = 3;
+    tarea.tiempo = 4;
+
+    paquete = ser_res_informar_tarea_tripulante(tarea);
+    tarea_res = des_res_informacion_tarea_tripulante(paquete);
+
+    CU_ASSERT_EQUAL(GENERAR_OXIGENO, tarea_res.tarea);
+    CU_ASSERT_EQUAL(tarea.parametro, tarea_res.parametro);
+    CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
+    CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
+    CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
+
+    free(paquete.buffer);
 }
