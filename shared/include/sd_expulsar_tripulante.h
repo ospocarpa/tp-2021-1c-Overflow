@@ -10,9 +10,11 @@
 #include<TAD.h>
 #include<sd_posicion.h>
 
+/* ******* DISCORDIADOR ******* */
+t_package ser_cod_expulsar_tripulante(t_expulsar_tripulante data_buffer);
 
-t_paquete * serializar_expulsar_tripulante(t_expulsar_tripulante data_buffer);
-t_expulsar_tripulante deserializar_expulsar_tripulante(t_paquete * paquete);
+/* ******* MI RAM HQ ******* */
+t_expulsar_tripulante des_cod_expulsar_tripulante(t_package paquete);
 
 
 #endif  

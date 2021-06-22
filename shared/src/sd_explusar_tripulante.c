@@ -1,23 +1,25 @@
 #include "../include/sd_expulsar_tripulante.h"
 
-t_paquete* serializar_expulsar_tripulante(t_expulsar_tripulante data_buffer){
+/* ******* DISCORDIADOR ******* */
+t_package ser_cod_expulsar_tripulante(t_expulsar_tripulante data_buffer){
 
-    t_paquete * paquete =malloc(sizeof(t_paquete));
+    t_package paquete;
     int tam_buffer = sizeof(int);
-    paquete->buffer = malloc(sizeof(t_buffer));
-    paquete->buffer->stream = malloc(tam_buffer);
-    paquete->codigo_operacion= EXPULSAR_TRIPULANTE;
+    paquete.buffer = malloc(tam_buffer);
+    paquete.cod_operacion = EXPULSAR_TRIPULANTE;
+    paquete.tam_buffer = tam_buffer;
     int offset = 0;
 
-    memcpy(paquete->buffer->stream + offset, &data_buffer.id_tripulante, sizeof(int));
+    memcpy(paquete.buffer + offset, &data_buffer.id_tripulante, sizeof(int));
 	offset += sizeof(int);
     
     return paquete;
 }
 
-t_expulsar_tripulante deserializar_expulsar_tripulante(t_paquete * paquete){
+/* ******* MI RAM HQ ******* */
+t_expulsar_tripulante des_cod_expulsar_tripulante(t_package paquete){
     t_expulsar_tripulante data;
-    memcpy(&data.id_tripulante,paquete->buffer->stream, sizeof(int) );
+    memcpy(&data.id_tripulante,paquete.buffer, sizeof(int) );
 
     return data;
 }

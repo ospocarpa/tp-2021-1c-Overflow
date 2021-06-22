@@ -1,34 +1,41 @@
 #include "../include/sd_listar_tripulantes.h"
 
-// lo que envia mi ram
-t_paquete* serializar_listar_tripulantes(t_listar_tripulantes data_buffer){
+/* ******* MI RAM HQ ******* */
+// lo que responde mi ram a discordiador
+t_package ser_res_listar_tripulantes(t_listar_tripulantes data_buffer){
 
-    t_paquete * paquete =malloc(sizeof(t_paquete));
+    t_package paquete;
     int tam_tripulante = 20;
-    int tam_buffer = data_buffer.cant_tripulantes * tam_tripulante;
-    paquete->buffer= malloc(sizeof(t_buffer));
-    paquete->buffer->stream = malloc(tam_buffer);
-
-    paquete->codigo_operacion= LISTAR_TRIPULANTES;
+    int tam_buffer = data_buffer.cant_tripulantes * tam_tripulante + sizeof(int);
+    paquete.buffer = malloc(tam_buffer);
+    paquete.tam_buffer = tam_buffer;
+    paquete.cod_operacion= LISTAR_TRIPULANTES;
     int offset = 0;
-    memcpy(paquete->buffer->stream+offset, &data_buffer.cant_tripulantes, sizeof(int));
+
+    memcpy(paquete.buffer, &data_buffer.cant_tripulantes, sizeof(int));
     offset+= sizeof(int);
 
     void agregar_tripulante_a_stream(t_tripulante * tripulante){
-        memcpy(paquete->buffer->stream+offset, &tripulante->patota_id, sizeof(int));
+
+        uint32_t patotaid = tripulante->patota_id;
+        memcpy(paquete.buffer+offset, &patotaid, sizeof(uint32_t));
+        offset+= sizeof(uint32_t);
+
+        uint32_t tripulanteid = tripulante->tripulante_id;
+        memcpy(paquete.buffer+offset, &tripulanteid, sizeof(uint32_t));
+        offset+= sizeof(uint32_t);
+
+        int posx = tripulante->posicion.posx;
+        memcpy(paquete.buffer+offset, &posx, sizeof(int));
         offset+= sizeof(int);
 
-        memcpy(paquete->buffer->stream+offset, &tripulante->tripulante_id, sizeof(int));
+        int posy = tripulante->posicion.posy;
+        memcpy(paquete.buffer+offset, &posy, sizeof(int));
         offset+= sizeof(int);
 
-        memcpy(paquete->buffer->stream+offset, &tripulante->posicion.posx, sizeof(int));
+        status_tripulante estado = tripulante->status;
+        memcpy(paquete.buffer+offset, &estado, sizeof(int));
         offset+= sizeof(int);
-
-        memcpy(paquete->buffer->stream+offset, &tripulante->posicion.posy, sizeof(int));
-        offset+= sizeof(int);
-
-        memcpy(paquete->buffer->stream+offset, &tripulante->status, sizeof(status_tripulante));
-        offset+= sizeof(status_tripulante);
 
     }
 
@@ -38,13 +45,14 @@ t_paquete* serializar_listar_tripulantes(t_listar_tripulantes data_buffer){
 
 }
 
-//lo utiliza discordiador cuando resive la respuesta
-t_listar_tripulantes deserializar_listar_tripulantes(t_paquete* paquete){
+/* ******* DISCORDIADOR ******* */
+//lo utiliza discordiador cuando resive la respuesta de mi ram
+t_listar_tripulantes des_res_listar_tripulantes(t_package paquete){
     t_listar_tripulantes data;
     int long_tripulante; //tamaño de un tripulante
 
-    memcpy(&data.cant_tripulantes,paquete->buffer->stream, sizeof(int) );
-    paquete->buffer->stream+=sizeof(int);
+    memcpy(&data.cant_tripulantes,paquete.buffer, sizeof(int) );
+    paquete.buffer += sizeof(int);
 
     data.tripulantes = list_create();
 
@@ -64,11 +72,10 @@ t_listar_tripulantes deserializar_listar_tripulantes(t_paquete* paquete){
     {
         t_tripulante * tripulante;
 
-        tripulante = get_tripulante(paquete->buffer->stream);
+        tripulante = get_tripulante(paquete.buffer);
         list_add(data.tripulantes, tripulante);
-        paquete->buffer->stream+=20;
+        paquete.buffer += 20;
     }
     
-
     return data;
 }

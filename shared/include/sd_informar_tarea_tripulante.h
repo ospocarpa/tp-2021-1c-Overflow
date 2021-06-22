@@ -10,9 +10,13 @@
 #include<TAD.h>
 #include<sd_posicion.h>
 
+/* ******* DISCORDIADOR ******* */
+t_package ser_cod_informar_tarea_tripulante(t_short_info_tripulante data);
+t_info_tarea des_res_informacion_tarea_tripulante(t_package paquete);
 
-t_paquete* serializar_informar_tarea_tripulante(t_informar_tarea_tripulante data_buffer);
-t_informar_tarea_tripulante deserializar_informar_tarea_tripulante(t_paquete* paquete);
+/* ******* MI RAM HQ ******* */
+t_package ser_res_informar_tarea_tripulante(t_info_tarea data_buffer);
+t_short_info_tripulante des_cod_informar_tarea_tripulante(t_package paquete);
 
 
 #endif  

@@ -21,81 +21,109 @@ typedef enum
 	OBTENER_BITACORA = 11,
 } op_code;
 
-typedef enum
-{
-	NEW,
-	READY,
-	EXEC,
-	BLOCKED,
-	EXIT
-} status_tripulante;
+	typedef enum
+	{
+		NEW,
+		READY,
+		EXEC,
+		BOCK,
+		EXIT	
+	} status_tripulante;
 
-typedef struct
-{
-  uint32_t size;
-  void *stream;
-} t_buffer;
+	typedef enum
+	{
+		GENERAR_OXIGENO,
+		GENERAR_COMIDA,
+		CONSUMIR_COMIDA,
+		GENERAR_BASURA,
+		DESCARTAR_BASURA,
+		OTRA_TAREA
+	} type_task;
 
-typedef struct
-{
-  op_code codigo_operacion;
-  t_buffer *buffer;
-} t_paquete;
+	typedef struct
+	{
+		uint32_t size;
+		void *stream;
+	} t_buffer;
 
-typedef struct
-{
-  int posx;
-  int posy;
-} Posicion;
+	typedef struct
+	{
+		op_code codigo_operacion;
+		t_buffer* buffer;
+	} t_paquete;
 
-typedef struct
-{
-	int patota_id;
-	char *description;
-	int description_length;
-	char *parametros;
-	int parametros_length;
-	int tiempo;
-	Posicion *posicion;
-} Tarea;
+	typedef struct
+	{
+		op_code cod_operacion;
+		int tam_buffer;
+		void * buffer;
+	} t_package;
 
-typedef struct
-{
-	int cant_tripulantes;
-	int long_path_tareas;
-	char *path_tareas;
-	int long_posicion;
-	char *posiciones;
-} t_iniciar_patota;
+	typedef struct
+	{
+		int posx;
+		int posy;
+	}__attribute__((packed))
+	Posicion;
 
-typedef struct
-{
-	int patota_id;
-	int tripulante_id;
-	Posicion posicion;
-	status_tripulante status;
-} __attribute__((packed))
-t_tripulante;
+	typedef struct
+	{
+		int patota_id;
+		char* description;
+		int description_length;
+		char* parametros;
+		int parametros_length;
+		int tiempo;
+		Posicion* posicion;
+	} Tarea;
 
-typedef struct
-{
-	int cant_tripulantes;
-	t_list *tripulantes; //estructura de tripulantes
-} t_listar_tripulantes;
+	typedef struct 
+	{
+		int cant_tripulantes;
+		int long_tareas;
+		char * tareas;
+		int long_posicion;
+		char * posiciones;
+	}t_iniciar_patota;
 
-typedef struct
-{
-	int id_tripulante;
-} t_expulsar_tripulante;
+	typedef struct 
+	{
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+		Posicion posicion;
+		status_tripulante status;
+	}__attribute__((packed))
+	t_tripulante;
+	
+	typedef struct{
+		int cant_tripulantes;
+		t_list * tripulantes; //estructura de tripulantes
+	}t_listar_tripulantes;
 
-typedef struct
-{
-	int patota_id;
-	int numero_tripulante;
+	typedef struct{
+		int id_tripulante;
+	}t_expulsar_tripulante;
 
-	Posicion *posicion;
+	typedef struct{
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+	}__attribute__((packed))
+	t_short_info_tripulante;
 
-} t_informar_tarea_tripulante;
+	typedef struct{
+		type_task tarea;
+		int parametro;
+		Posicion posicion;
+		int tiempo;	
+	}t_info_tarea;
+	
+	typedef struct{
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+		Posicion posicion;
+	}__attribute__((packed))
+	t_informar_posicion_tripulante;
+
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
 // Sabotaje
