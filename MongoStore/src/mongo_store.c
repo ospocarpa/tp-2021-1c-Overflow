@@ -13,8 +13,6 @@ int main(int argc, char **argv)
     t_config *g_config = leer_config_file("./cfg/mongo_store.config");
     config_global_mongo_store = leer_config_mongo_store(g_config);
    
-    method_sigusr1();
-    return 1;
     //Iniciar Log
     logger = iniciar_logger(config_global_mongo_store->ARCHIVO_LOG, "SERVIDOR");
     log_info(logger, "Iniciando módulo i-Mongo-Store");

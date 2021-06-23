@@ -8,9 +8,11 @@ void method_sigusr1(){
     sabotaje->mensaje_length = strlen(sabotaje->mensaje);
 
     int indice = list_size(config_global_mongo_store->POSICIONES_SABOTAJE);
+    if(debug) printf("Indice: %d\n", indice);
+    if(indice==0) return;
     Posicion* posicion = list_get(config_global_mongo_store->POSICIONES_SABOTAJE, indice-1);
     sabotaje->posicion = posicion;
-    list_remove(config_global_mongo_store->POSICIONES_SABOTAJE, indice);
+    list_remove(config_global_mongo_store->POSICIONES_SABOTAJE, indice-1);
 
     int conexion_a_discordiador = crear_conexion(config_global_mongo_store->IP_DISCORDIADOR, config_global_mongo_store->PUERTO_DISCORDIADOR);
     //printf("Ini: %d\n", conexion_a_discordiador);
@@ -105,7 +107,6 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
         memcpy(punteroBits+offset, &puntero_bitmap, sizeof(puntero_bitmap));
         offset+=sizeof(uint32_t);
     }
-    if(debug) printf("Fin\n");
 }
 
 void create_file_blocks(t_config_mongo_store* config_mongo_store){
@@ -117,7 +118,14 @@ void create_file_blocks(t_config_mongo_store* config_mongo_store){
     string_append_with_format(&path_super_bloque, "%s", punto_montaje);
     string_append_with_format(&path_super_bloque, "%s", "/Blocks.ims");
     
-    int fd = open(path_super_bloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    bool exist_file = existePath(path_super_bloque);
+    if(debug) printf("Creación del archivo bloque: %d\n", exist_file);
+    if(!exist_file){
+        int fd = open(path_super_bloque, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+        int block_size = config_mongo_store->BLOCK_SIZE;
+        int blocks = config_mongo_store->BLOCKS;
+        ftruncate(fd, block_size * blocks);
+    }   
 }
 
 void create_dir_files(t_config_mongo_store* config_mongo_store){
