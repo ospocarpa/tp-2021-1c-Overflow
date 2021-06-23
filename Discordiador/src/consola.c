@@ -1,5 +1,5 @@
 #include "consola.h"
-//inline
+
 void mostrar_consola()
 {
 
@@ -36,6 +36,8 @@ void liberar_puntero_doble(char **puntero_doble)
 
 bool leer_consola(void)
 {
+    pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
+
     while (1)
     {
         mostrar_consola();
@@ -70,7 +72,7 @@ bool leer_consola(void)
         else if (string_equals_ignore_case(tokens[0], "LISTAR_TRIPULANTES"))
         {
             printf(">>>>>LISTAR_TRIPULANTES<<<<<\n");
-            parsear_mensaje(LISTAR_TRIPULANTES, &buffer);
+            parsear_mensaje(LISTAR_TRIPULANTES, tokens);
             printf("========================\n");
         }
         else if (string_equals_ignore_case(tokens[0], "EXPULSAR_TRIPULANTE"))
@@ -116,13 +118,14 @@ bool leer_consola(void)
         free(buffer);
 
         liberar_puntero_doble(tokens);
+        sleep(2);
     }
     printf("termino leer consola|\n");
     printf("\n------------------------------------------\n");
     return false;
 }
 
-void parsear_mensaje(cod_operacion operacion, char **tokens)
+void parsear_mensaje(op_code operacion, char **tokens)
 {
 
     int cantidad_argumentos;
@@ -175,7 +178,7 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
-            //completar
+            activar_planificacion();
         }
         else
         {
@@ -189,6 +192,7 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
+            detener();
         }
         else
         {
@@ -235,7 +239,58 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
 
                 return;
             }
+            //tokens[2]: path del archivo
+            if (!existe_archivo(tokens[2]))
+            {
+
+                logger_info("No se encontro el archivo %s ", tokens[2]);
+                return;
+            }
+            for (int i = 0; i < cantidad_argumentos - 2; i++)
+            {
+                char **coordenada = string_split(tokens[3 + i], "|");
+                if (!es_un_numero(coordenada[0]) || !es_un_numero(coordenada[1]))
+                {
+                    logger_info("Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
+                    return;
+                }
+                liberar_puntero_doble(coordenada);
+            }
+            t_iniciar_patota datosPatota;
+
+            cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
+            mostrar_datos_patota(&datosPatota);
+
+            t_paquete *paquete = serializar_iniciar_patota(datosPatota);
+            //no uso variable paquete
+            int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+
+            Patota *patota_new = map_to_patota(datosPatota);
+            mostrar_t_patota(patota_new);
+            crearHilosTripulantes(patota_new);
+            //sendMessage(paquete, socket_cliente);
+            //falto esperar respuesta de confirmacion de carga de los pcb
+            liberar_conexion(socket_cliente);
+            free(paquete->buffer->stream);
+            free(paquete->buffer);
+            free(paquete);
+            /*
+    
+            int socket_cliente = crear_conexion(ip, puerto);
+            sendMessage(paquete, socket_cliente);
+            */
+
+            /* int cant_tripulantes = 0;
+            for (int c = 0; c < cant_tripulantes; c++)
+            {
+                Tripulante *tripulante = malloc(sizeof(Tripulante)); //tripulantes[c];
+                pthread_t thread_tripulante;
+                //tripulante->thread = thread_tripulante; // Si necesitan que el tripulante conozca el hilo que lo ejecuta
+                pthread_create(&thread_tripulante, NULL, (void *)ejecutar_operacion, tripulante);
+                pthread_detach(thread_tripulante);
+            } */
         }
+
         else
         {
             printf("Cantidad de argumentos invalido\n");
@@ -247,6 +302,45 @@ void parsear_mensaje(cod_operacion operacion, char **tokens)
         break;
     }
 }
+
+// void ejecutar_operacion(Tripulante *tripulante)
+// {
+//new
+/*
+    Estado inicial: bloqueado
+    alistate();
+    
+    ejecutar(){
+        Código de ejecutar
+        switch(siguiente_transicion){
+            case 1: 
+                bloqueate();
+                break;
+            case 2: 
+                finalizate();
+                break;
+            case 3: 
+                alistate();
+                break;
+        }
+        //sleep(1);
+    };
+
+    bloqueate(){
+        Código de bloqueo
+        alistate();
+    }
+    
+    alistate(){
+        Código de alistate
+        switch(siguiente_transicion){
+            case 1: 
+                ejecutar();
+                break;
+        }
+    }
+    //finish*/
+// }
 
 int obtener_cantidad_argumentos(char **tokens)
 {
@@ -261,4 +355,74 @@ int obtener_cantidad_argumentos(char **tokens)
     }
 
     return cantidad;
+}
+
+// deberia ir a la shared ?
+int existe_archivo(const char *ruta)
+{
+    FILE *archivo = fopen(ruta, "r+");
+
+    if (archivo == NULL)
+    {
+
+        return false;
+    }
+
+    fclose(archivo);
+    return true;
+}
+int guardar_contenido_archivo(const char *ruta, char **contenido)
+{
+
+    FILE *arch = fopen(ruta, "r");
+    int bytes;
+    *contenido = NULL;
+    fseek(arch, 0, SEEK_END);
+    bytes = ftell(arch);
+    fseek(arch, 0, SEEK_SET);
+    *contenido = malloc(bytes);
+    fread(*contenido, 1, bytes, arch);
+    fclose(arch);
+    return bytes;
+}
+
+void detener()
+{
+
+    if (planificacion_activa)
+    {
+        planificacion_activa = false;
+        logger_info("[Planificacion detenida]");
+    }
+    else
+    {
+        logger_info("[La planificacion ya está desactivada]");
+    }
+}
+
+void activar_planificacion()
+{
+    if (!planificacion_activa)
+    {
+        planificacion_activa = true;
+        logger_info("[Planificacion activada]");
+        planificar();
+    }
+    else
+    {
+        logger_info("[La planificacion ya está activada]");
+    }
+}
+void planificar()
+{
+
+    if (planificacion_activa)
+    {
+
+        //TODO
+    }
+    else
+    {
+        logger_info("La planificación está desactivada");
+    }
 }

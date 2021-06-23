@@ -4,6 +4,8 @@
 #include <TAD.h>
 #include <stdlib.h>
 #include <stdio.h>
+#include "../include/sd_tarea.h"
+#include "../include/sd_sabotaje.h"
 
 int run_tests();
 void verificarTarea();
