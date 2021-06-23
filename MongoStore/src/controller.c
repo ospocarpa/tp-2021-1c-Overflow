@@ -1,20 +1,18 @@
 #include "controller.h"
 
 void method_sigusr1(){
-    printf("Cuando reciba sigusr1\n");
-    Sabotaje* sabotaje = malloc(sizeof(Sabotaje));
+    if(debug) printf("Cuando reciba sigusr1\n");
+    t_sabotaje* sabotaje = malloc(sizeof(t_sabotaje));
 
     sabotaje->mensaje = "Test";
     sabotaje->mensaje_length = strlen(sabotaje->mensaje);
-    Posicion* posicion = malloc(sizeof(Posicion));
 
-    //Retirar de la lista del config
-    posicion->posx = 1;
-    posicion->posy = 1;
+    int indice = list_size(config_global_mongo_store->POSICIONES_SABOTAJE);
+    Posicion* posicion = list_get(config_global_mongo_store->POSICIONES_SABOTAJE, indice-1);
     sabotaje->posicion = posicion;
+    list_remove(config_global_mongo_store->POSICIONES_SABOTAJE, indice);
 
     int conexion_a_discordiador = crear_conexion(config_global_mongo_store->IP_DISCORDIADOR, config_global_mongo_store->PUERTO_DISCORDIADOR);
-    
     //printf("Ini: %d\n", conexion_a_discordiador);
 
     t_paquete* paquete = serializar_I_SABOTAJE(sabotaje);

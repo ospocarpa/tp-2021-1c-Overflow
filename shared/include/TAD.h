@@ -140,8 +140,7 @@ typedef struct
   // 2 sabotaje en files
 	// 3 Sabotaje en bloques
 	Posicion *posicion;
-} Sabotaje;
-
+} t_sabotaje;
 // Son un struct cada tipo de sabotaje??
 //
 // o los tomo todo dentro del mismo ver si tiene la misma logica

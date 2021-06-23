@@ -14,6 +14,8 @@
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
 
+    extern t_config_mongo_store* config_global_mongo_store;
+
     void method_sigusr1();
     void init_mongo_store();
     void create_punto_montaje(t_config_mongo_store* config_mongo_store);
