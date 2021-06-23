@@ -15,9 +15,9 @@
 #include "RecepcionMensajes.h"
 #include <consola.h>
 #include <semaphore.h>
-//#include "discordiador.h"
 
+extern t_list* lista_READY;
 void init_dispatcher();
-Tripulante* busqueda_algoritmo(alg_planificacion);
+Tripulante* busqueda_algoritmo();
 
 #endif

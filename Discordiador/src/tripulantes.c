@@ -18,8 +18,8 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     datosPatota->long_posicion = strlen(posiciones);
     datosPatota->posiciones = posiciones;
     int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
-    datosPatota->long_path_tareas = bytesContenido,
-    datosPatota->path_tareas = contenido;
+    datosPatota->long_tareas = bytesContenido,
+    datosPatota->tareas = contenido;
     free(contenido);
     //mostrar_datos_patota(datosPatota);
 }

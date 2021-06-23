@@ -8,15 +8,6 @@
 #include <TAD.h>
 #include <tests.h>
 
-// typedef enum
-// {
-//     NEW,
-//     READY,
-//     EXEC,
-//     BLOCKED,
-//     EXIT
-// } status_planificacion;
-
 typedef struct
 {
     t_list *patotas; //Lista [Patota]
