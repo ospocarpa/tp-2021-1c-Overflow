@@ -31,12 +31,12 @@ void ejecutar_operacion(int cliente_fd)
 {
     while (1)
     {
-        t_paquete *paquete = recibir_mensaje(cliente_fd);
-        if (paquete->codigo_operacion > 0 && paquete->codigo_operacion < 100)
+        t_package paquete = recibir_mensaje(cliente_fd);
+        if (paquete.cod_operacion > 0 && paquete.cod_operacion < 100)
         {
 
             recepcionMensaje(paquete, cliente_fd, logger);
-            if (paquete->codigo_operacion == 0)
+            if (paquete.cod_operacion == 0)
                 exit; //exit sin efecto
         }
         else

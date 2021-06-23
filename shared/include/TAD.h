@@ -26,7 +26,7 @@ typedef enum
 		NEW,
 		READY,
 		EXEC,
-		BOCK,
+		BLOCKED,
 		EXIT	
 	} status_tripulante;
 
@@ -80,8 +80,8 @@ typedef enum
 	typedef struct 
 	{
 		int cant_tripulantes;
-		int long_tareas;
 		char * tareas;
+		int long_tareas;
 		int long_posicion;
 		char * posiciones;
 	}t_iniciar_patota;
