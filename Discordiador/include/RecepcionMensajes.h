@@ -12,6 +12,6 @@
 #include "shared_utils.h"
 #include "TAD.h"
 
-void *recepcionMensaje(t_paquete *paquete, int cliente_fd, t_log *logger);
+void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger);
 
 // #endif

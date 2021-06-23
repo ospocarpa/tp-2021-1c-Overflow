@@ -60,7 +60,7 @@ t_iniciar_patota des_cod_iniciar_patota(t_package paquete)
 
 t_list * convertir_a_list_posiciones(char * posiciones_string){
     t_list * posiciones = list_create();
-    char ** list_posiciones = string_split( posiciones, " ");
+    char ** list_posiciones = string_split( posiciones_string, " ");
 
     for (size_t i = 0; i < sizeof(list_posiciones); i++)
     {
