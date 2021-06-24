@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include "log_utils.h"
-#include "config_utils.h"
+#include "../include/config_utils.h"
 #include <commons/config.h>
 #include <commons/collections/list.h>
 #include "socket_client.h"
@@ -31,11 +31,10 @@ int numeroPatota = 0;
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 sem_t listos;
 sem_t grado_multiprocesamiento;
-sem_t activados;                        //Incluye a los tripulantes que se encuentran en exec, ready y bloqueado por I/O
-
+sem_t activados; //Incluye a los tripulantes que se encuentran en exec, ready y bloqueado por I/O
 
 //Listas de estados
-t_list *lista_tripulantes;              //gelall()
+t_list *lista_tripulantes; //gelall()
 //t_list *lista_NEW;
 t_list *lista_READY;
 t_list *lista_EXEC;

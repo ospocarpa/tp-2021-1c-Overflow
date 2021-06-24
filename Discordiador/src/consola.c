@@ -262,30 +262,39 @@ void parsear_mensaje(op_code operacion, char **tokens)
             mostrar_datos_patota(&datosPatota);
 
             t_package paquete = ser_cod_iniciar_patota(datosPatota);
-            //no uso variable paquete
+
             int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+            printf("%s %d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+            if (socket_cliente < 0)
+            {
+                log_error(logger, "Conexion Mi-RAM fallida");
+                liberar_conexion(socket_cliente);
+                // return EXIT_FAILURE; //despues descomitear
+            }
+            else
+            {
+                log_info(logger, "Conexion con Mi-RAM-HQ exitosa");
+            }
+
+            sendMessage(paquete, socket_cliente);
+
+            //Intento de espera respuesta de confirmacion de carga de los pcb
+
+            bool respuesta;
+
+            recv(socket_cliente, &respuesta, sizeof respuesta, 0);
+            if (!respuesta)
+            {
+                log_error(logger, "No se puede crear la patota/tripulanes");
+                return;
+            }
+
+            log_info(logger, " Empezando a crear los  tripulanes...");
 
             Patota *patota_new = map_to_patota(datosPatota);
             mostrar_t_patota(patota_new);
             crearHilosTripulantes(patota_new);
-            //sendMessage(paquete, socket_cliente);
-            //falto esperar respuesta de confirmacion de carga de los pcb
             liberar_conexion(socket_cliente);
-            /*
-    
-            int socket_cliente = crear_conexion(ip, puerto);
-            sendMessage(paquete, socket_cliente);
-            */
-
-            /* int cant_tripulantes = 0;
-            for (int c = 0; c < cant_tripulantes; c++)
-            {
-                Tripulante *tripulante = malloc(sizeof(Tripulante)); //tripulantes[c];
-                pthread_t thread_tripulante;
-                //tripulante->thread = thread_tripulante; // Si necesitan que el tripulante conozca el hilo que lo ejecuta
-                pthread_create(&thread_tripulante, NULL, (void *)ejecutar_operacion, tripulante);
-                pthread_detach(thread_tripulante);
-            } */
         }
 
         else

@@ -23,7 +23,14 @@ static void *ejecutar_operacion(int tripulante)
 		logger_info("INICIAR PATOTA");
 		/* interpreto el contenido del mensaje */
 		init_patota = des_cod_iniciar_patota(paquete);
+
 		//mi funcion iniciar patota
+
+		//se envia un booleano de confirmacion
+		bool respuesta = true;
+
+		send(tripulante, &respuesta, sizeof(respuesta), 0);
+
 		break;
 
 	case LISTAR_TRIPULANTES:
@@ -57,9 +64,9 @@ static void *ejecutar_operacion(int tripulante)
 	case INFORMAR_POSICION_TRIPULANTE:
 		/* code */
 		break;
-	
+
 	default:
-		logger_error("No existe operacion");
+		//logger_error("No existe operacion");
 		break;
 	}
 }

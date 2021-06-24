@@ -47,7 +47,10 @@ void ejecucion_dispatcher()
 //
 Tarea *pedirTarea(Tripulante *tripulante)
 {
-    //Despues tendra que llamar a miram?
+    //Despues tendra que llamar a miram
+    t_short_info_tripulante info_tripulate;
+    //info_tripulate.patota_id = tripulante.info_tripulante.t_package paquete = ser_cod_informar_tarea_tripulante(t_short_info_tripulante info);
+
     return NULL;
 }
 void hilo_tripulante(Tripulante *tripulante)
@@ -158,23 +161,24 @@ void crearHilosTripulantes(Patota *una_patota)
     }
 }
 
+void ir_a_la_posicion(Tripulante *tripulante, Posicion posicion_tarea)
+{
 
-void ir_a_la_posicion(Tripulante* tripulante, Posicion posicion_tarea){
+    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for
 
-    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for 
-
-    while(tripulante->posicion->posx != posicion_tarea.posx)
+    while (tripulante->posicion->posx != posicion_tarea.posx)
     {
         /*if(esta_pausado){
             pthread_mutex_lock(tripulante->activo);
         }
         */
-       
-        if (tripulante->posicion->posx < posicion_tarea.posx )
+
+        if (tripulante->posicion->posx < posicion_tarea.posx)
         {
             tripulante->posicion->posx++;
         }
-        else{
+        else
+        {
             tripulante->posicion->posx--;
         }
     }
@@ -185,13 +189,13 @@ void ir_a_la_posicion(Tripulante* tripulante, Posicion posicion_tarea){
             pthread_mutex_lock(tripulante->activo);
         }
         */
-        if (tripulante->posicion->posy < posicion_tarea.posy )
+        if (tripulante->posicion->posy < posicion_tarea.posy)
         {
             tripulante->posicion->posy++;
         }
-        else{
+        else
+        {
             tripulante->posicion->posy--;
         }
     }
-    
 }

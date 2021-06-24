@@ -33,4 +33,6 @@ pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 int existe_archivo(const char *); // en la shared ?
 void liberar_puntero_doble(char **);
 
+t_log *logger;
+
 #endif

@@ -46,14 +46,15 @@ void ejecutar_operacion(int cliente_fd)
     }
 }
 
-void inicializacion_recursos(){
+void inicializacion_recursos()
+{
     //mejorar en metodo la iniciliazicion del semaforo
     pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
     //printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
     sem_init(&listos, 0, 0); // contador de listos =0
     sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
     sem_init(&activados, 0, 0);
-    
+
     // mutex_unlock (semafor) --> 0
     /* pthread_mutex_unlock(&SEM_PAUSAR_PLANIFICACION);
     printf("%d\n", SEM_PAUSAR_PLANIFICACION);
@@ -90,11 +91,11 @@ int main(int argc, char **argv)
 
         //Iniciar Log
         logger = iniciar_logger(config->ARCHIVO_LOG, "SERVIDOR");
-        log_info(logger, "CONFIGURACION CARGADA!");   
+        log_info(logger, "CONFIGURACION CARGADA!");
         inicializacion_recursos();
-        
 
         int conexion_mi_ram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+        printf("ip mi ram :%s  puerto:%d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
         if (conexion_mi_ram < 0)
         {
             log_error(logger, "Conexion Mi-RAM fallida");
@@ -103,11 +104,13 @@ int main(int argc, char **argv)
         }
         else
         {
-            logger_info("Conexion con Mi-RAM-HQ exitosa");
+            log_info(logger, "Conexion con Mi-RAM-HQ exitosa");
         }
 
         iniciar_servidor_main();
-        while(1){}
+        while (1)
+        {
+        }
         printf("sali de  inciar servidor\n");
 
         // Libero el log y config al final
