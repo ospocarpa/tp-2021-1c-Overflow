@@ -264,7 +264,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
             t_package paquete = ser_cod_iniciar_patota(datosPatota);
 
             int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
-            printf("%s %d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+            // printf("%s %d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
             if (socket_cliente < 0)
             {
                 log_error(logger, "Conexion Mi-RAM fallida");

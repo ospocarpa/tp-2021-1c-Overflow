@@ -95,7 +95,7 @@ int main(int argc, char **argv)
         inicializacion_recursos();
 
         int conexion_mi_ram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
-        printf("ip mi ram :%s  puerto:%d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+        // printf("ip mi ram :%s  puerto:%d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
         if (conexion_mi_ram < 0)
         {
             log_error(logger, "Conexion Mi-RAM fallida");
