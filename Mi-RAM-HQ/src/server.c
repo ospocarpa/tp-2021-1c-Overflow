@@ -13,6 +13,7 @@ static void *ejecutar_operacion(int tripulante)
 	/* INFORMAR TAREA */
 	t_short_info_tripulante tripulante_info;
 	t_info_tarea tarea;
+
 	/* INFORMAR POSICION */
 
 	paquete = recibir_mensaje(tripulante);
@@ -51,10 +52,17 @@ static void *ejecutar_operacion(int tripulante)
 		break;
 
 	case INFORMAR_TAREA_TRIPULANTE:
-		logger_info("INFORMAR TARAE");
+		logger_info("INFORMAR TAREA");
 		/* interpreto el contenido del mensaje */
 		tripulante_info = des_cod_informar_tarea_tripulante(paquete);
 		//tarea = ; mi funcion que devuelve una tarea
+
+		//un ejemplo de tarea(despues borrar)
+		tarea.tarea = OTRA_TAREA;
+		tarea.tiempo = 5;
+		tarea.posicion.posx = 2;
+		tarea.posicion.posy = 2;
+
 		/* serializo la respuesta al tripulante */
 		paquete_res = ser_res_informar_tarea_tripulante(tarea);
 		/* envio respuesta */

@@ -15,6 +15,8 @@
 #include <semaphore.h>
 #include <commons/process.h>
 #include "../include/TAD.h"
+#include "../include/sd_informar_tarea_tripulante.h" /*  */
+#include "../include/server_utils.h"
 
 extern int numeroTripulante;
 extern int numeroPatota;

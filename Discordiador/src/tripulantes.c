@@ -45,13 +45,20 @@ void ejecucion_dispatcher()
     //tripulantes.listos a tripulanes.exec
 }
 //
-Tarea *pedirTarea(Tripulante *tripulante)
+void pedirTarea(Tripulante *tripulante, int socket)
 {
     //Despues tendra que llamar a miram
-    t_short_info_tripulante info_tripulate;
-    //info_tripulate.patota_id = tripulante.info_tripulante.t_package paquete = ser_cod_informar_tarea_tripulante(t_short_info_tripulante info);
-
-    return NULL;
+    t_short_info_tripulante info_tripulante;
+    info_tripulante.patota_id = tripulante->patota_id;
+    info_tripulante.tripulante_id = tripulante->id;
+    // printf("%d %d\n", info_tripulante.tripulante_id, info_tripulante.patota_id);
+    t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
+    sendMessage(paquete, socket);
+    //Espero respuesta de mi_ram
+    paquete = recibir_mensaje(socket);
+    t_info_tarea tarea = des_res_informacion_tarea_tripulante(paquete);
+    tripulante->tarea = &tarea;
+    return;
 }
 void hilo_tripulante(Tripulante *tripulante)
 {
@@ -60,6 +67,21 @@ void hilo_tripulante(Tripulante *tripulante)
 
     //Tripulante *otroTripulante = list_get(lista_tripulantes, (tripulante->id) - 1);
     pthread_mutex_unlock(&MXTRIPULANTE);
+
+    //tripulante se conecta a mi ram
+    int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+    // printf("%s %d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+    if (socket_cliente < 0)
+    {
+        log_error(logger, "Conexion Mi-RAM fallida");
+        liberar_conexion(socket_cliente);
+        // return EXIT_FAILURE; //despues descomitear
+    }
+    else
+    {
+        log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
+    }
+
     //usar estructura patota id
     //devolver un metodo tarea por default(por ahora)
     //getTarea(Tar)
@@ -76,11 +98,12 @@ void hilo_tripulante(Tripulante *tripulante)
     {
         if (!finalizo_tarea)
         {
-            Tarea *tarea = pedirTarea(tripulante); //agregado
+            pedirTarea(tripulante, socket_cliente); //agregado
+            printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
             if (tripulante->status == NEW)
             {
 
-                // 1era iter
+                // 1era itera
                 tripulante->status = READY;
             }
             if (tripulante->tarea == NULL)
@@ -109,6 +132,7 @@ void hilo_tripulante(Tripulante *tripulante)
     /*  printf("hilo:%d\n", process_get_thread_id());
     pthread_mutex_unlock(&MXTRIPULANTE);
  */
+    liberar_conexion(socket_cliente);
     return;
 }
 
