@@ -45,32 +45,17 @@ void ejecucion_dispatcher()
     //tripulantes.listos a tripulanes.exec
 }
 //
-void pedirTarea(Tripulante *tripulante, int socket)
-{
-    //Despues tendra que llamar a miram
-    t_short_info_tripulante info_tripulante;
-    info_tripulante.patota_id = tripulante->patota_id;
-    info_tripulante.tripulante_id = tripulante->id;
-    // printf("%d %d\n", info_tripulante.tripulante_id, info_tripulante.patota_id);
-    t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
-    sendMessage(paquete, socket);
-    //Espero respuesta de mi_ram
-    paquete = recibir_mensaje(socket);
-    t_info_tarea tarea = des_res_informacion_tarea_tripulante(paquete);
-    tripulante->tarea = &tarea;
-    return;
-}
+
 void hilo_tripulante(Tripulante *tripulante)
 {
     pthread_mutex_lock(&MXTRIPULANTE);
     list_add(lista_tripulantes, tripulante);
-
-    //Tripulante *otroTripulante = list_get(lista_tripulantes, (tripulante->id) - 1);
     pthread_mutex_unlock(&MXTRIPULANTE);
 
     //tripulante se conecta a mi ram
+
     int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
-    // printf("%s %d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+
     if (socket_cliente < 0)
     {
         log_error(logger, "Conexion Mi-RAM fallida");
@@ -82,39 +67,69 @@ void hilo_tripulante(Tripulante *tripulante)
         log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
     }
 
-    //usar estructura patota id
-    //devolver un metodo tarea por default(por ahora)
-    //getTarea(Tar)
-    //printf("Posicione %d esta el tripulante%d\n", (tripulante->id) - 1, otroTripulante->id);
     printf("Hilo tripulante:%d\n", tripulante->id);
+
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
     printf("multiTarea:%d\n", sval); */
 
     _Bool finalizo_tarea = false; //chequear
-                                  //mutex_init de los semaforos esta en la creacion de los tripulantes(mapToPatota)
+
+    //Defino pedirTarea dentro de hilo_tripulante
+    void pedirTarea()
+    {
+        // Completa esta estructura para pedir la tarea a mi_ram
+        t_short_info_tripulante info_tripulante;
+        info_tripulante.patota_id = tripulante->patota_id;
+        info_tripulante.tripulante_id = tripulante->id;
+
+        //se empaqueta y se envia el mensaje
+        t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
+        sendMessage(paquete, socket_cliente);
+        //se espara una respuesta
+        paquete = recibir_mensaje(socket_cliente);
+        //En tarea se guarda la proxima tarea a ejecutar
+        t_info_tarea tarea = des_res_informacion_tarea_tripulante(paquete);
+        tripulante->tarea = &tarea;
+        return;
+    }
+
     pthread_mutex_lock(&tripulante->activo);
+
     while (1)
     {
         if (!finalizo_tarea)
         {
-            pedirTarea(tripulante, socket_cliente); //agregado
+            pedirTarea();
+
+            //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
             printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
+            //
+
             if (tripulante->status == NEW)
             {
 
-                // 1era itera
+                // 1era iteracion entraria al if
+                // sacarlo de la lista_tripulantes ?
                 tripulante->status = READY;
+
+                // cantidad tripulantes:READY-EXEC-I/O
+                // sem_post(&activados); //ver porque da error
             }
             if (tripulante->tarea == NULL)
-            { //linea 77 rompe
-                //list_remove(lista_tripulantes, tripulante->id - 1);
+            {
+
                 list_add(lista_EXIT, tripulante);
                 printf("Hilo tripulante :%d bye bye\n", tripulante->id);
+
+                //falta removerlo de la lista tripulante
+                //list_remove_and_destroy_by_condition(lista_tripulantes*, ,)
+
                 break;
             }
-
-            sem_post(&listos); //listos++
+            //Para que el dispatcher sepa que estamos listos
+            sem_post(&listos);
+            //Esperamos ser seleccionados
             pthread_mutex_lock(&tripulante->seleccionado);
 
             //   ir_a_la_posicion(tripulante->tarea->posicion->posx,tripulante->tarea->posicion->posy);
