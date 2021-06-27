@@ -256,9 +256,9 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
     }
     //Comprobacion despues borrar
     printf("Tripulante %d POsicion final %d-%d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy);
-    
 
     //Prueba en cosola en fifo:OK
+    // mi ram nos envia una tarea con pos 3-4
     //iniciar_patota 5 ./cfg/tareasPatota1.txt 1|1 2|2 3|3 4|4 5|5
 }
 
