@@ -16,6 +16,7 @@
 #include <commons/process.h>
 #include "../include/TAD.h"
 #include "../include/sd_informar_tarea_tripulante.h" /*  */
+#include "../include/sd_informar_posicion_tripulante.h" /*  */
 #include "../include/server_utils.h"
 
 extern int numeroTripulante;
@@ -29,9 +30,9 @@ extern t_list *lista_tripulantes; //Dentro van a estar los tripulantes en estado
 extern t_list *lista_EXIT;
 
 void crearHilosTripulantes(Patota *);
-void hilo_tripulante(Tripulante *);
+void leerConfighilo_tripulante(Tripulante *);
 
 void cargarTripulante(t_iniciar_patota *, char **, int);
-void ir_a_la_posicion(Tripulante *, Posicion);
+void mover_tripulante_a_tarea(Tripulante *, int);
 
 #endif

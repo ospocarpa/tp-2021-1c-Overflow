@@ -116,8 +116,7 @@ void hilo_tripulante(Tripulante *tripulante)
 
             sem_post(&listos); //listos++
             pthread_mutex_lock(&tripulante->seleccionado);
-
-            //   ir_a_la_posicion(tripulante->tarea->posicion->posx,tripulante->tarea->posicion->posy);
+            mover_tripulante_a_tarea(tripulante, socket_cliente);
             sem_post(&grado_multiprocesamiento);
 
             //   if(tripulante->tarea.bloqueado == true) {
@@ -185,41 +184,57 @@ void crearHilosTripulantes(Patota *una_patota)
     }
 }
 
-void ir_a_la_posicion(Tripulante *tripulante, Posicion posicion_tarea)
+void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
 {
+    Posicion posicion_tarea = tripulante->tarea->posicion;
+    int rafaga = -1;
+    if(config->ALGORITMO == RR){
+        rafaga = config->QUANTUM;
+    }
+    int ciclos_consumidos = 0;
 
-    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for
-
-    while (tripulante->posicion->posx != posicion_tarea.posx)
+    while (tripulante->posicion->posx != posicion_tarea.posx && rafaga < ciclos_consumidos)
     {
-        /*if(esta_pausado){
-            pthread_mutex_lock(tripulante->activo);
+        if(planificacion_activa){
+            pthread_mutex_lock(&tripulante->activo);
         }
-        */
-
-        if (tripulante->posicion->posx < posicion_tarea.posx)
-        {
+        //Mueve uno en X
+        if (tripulante->posicion->posx < posicion_tarea.posx){
             tripulante->posicion->posx++;
         }
-        else
-        {
+        else{
             tripulante->posicion->posx--;
         }
+        ciclos_consumidos++;
+        enviar_posicion_mi_ram(tripulante, socket);
     }
 
-    while (tripulante->posicion->posy != posicion_tarea.posy)
+    while (tripulante->posicion->posy != posicion_tarea.posy && rafaga < ciclos_consumidos)
     {
-        /*if(esta_pausado){
-            pthread_mutex_lock(tripulante->activo);
+        if(planificacion_activa){
+            pthread_mutex_lock(&tripulante->activo);
         }
-        */
-        if (tripulante->posicion->posy < posicion_tarea.posy)
-        {
+        //Mueve uno en Y
+        if (tripulante->posicion->posy < posicion_tarea.posy){
             tripulante->posicion->posy++;
         }
-        else
-        {
+        else{
             tripulante->posicion->posy--;
         }
+        ciclos_consumidos++;
+        enviar_posicion_mi_ram(tripulante, socket);
     }
+}
+
+void enviar_posicion_mi_ram(Tripulante *tripulante, int socket){
+    t_informar_posicion_tripulante info_tripulante;
+    info_tripulante.patota_id = tripulante->patota_id;
+    info_tripulante.tripulante_id = tripulante->id;
+    info_tripulante.posicion.posx = tripulante->posicion->posx;
+    info_tripulante.posicion.posy = tripulante->posicion->posy;
+
+    t_package paquete = ser_res_informar_posicion_tripulante(info_tripulante);
+    sendMessage(paquete, socket);
+
+
 }
