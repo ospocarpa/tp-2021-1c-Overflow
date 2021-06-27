@@ -243,7 +243,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
             if (!existe_archivo(tokens[2]))
             {
 
-                logger_info("No se encontro el archivo %s ", tokens[2]);
+                log_error(logger, "No se encontro el archivo %s ", tokens[2]);
                 return;
             }
             for (int i = 0; i < cantidad_argumentos - 2; i++)
@@ -251,7 +251,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
                 char **coordenada = string_split(tokens[3 + i], "|");
                 if (!es_un_numero(coordenada[0]) || !es_un_numero(coordenada[1]))
                 {
-                    logger_info("Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
+                    log_info(logger, "Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
                     return;
                 }
                 liberar_puntero_doble(coordenada);

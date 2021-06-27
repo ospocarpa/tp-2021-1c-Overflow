@@ -60,8 +60,9 @@ static void *ejecutar_operacion(int tripulante)
 		//un ejemplo de tarea(despues borrar)
 		tarea.tarea = OTRA_TAREA;
 		tarea.tiempo = 5;
-		tarea.posicion.posx = 2;
-		tarea.posicion.posy = 2;
+		tarea.posicion.posx = 3;
+		tarea.posicion.posy = 4;
+		tarea.parametro = 0;
 
 		/* serializo la respuesta al tripulante */
 		paquete_res = ser_res_informar_tarea_tripulante(tarea);

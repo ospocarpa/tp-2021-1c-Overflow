@@ -29,6 +29,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         Tripulante *tripulante = malloc(sizeof(Tripulante));
         tripulante->id = numeroTripulante;
         tripulante->status = NEW;
+        tripulante->tarea = malloc(sizeof(t_info_tarea));
         tripulante->tarea = NULL;
         tripulante->posicion = malloc(sizeof(Posicion));
         tripulante->posicion->posx = 0;
@@ -43,8 +44,9 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
     int posx = 0;
     int posy = 0;
 
-    for (int c = 0; c < list_size(posiciones_lista) && list_is_empty(posiciones_lista); c++)
+    for (int c = 0; c < list_size(posiciones_lista) && !list_is_empty(posiciones_lista); c++)
     {
+
         Tripulante *tripulante = list_get(patota_new->tripulantes, c);
         char *posicion_string = list_get(posiciones_lista, c);
         char **coordenadas = string_split(posicion_string, "|");
@@ -52,7 +54,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         posy = atoi(coordenadas[1]);
         tripulante->posicion->posx = posx;
         tripulante->posicion->posy = posy;
-    }
+        }
 
     //Falta mapeo de tareas para patota
     //list_clean(posiciones_lista);

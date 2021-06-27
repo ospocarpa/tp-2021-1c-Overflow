@@ -67,14 +67,12 @@ void hilo_tripulante(Tripulante *tripulante)
         log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
     }
 
-    printf("Hilo tripulante:%d\n", tripulante->id);
-
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
     printf("multiTarea:%d\n", sval); */
 
     _Bool finalizo_tarea = false; //chequear
-
+    t_info_tarea tarea;
     //Defino pedirTarea dentro de hilo_tripulante
     void pedirTarea()
     {
@@ -89,8 +87,9 @@ void hilo_tripulante(Tripulante *tripulante)
         //se espara una respuesta
         paquete = recibir_mensaje(socket_cliente);
         //En tarea se guarda la proxima tarea a ejecutar
-        t_info_tarea tarea = des_res_informacion_tarea_tripulante(paquete);
+        tarea = des_res_informacion_tarea_tripulante(paquete);
         tripulante->tarea = &tarea;
+
         return;
     }
 
@@ -100,10 +99,11 @@ void hilo_tripulante(Tripulante *tripulante)
     {
         if (!finalizo_tarea)
         {
+
             pedirTarea();
 
             //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
-            printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
+            // printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
             //
 
             if (tripulante->status == NEW)
@@ -202,46 +202,68 @@ void crearHilosTripulantes(Patota *una_patota)
 void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
 {
     Posicion posicion_tarea = tripulante->tarea->posicion;
+
     int rafaga = -1;
-    if(config->ALGORITMO == RR){
+    int retardo_cpu = config->RETARDO_CICLO_CPU;
+    if (config->ALGORITMO == RR)
+    {
         rafaga = config->QUANTUM;
     }
     int ciclos_consumidos = 0;
 
     while (tripulante->posicion->posx != posicion_tarea.posx && rafaga < ciclos_consumidos)
     {
-        if(planificacion_activa){
+
+        if (planificacion_activa)
+        {
+
             pthread_mutex_lock(&tripulante->activo);
         }
         //Mueve uno en X
-        if (tripulante->posicion->posx < posicion_tarea.posx){
+        if (tripulante->posicion->posx < posicion_tarea.posx)
+        {
             tripulante->posicion->posx++;
         }
-        else{
+        else
+        {
             tripulante->posicion->posx--;
         }
         ciclos_consumidos++;
+        sleep(retardo_cpu);
         enviar_posicion_mi_ram(tripulante, socket);
     }
 
     while (tripulante->posicion->posy != posicion_tarea.posy && rafaga < ciclos_consumidos)
     {
-        if(planificacion_activa){
+
+        if (planificacion_activa)
+        {
+
             pthread_mutex_lock(&tripulante->activo);
         }
         //Mueve uno en Y
-        if (tripulante->posicion->posy < posicion_tarea.posy){
+        if (tripulante->posicion->posy < posicion_tarea.posy)
+        {
             tripulante->posicion->posy++;
         }
-        else{
+        else
+        {
             tripulante->posicion->posy--;
         }
         ciclos_consumidos++;
+        sleep(retardo_cpu);
         enviar_posicion_mi_ram(tripulante, socket);
     }
+    //Comprobacion despues borrar
+    printf("Tripulante %d POsicion final %d-%d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy);
+    
+
+    //Prueba en cosola en fifo:OK
+    //iniciar_patota 5 ./cfg/tareasPatota1.txt 1|1 2|2 3|3 4|4 5|5
 }
 
-void enviar_posicion_mi_ram(Tripulante *tripulante, int socket){
+void enviar_posicion_mi_ram(Tripulante *tripulante, int socket)
+{
     t_informar_posicion_tripulante info_tripulante;
     info_tripulante.patota_id = tripulante->patota_id;
     info_tripulante.tripulante_id = tripulante->id;
@@ -250,6 +272,4 @@ void enviar_posicion_mi_ram(Tripulante *tripulante, int socket){
 
     t_package paquete = ser_res_informar_posicion_tripulante(info_tripulante);
     sendMessage(paquete, socket);
-
-
 }
