@@ -7,6 +7,7 @@ void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram();
 void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador();
 void validar_sd_informar_posicion_msj_disc_mi_ram();
 void validar_sd_informar_posicion_msj_mi_ram_disc();
+void validar_sd_informar_estado_msj_discordiador_a_mi_ram();
 
 int run_tests()
 {
@@ -21,7 +22,8 @@ int run_tests()
     CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj mi ram a discordiador", validar_sd_informar_posicion_msj_disc_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj discordiador a mi ram", validar_sd_informar_posicion_msj_mi_ram_disc);
-    
+    CU_add_test(tests, "Valido informar estado msj discordiador a mi ram", validar_sd_informar_estado_msj_discordiador_a_mi_ram);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
@@ -226,6 +228,25 @@ void validar_sd_informar_posicion_msj_mi_ram_disc(){
     CU_ASSERT_EQUAL(data.posicion.posx, data_res.posicion.posx);
     CU_ASSERT_EQUAL(data.posicion.posy, data_res.posicion.posy);
     
+
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_estado_msj_discordiador_a_mi_ram(){
+    t_estado_tripulante tripulante;
+    t_estado_tripulante tripulante_res;
+    t_package paquete;
+
+    tripulante.status = READY;
+    tripulante.patota_id = 1;
+    tripulante.tripulante_id = 2;
+
+    paquete = ser_cod_informar_estado(tripulante);
+    tripulante_res = des_cod_informar_estado(paquete);
+
+    CU_ASSERT_EQUAL(tripulante.patota_id, tripulante_res.patota_id);
+    CU_ASSERT_EQUAL(tripulante.tripulante_id, tripulante_res.tripulante_id);
+    CU_ASSERT_EQUAL(tripulante.status, tripulante_res.status);
 
     free(paquete.buffer);
 }
