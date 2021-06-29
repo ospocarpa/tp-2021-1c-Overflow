@@ -80,12 +80,14 @@ typedef enum
 
 	typedef struct 
 	{
-
 		int cant_tripulantes;
 		char * tareas;
 		int long_tareas;
 		int long_posicion;
 		char * posiciones;
+		uint32_t patota_id;
+		int long_de_ids_tripulantes;
+		char * ids_tripulantes;
 	}t_iniciar_patota;
 
 	typedef struct 

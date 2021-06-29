@@ -28,6 +28,15 @@ t_package ser_cod_iniciar_patota(t_iniciar_patota data)
     return paquete;
 }
 
+bool des_res_iniciar_patota(t_package paquete)
+{
+    bool res;
+
+    memcpy(&res, paquete.buffer, sizeof(bool));
+
+    return res;
+}
+
 /* ******* MI RAM HQ ******* */
 t_iniciar_patota des_cod_iniciar_patota(t_package paquete)
 {
@@ -56,6 +65,19 @@ t_iniciar_patota des_cod_iniciar_patota(t_package paquete)
     data.posiciones[size_posiciones] = '\0';
 
     return data;
+}
+
+t_package ser_res_iniciar_patota(bool data)
+{
+    t_package paquete;
+    int tam_buffer = sizeof(bool);
+    paquete.buffer = malloc(tam_buffer);
+    paquete.tam_buffer = tam_buffer;
+    paquete.cod_operacion = INICIAR_PATOTA;
+
+    memcpy(paquete.buffer, &data, sizeof(bool));
+
+    return paquete;
 }
 
 t_list * convertir_a_list_posiciones(char * posiciones_string){

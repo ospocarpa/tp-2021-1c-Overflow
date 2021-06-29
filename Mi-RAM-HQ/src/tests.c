@@ -8,6 +8,7 @@ void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador();
 void validar_sd_informar_posicion_msj_disc_mi_ram();
 void validar_sd_informar_posicion_msj_mi_ram_disc();
 void validar_sd_informar_estado_msj_discordiador_a_mi_ram();
+void validar_sd_res_iniciar_patota();
 
 int run_tests()
 {
@@ -23,6 +24,7 @@ int run_tests()
     CU_add_test(tests, "Valido informar posicion msj mi ram a discordiador", validar_sd_informar_posicion_msj_disc_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj discordiador a mi ram", validar_sd_informar_posicion_msj_mi_ram_disc);
     CU_add_test(tests, "Valido informar estado msj discordiador a mi ram", validar_sd_informar_estado_msj_discordiador_a_mi_ram);
+    CU_add_test(tests, "Valido res de iniciar patota msj mi ram a discordialor", validar_sd_res_iniciar_patota);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -247,6 +249,19 @@ void validar_sd_informar_estado_msj_discordiador_a_mi_ram(){
     CU_ASSERT_EQUAL(tripulante.patota_id, tripulante_res.patota_id);
     CU_ASSERT_EQUAL(tripulante.tripulante_id, tripulante_res.tripulante_id);
     CU_ASSERT_EQUAL(tripulante.status, tripulante_res.status);
+
+    free(paquete.buffer);
+}
+
+void validar_sd_res_iniciar_patota(){
+    bool validacion = true;
+    bool validacion_res;
+    t_package paquete;
+
+    paquete = ser_res_iniciar_patota(validacion);
+    validacion_res = des_res_iniciar_patota(paquete);
+
+    CU_ASSERT_TRUE(validacion_res);
 
     free(paquete.buffer);
 }
