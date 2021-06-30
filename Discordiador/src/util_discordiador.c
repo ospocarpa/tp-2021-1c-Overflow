@@ -54,7 +54,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         posy = atoi(coordenadas[1]);
         tripulante->posicion->posx = posx;
         tripulante->posicion->posy = posy;
-        }
+    }
 
     //Falta mapeo de tareas para patota
     //list_clean(posiciones_lista);
@@ -120,6 +120,7 @@ t_list *get_tripulantes_all()
     return tripulantes;
 }
 //agregado funcion
+
 Tripulante *tripulante_segun_id(int id)
 {
     _Bool mismo_id(void *param)

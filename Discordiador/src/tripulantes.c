@@ -46,6 +46,25 @@ void ejecucion_dispatcher()
 }
 //
 
+void pedirTarea(Tripulante *tripulante, int socket_cliente)
+{
+    // Completa esta estructura para pedir la tarea a mi_ram
+    t_short_info_tripulante info_tripulante;
+    info_tripulante.patota_id = tripulante->patota_id;
+    info_tripulante.tripulante_id = tripulante->id;
+
+    //Se empaqueta y se envia el mensaje
+    t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
+    sendMessage(paquete, socket_cliente);
+    //Se espara una respuesta
+    paquete = recibir_mensaje(socket_cliente);
+    //En tarea se guarda la proxima tarea a ejecutar
+    t_info_tarea tarea;
+    tarea = des_res_informacion_tarea_tripulante(paquete);
+    tripulante->tarea = &tarea;
+
+    return;
+}
 void hilo_tripulante(Tripulante *tripulante)
 {
     pthread_mutex_lock(&MXTRIPULANTE);
@@ -72,26 +91,6 @@ void hilo_tripulante(Tripulante *tripulante)
     printf("multiTarea:%d\n", sval); */
 
     _Bool finalizo_tarea = false; //chequear
-    t_info_tarea tarea;
-    //Defino pedirTarea dentro de hilo_tripulante
-    void pedirTarea()
-    {
-        // Completa esta estructura para pedir la tarea a mi_ram
-        t_short_info_tripulante info_tripulante;
-        info_tripulante.patota_id = tripulante->patota_id;
-        info_tripulante.tripulante_id = tripulante->id;
-
-        //se empaqueta y se envia el mensaje
-        t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
-        sendMessage(paquete, socket_cliente);
-        //se espara una respuesta
-        paquete = recibir_mensaje(socket_cliente);
-        //En tarea se guarda la proxima tarea a ejecutar
-        tarea = des_res_informacion_tarea_tripulante(paquete);
-        tripulante->tarea = &tarea;
-
-        return;
-    }
 
     pthread_mutex_lock(&tripulante->activo);
 
@@ -100,30 +99,41 @@ void hilo_tripulante(Tripulante *tripulante)
         if (!finalizo_tarea)
         {
 
-            pedirTarea();
+            pedirTarea(tripulante, socket_cliente);
 
             //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
-            // printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
+            //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
             //
 
             if (tripulante->status == NEW)
             {
 
-                // 1era iteracion entraria al if
-                // sacarlo de la lista_tripulantes ?
-                tripulante->status = READY;
+                // Solo en la 1era iteraccion entraria a est if
+                //Se agrega a la lista de ready
+                pthread_mutex_lock(&MXTRIPULANTE);
+                list_add(lista_READY, tripulante);
+                pthread_mutex_unlock(&MXTRIPULANTE);
+                //
 
-                // cantidad tripulantes:READY-EXEC-I/O
-                // sem_post(&activados); //ver porque da error
+                tripulante->status = READY;
             }
             if (tripulante->tarea == NULL)
             {
 
                 list_add(lista_EXIT, tripulante);
-                printf("Hilo tripulante :%d bye bye\n", tripulante->id);
-
+                printf("Tripulante %d Bye Bye\n", tripulante->id);
+                //MI ram elimina a este tripulante de su memoria
                 //falta removerlo de la lista tripulante
-                //list_remove_and_destroy_by_condition(lista_tripulantes*, ,)
+                _Bool mismo_id(void *param)
+                {
+                    int *un_id = (int *)param;
+                    return tripulante->id == *un_id;
+                }
+
+                Tripulante *tripulante1 = list_remove_by_condition(lista_tripulantes, mismo_id);
+                free(tripulante);
+                //Comprobacion :despues borrar
+                //printf("id del tripulane removido:%d\n", tripulante1->id);
 
                 break;
             }
@@ -131,6 +141,9 @@ void hilo_tripulante(Tripulante *tripulante)
             sem_post(&listos);
             //Esperamos ser seleccionados
             pthread_mutex_lock(&tripulante->seleccionado);
+
+            sem_post(&activados); // cantidad tripulantes:-EXEC-I/O
+
             mover_tripulante_a_tarea(tripulante, socket_cliente);
             sem_post(&grado_multiprocesamiento);
 
@@ -139,13 +152,6 @@ void hilo_tripulante(Tripulante *tripulante)
         }
     }
 
-    //tripulane pasa a cola de exit ;
-    /// -------------------------------------------------
-    //pthread_mutex_lock(&MXTRIPULANTE);
-
-    /*  printf("hilo:%d\n", process_get_thread_id());
-    pthread_mutex_unlock(&MXTRIPULANTE);
- */
     liberar_conexion(socket_cliente);
     return;
 }
