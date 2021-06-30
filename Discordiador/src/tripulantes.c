@@ -86,6 +86,12 @@ void hilo_tripulante(Tripulante *tripulante)
         log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
     }
 
+    _Bool mismo_id(void *param)
+    {
+        int *un_id = (int *)param;
+        return tripulante->id == *un_id;
+    }
+
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
     printf("multiTarea:%d\n", sval); */
@@ -117,6 +123,7 @@ void hilo_tripulante(Tripulante *tripulante)
 
                 tripulante->status = READY;
             }
+
             if (tripulante->tarea == NULL)
             {
 
@@ -124,11 +131,6 @@ void hilo_tripulante(Tripulante *tripulante)
                 printf("Tripulante %d Bye Bye\n", tripulante->id);
                 //MI ram elimina a este tripulante de su memoria
                 //falta removerlo de la lista tripulante
-                _Bool mismo_id(void *param)
-                {
-                    int *un_id = (int *)param;
-                    return tripulante->id == *un_id;
-                }
 
                 Tripulante *tripulante1 = list_remove_by_condition(lista_tripulantes, mismo_id);
                 free(tripulante);
@@ -145,10 +147,18 @@ void hilo_tripulante(Tripulante *tripulante)
             sem_post(&activados); // cantidad tripulantes:-EXEC-I/O
 
             mover_tripulante_a_tarea(tripulante, socket_cliente);
+
             sem_post(&grado_multiprocesamiento);
 
-            //   if(tripulante->tarea.bloqueado == true) {
-            //      bloqueate();
+            if (tripulante->tarea->tarea != OTRA_TAREA)
+            {
+                printf("tripulante %d bloqueate\n", tripulante->id);
+                sleep(config->RETARDO_CICLO_CPU);
+                // bloqueate();
+            }
+            //Falta que el tripulante consuma su rafa de CPU
+            //consulta de agregar ese consumo (si es bloqueado por sabataje)
+            // persistirlo
         }
     }
 
@@ -159,6 +169,7 @@ void hilo_tripulante(Tripulante *tripulante)
 /*  
         1 tiene q llamar a mi_ram  para pedir siguiente tarea
           nota: si tiene tarea pasa a estado listo
+          //TODO
           2 creamos semaforo planificacion "PAUSAR_PLANIFICACION"
           3 Cuando se pause la planificacion ,a todos los semaforos
           de los tripulantes se bloquea 
