@@ -43,18 +43,22 @@ void validar_sd_iniciar_patota()
     data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
     data_input.posiciones = "0|3 0|0";
     data_input.long_posicion = strlen("0|3 0|0");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
 
     paquete = ser_cod_iniciar_patota(data_input);
 
     data_res = des_cod_iniciar_patota(paquete);
 
-    printf("path tareas: %d \n", data_res.long_posicion);
+    printf("path tareas: %d \n", data_res.id_primer_tripulante);
 
     CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
     CU_ASSERT_EQUAL(data_input.long_tareas, data_res.long_tareas);
     CU_ASSERT_STRING_EQUAL(data_input.tareas, data_res.tareas);
     CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
     CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
+    CU_ASSERT_EQUAL(data_input.patota_id, data_res.patota_id);
+    CU_ASSERT_EQUAL(data_input.id_primer_tripulante, data_res.id_primer_tripulante);
 
     free(paquete.buffer);
     free(data_res.tareas);

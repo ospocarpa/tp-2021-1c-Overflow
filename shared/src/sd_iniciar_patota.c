@@ -4,7 +4,7 @@
 /* ******* DISCORDIADOR ******* */
 t_package ser_cod_iniciar_patota(t_iniciar_patota data)
 {
-    int tam_buffer = sizeof(int) * 3 + data.long_tareas + data.long_posicion;
+    int tam_buffer = sizeof(int) * 3 + data.long_tareas + data.long_posicion + sizeof(uint32_t)*2 ;
     t_package paquete;
     paquete.buffer = malloc(tam_buffer);
     paquete.cod_operacion = INICIAR_PATOTA;
@@ -24,6 +24,13 @@ t_package ser_cod_iniciar_patota(t_iniciar_patota data)
     offset+=sizeof(int);
 
     memcpy(paquete.buffer+offset, data.posiciones, data.long_posicion);
+    offset+= data.long_posicion;
+
+    memcpy(paquete.buffer+offset, &data.patota_id, sizeof(uint32_t));
+    offset+=sizeof(uint32_t);
+
+    memcpy(paquete.buffer+offset, &data.id_primer_tripulante, sizeof(uint32_t));
+    offset+=sizeof(uint32_t);
     
     return paquete;
 }
@@ -63,6 +70,12 @@ t_iniciar_patota des_cod_iniciar_patota(t_package paquete)
     memcpy(data.posiciones, paquete.buffer, size_posiciones);
     paquete.buffer += size_posiciones;
     data.posiciones[size_posiciones] = '\0';
+
+    memcpy(&data.patota_id, paquete.buffer, sizeof(uint32_t));
+    paquete.buffer += sizeof(uint32_t);
+
+    memcpy(&data.id_primer_tripulante, paquete.buffer, sizeof(uint32_t));
+    paquete.buffer += sizeof(uint32_t);
 
     return data;
 }
