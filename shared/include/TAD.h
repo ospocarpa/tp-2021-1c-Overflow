@@ -19,6 +19,7 @@ typedef enum
 	INICIAR_PLANIFICACION = 9,
 	PAUSAR_PLANIFICACION = 10,
 	OBTENER_BITACORA = 11,
+	INFORMAR_ESTADO_TRIPULANTE = 12,
 } op_code;
 
 	typedef enum
@@ -84,6 +85,8 @@ typedef enum
 		int long_tareas;
 		int long_posicion;
 		char * posiciones;
+		uint32_t patota_id;
+		uint32_t id_primer_tripulante;
 	}t_iniciar_patota;
 
 	typedef struct 
@@ -123,6 +126,13 @@ typedef enum
 		Posicion posicion;
 	}__attribute__((packed))
 	t_informar_posicion_tripulante;
+
+	typedef struct{
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+		status_tripulante status;
+	}__attribute__((packed))
+	t_estado_tripulante;
 
 //---------------------- Comunicacion con Mongo -> Discordiador ----------------------
 
