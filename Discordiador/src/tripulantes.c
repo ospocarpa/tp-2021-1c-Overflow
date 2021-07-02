@@ -218,9 +218,12 @@ void crearHilosTripulantes(Patota *una_patota)
 
 void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
 {
-    Posicion posicion_tarea = tripulante->tarea->posicion;
+    int posicion_tarea_x = 2;//tripulante->tarea->posicion.posx;
+    int posicion_tarea_y = 3;//tripulante->tarea->posicion.posy;
+    //Parece que se pasa mal la tarea o algo, pero harcodeando la posicion de la tarea funca bien. 
+    printf("TAREA POSICION X : %d POSICION Y: %d\n", posicion_tarea_x,posicion_tarea_y);//BORRAR
 
-    int rafaga = -1;
+    int rafaga = 1;
     int retardo_cpu = config->RETARDO_CICLO_CPU;
     if (config->ALGORITMO == RR)
     {
@@ -228,50 +231,57 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
     }
     int ciclos_consumidos = 0;
 
-    while (tripulante->posicion->posx != posicion_tarea.posx && rafaga < ciclos_consumidos)
+    while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
     {
-
         if (planificacion_activa)
         {
-
             pthread_mutex_lock(&tripulante->activo);
         }
         //Mueve uno en X
-        if (tripulante->posicion->posx < posicion_tarea.posx)
+        if (posicion_tarea_x > tripulante->posicion->posx )
         {
             tripulante->posicion->posx++;
         }
-        else
+        else if(posicion_tarea_x < tripulante->posicion->posx)
         {
             tripulante->posicion->posx--;
         }
-        ciclos_consumidos++;
+        //prueba 
+        printf("Tripulante: %d  posx: %d, posy: %d, ciclos consumidos: %d,tareaPosX: %d , tareaPosY: %d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy, ciclos_consumidos, tripulante->tarea->posicion.posx,tripulante->tarea->posicion.posy);
+        //
+        if (config->ALGORITMO == RR)
+        {   
+            ciclos_consumidos++;
+        }
         sleep(retardo_cpu);
         enviar_posicion_mi_ram(tripulante, socket);
     }
 
-    while (tripulante->posicion->posy != posicion_tarea.posy && rafaga < ciclos_consumidos)
+    while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
-
         if (planificacion_activa)
         {
-
             pthread_mutex_lock(&tripulante->activo);
         }
         //Mueve uno en Y
-        if (tripulante->posicion->posy < posicion_tarea.posy)
+        if (posicion_tarea_y > tripulante->posicion->posy)
         {
             tripulante->posicion->posy++;
         }
-        else
+        else if(posicion_tarea_y < tripulante->posicion->posy)
         {
             tripulante->posicion->posy--;
         }
-        ciclos_consumidos++;
+        //prueba 
+        printf("Tripulante: %d  posx: %d, posy: %d, ciclos consumidos: %d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy, ciclos_consumidos);
+        //
+        if (config->ALGORITMO == RR)
+        {   
+            ciclos_consumidos++;
+        }
         sleep(retardo_cpu);
         enviar_posicion_mi_ram(tripulante, socket);
     }
-    //Comprobacion despues borrar
     printf("Tripulante %d POsicion final %d-%d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy);
 
     //Prueba en cosola en fifo:OK
