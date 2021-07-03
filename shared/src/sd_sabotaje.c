@@ -1,6 +1,6 @@
 #include "../include/sd_sabotaje.h"
 
-t_paquete* serializar_I_SABOTAJE(Sabotaje* input){
+t_paquete* serializar_I_SABOTAJE(t_sabotaje* input){
 	t_paquete* paquete = malloc(sizeof(t_paquete));
     t_buffer* new_buffer = malloc(sizeof(t_buffer));
 
@@ -27,9 +27,9 @@ t_paquete* serializar_I_SABOTAJE(Sabotaje* input){
 	return paquete;
 }
 
-Sabotaje* deserializar_I_SABOTAJE(t_paquete* paquete){
+t_sabotaje* deserializar_I_SABOTAJE(t_paquete* paquete){
 	//preguntar lo de Sarea 
-	Sabotaje* respuesta = malloc(sizeof(Sabotaje));
+	t_sabotaje* respuesta = malloc(sizeof(t_sabotaje));
 	t_buffer* buffer = paquete->buffer;
 
 	memcpy(&respuesta->mensaje_length, buffer->stream, sizeof(uint32_t));
@@ -51,7 +51,7 @@ Sabotaje* deserializar_I_SABOTAJE(t_paquete* paquete){
     return respuesta;
 }
 
-void mostrarSabotaje(Sabotaje* sabotaje){
+void mostrarSabotaje(t_sabotaje* sabotaje){
     printf("Description: %s\n", sabotaje->mensaje);
     printf("Description length: %d\n", sabotaje->mensaje_length);
     printf("Posicion x: %d\n", sabotaje->posicion->posx);

@@ -16,7 +16,8 @@
 			"consola.h": "c",
 			"sd_posicion.h": "c",
 			"server.h": "c",
-			"tad.h": "c"
+			"tad.h": "c",
+			"sd_create_file.h": "c"
 		}
 	}
 }

@@ -15,6 +15,6 @@ Tripulante* busqueda_algoritmo(){
     //Retornar la cola de listos
     int indice = list_size(lista_READY)-1;
     list_remove(lista_READY, indice);
-    Tripulante* tripulante = list_find(lista_READY, indice);
+    Tripulante* tripulante = list_get(lista_READY, indice);
     return tripulante;
 }

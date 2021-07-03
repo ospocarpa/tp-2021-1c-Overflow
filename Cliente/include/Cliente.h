@@ -8,6 +8,10 @@
 #include "shared_utils.h"
 #include "config_utils.h"
 #include "server_utils.h"
+#include "sd_create_file.h"
+#include "sd_get_file.h"
+#include "sd_update_bitacora.h"
+#include "sd_operation_file_recurso.h"
 #include "TAD.h"
 
 // ----------------------------------- INICIO DE DECLARACIONES --------------------------------------
