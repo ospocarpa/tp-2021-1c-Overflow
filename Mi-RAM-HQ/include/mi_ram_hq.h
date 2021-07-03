@@ -8,5 +8,6 @@
 #include "server.h"
 #include <commons/log.h>
 #include "tests.h"
+#include "memoria.h"
 
 #endif

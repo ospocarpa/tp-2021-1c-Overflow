@@ -13,6 +13,9 @@ int main(int argc, char **argv)
         logger_info("Iniciando módulo Mi-RAM-HQ");
 
         int puerto = get_puerto();
+        int tam_memoria = get_tamanio_memoria();
+
+        iniciar_memoria_principal(tam_memoria);
 
         server_mi_ram_iniciar(puerto);
 
