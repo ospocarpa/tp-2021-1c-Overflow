@@ -7,6 +7,8 @@ void validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram();
 void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador();
 void validar_sd_informar_posicion_msj_disc_mi_ram();
 void validar_sd_informar_posicion_msj_mi_ram_disc();
+void validar_sd_informar_estado_msj_discordiador_a_mi_ram();
+void validar_sd_res_iniciar_patota();
 
 int run_tests()
 {
@@ -21,7 +23,9 @@ int run_tests()
     CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj mi ram a discordiador", validar_sd_informar_posicion_msj_disc_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj discordiador a mi ram", validar_sd_informar_posicion_msj_mi_ram_disc);
-    
+    CU_add_test(tests, "Valido informar estado msj discordiador a mi ram", validar_sd_informar_estado_msj_discordiador_a_mi_ram);
+    CU_add_test(tests, "Valido res de iniciar patota msj mi ram a discordialor", validar_sd_res_iniciar_patota);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
@@ -39,18 +43,22 @@ void validar_sd_iniciar_patota()
     data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
     data_input.posiciones = "0|3 0|0";
     data_input.long_posicion = strlen("0|3 0|0");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
 
     paquete = ser_cod_iniciar_patota(data_input);
 
     data_res = des_cod_iniciar_patota(paquete);
 
-    printf("path tareas: %d \n", data_res.long_posicion);
+    printf("path tareas: %d \n", data_res.id_primer_tripulante);
 
     CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
     CU_ASSERT_EQUAL(data_input.long_tareas, data_res.long_tareas);
     CU_ASSERT_STRING_EQUAL(data_input.tareas, data_res.tareas);
     CU_ASSERT_EQUAL(data_input.long_posicion, data_res.long_posicion);
     CU_ASSERT_STRING_EQUAL(data_input.posiciones, data_res.posiciones);
+    CU_ASSERT_EQUAL(data_input.patota_id, data_res.patota_id);
+    CU_ASSERT_EQUAL(data_input.id_primer_tripulante, data_res.id_primer_tripulante);
 
     free(paquete.buffer);
     free(data_res.tareas);
@@ -226,6 +234,38 @@ void validar_sd_informar_posicion_msj_mi_ram_disc(){
     CU_ASSERT_EQUAL(data.posicion.posx, data_res.posicion.posx);
     CU_ASSERT_EQUAL(data.posicion.posy, data_res.posicion.posy);
     
+
+    free(paquete.buffer);
+}
+
+void validar_sd_informar_estado_msj_discordiador_a_mi_ram(){
+    t_estado_tripulante tripulante;
+    t_estado_tripulante tripulante_res;
+    t_package paquete;
+
+    tripulante.status = READY;
+    tripulante.patota_id = 1;
+    tripulante.tripulante_id = 2;
+
+    paquete = ser_cod_informar_estado(tripulante);
+    tripulante_res = des_cod_informar_estado(paquete);
+
+    CU_ASSERT_EQUAL(tripulante.patota_id, tripulante_res.patota_id);
+    CU_ASSERT_EQUAL(tripulante.tripulante_id, tripulante_res.tripulante_id);
+    CU_ASSERT_EQUAL(tripulante.status, tripulante_res.status);
+
+    free(paquete.buffer);
+}
+
+void validar_sd_res_iniciar_patota(){
+    bool validacion = true;
+    bool validacion_res;
+    t_package paquete;
+
+    paquete = ser_res_iniciar_patota(validacion);
+    validacion_res = des_res_iniciar_patota(paquete);
+
+    CU_ASSERT_TRUE(validacion_res);
 
     free(paquete.buffer);
 }
