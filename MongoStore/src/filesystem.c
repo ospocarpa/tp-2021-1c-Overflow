@@ -1,5 +1,16 @@
 #include "filesystem.h"
 
+void implementar_sincronizacion(){
+    int file_size = sizeof(uint32_t) * 2 + filesystem.blocks_cant/8;  
+    do{
+        sleep(config_global_mongo_store->TIEMPO_SINCRONIZACION);
+        memcpy(filesystem.stream_copy, filesystem.stream, file_size);      //Lo paso a la copia que se usará
+        msync(filesystem.stream_copy, file_size, MS_SYNC);
+        printf("Sincronizacion: %d\n", config_global_mongo_store->TIEMPO_SINCRONIZACION);
+
+    }while(1);
+}
+
 void init_filesystem(){
     filesystem.blocks_cant = config_global_mongo_store->BLOCKS;
     filesystem.blocks_size = config_global_mongo_store->BLOCK_SIZE;

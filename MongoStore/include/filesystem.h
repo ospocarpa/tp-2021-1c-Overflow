@@ -27,6 +27,7 @@
     t_filesystem filesystem;
 
     // Creación
+    void implementar_sincronizacion();
     char* get_path_file_recurso(char* file_name);
     char* get_path_file_bitacora(char* file_name);
     char* get_contenido_recurso(char* filename);
