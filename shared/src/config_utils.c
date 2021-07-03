@@ -24,14 +24,14 @@ t_config_mongo_store* leer_config_mongo_store(t_config* config){
 	
 	config_mongo_store->POSICIONES_SABOTAJE = list_create();
 	char** partes_posiciones = string_split(posiciones_sabotaje_string, ",");
-    void a_la_lista_posiciones(char *item) {
+    void a_la_lista_posiciones(char *item){
 		//item = "1|1"
 		char** coordenadas = string_split(item, "|");
 		Posicion* posicion = malloc(sizeof(Posicion));
 		posicion->posx = atoi(coordenadas[0]);
 		posicion->posy = atoi(coordenadas[1]);
 		list_add(config_mongo_store->POSICIONES_SABOTAJE, posicion);
-    }
+    };
     string_iterate_lines(partes_posiciones, a_la_lista_posiciones);
 
 	/*for(int c=0;c< list_size(config_mongo_store->POSICIONES_SABOTAJE); c++){

@@ -27,6 +27,25 @@ int main(int argc, char **argv)
     return 1;
 }
 
+void sincronizacion(){
+    int fd = open("/home/utnso/prueba.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    int file_size = 100;
+    ftruncate(fd, file_size);
+    printf("Fd: %d\n", fd);
+    
+    void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);//Memoria virtual
+    
+    void* stream_copy = malloc(file_size);
+    char* test = malloc(10);
+    strcpy(test, "Ari Latpat");
+    printf("%s\n", test);
+    int offset = 0;
+    memcpy(stream_copy+offset, test, 10);
+
+    memcpy(stream+offset, stream_copy, 10);
+    //msync(stream_copy, file_size, MS_SYNC);
+}
+
 void lectura_file(){
     int block_size = 0;
     int blocks = 0;
@@ -35,7 +54,7 @@ void lectura_file(){
     int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
     int file_size = sizeof(uint32_t) * 2 + 4;
     void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-    t_bitarray* bitarray = 
+    t_bitarray* bitarray = NULL;
 
     memcpy(&block_size, stream, sizeof(uint32_t));
 	stream += sizeof(uint32_t);
