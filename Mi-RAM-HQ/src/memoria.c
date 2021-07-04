@@ -26,11 +26,36 @@ void agregar_hueco(int base, int desplazamiento){
 }
 
 
-void cargar_informacion_MP(t_PCB pcb,int base){
+void cargar_informacion_PCB_a_MP(t_PCB pcb,int base){
     
     int offset = base;
     memcpy(memoria_principal + offset, &pcb.pid,sizeof(uint32_t));
     offset +=sizeof(uint32_t) ;
     memcpy(memoria_principal + offset, &pcb.tareas,sizeof(uint32_t));
+
+}
+
+void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
+    
+    // uint32_t tid;
+    // char estado;
+    // int posx;
+    // int posy;
+    // uint32_t prox_tarea;
+    // uint32_t puntero_pcb;
+
+    int offset = base;
+    memcpy(memoria_principal + offset, &tcb.tid,sizeof(uint32_t));
+    offset +=sizeof(uint32_t) ;
+    memcpy(memoria_principal + offset, &tcb.estado,sizeof(char));
+    offset += sizeof(char);
+    memcpy(memoria_principal + offset, &tcb.posx,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(memoria_principal + offset, &tcb.posy,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
+    offset +=sizeof(uint32_t);
+    memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));
+    
 
 }
