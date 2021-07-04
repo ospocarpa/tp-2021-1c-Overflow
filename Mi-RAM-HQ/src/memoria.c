@@ -24,3 +24,13 @@ void agregar_hueco(int base, int desplazamiento){
 
     list_add(tabla_hueco, nuevo_hueco);
 }
+
+
+void cargar_informacion_MP(t_PCB pcb,int base){
+    
+    offset = base;
+    memcpy(memoria_principal + offset, &pcb.pid,size(uint32_t));
+    offset +=size(uint32_t) ;
+    memcpy(memoria_principal + offset, &pcb.tareas,size(uint32_t));
+
+}
