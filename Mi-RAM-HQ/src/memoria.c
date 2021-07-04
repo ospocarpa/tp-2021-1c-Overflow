@@ -28,9 +28,9 @@ void agregar_hueco(int base, int desplazamiento){
 
 void cargar_informacion_MP(t_PCB pcb,int base){
     
-    offset = base;
-    memcpy(memoria_principal + offset, &pcb.pid,size(uint32_t));
-    offset +=size(uint32_t) ;
-    memcpy(memoria_principal + offset, &pcb.tareas,size(uint32_t));
+    int offset = base;
+    memcpy(memoria_principal + offset, &pcb.pid,sizeof(uint32_t));
+    offset +=sizeof(uint32_t) ;
+    memcpy(memoria_principal + offset, &pcb.tareas,sizeof(uint32_t));
 
 }

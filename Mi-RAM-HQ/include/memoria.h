@@ -10,6 +10,6 @@
 void iniciar_memoria_principal(int tam_memoria);
 
 
-void cargar_informacion_MP(t_PCB pcb,int base)
+void cargar_informacion_MP(t_PCB pcb,int base);
 
 #endif
