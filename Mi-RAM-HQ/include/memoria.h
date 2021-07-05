@@ -8,5 +8,6 @@
 #include "log_utils.h"
 
 void iniciar_memoria_principal(int tam_memoria);
+void liberar_memoria_principal();
 
 #endif
