@@ -16,8 +16,6 @@ void mostrar_consola()
         "SALIR\n"
 
     );
-
-    //system("clear");
 }
 
 void liberar_puntero_doble(char **puntero_doble)
@@ -44,7 +42,6 @@ bool leer_consola(void)
         int tamanio_buffer = 128;
 
         char *buffer = malloc(tamanio_buffer + 1);
-
         fgets(buffer, tamanio_buffer, stdin);
 
         string_trim_right(&buffer);
@@ -141,6 +138,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
+            listar_tripulantes();
         }
         else
         {
@@ -286,7 +284,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
             if (!respuesta)
             {
                 log_error(logger, "No se puede crear la patota/tripulanes");
-                return;
+                //return;
             }
 
             log_info(logger, " Empezando a crear los  tripulanes...");
@@ -307,60 +305,6 @@ void parsear_mensaje(op_code operacion, char **tokens)
     default:
         break;
     }
-}
-
-// void ejecutar_operacion(Tripulante *tripulante)
-// {
-//new
-/*
-    Estado inicial: bloqueado
-    alistate();
-    
-    ejecutar(){
-        Código de ejecutar
-        switch(siguiente_transicion){
-            case 1: 
-                bloqueate();
-                break;
-            case 2: 
-                finalizate();
-                break;
-            case 3: 
-                alistate();
-                break;
-        }
-        //sleep(1);
-    };
-
-    bloqueate(){
-        Código de bloqueo
-        alistate();
-    }
-    
-    alistate(){
-        Código de alistate
-        switch(siguiente_transicion){
-            case 1: 
-                ejecutar();
-                break;
-        }
-    }
-    //finish*/
-// }
-
-int obtener_cantidad_argumentos(char **tokens)
-{
-
-    int i = 1;
-    int cantidad = 0;
-
-    while (*(tokens + i) != NULL)
-    {
-        cantidad++;
-        i++;
-    }
-
-    return cantidad;
 }
 
 // deberia ir a la shared ?
@@ -430,5 +374,16 @@ void planificar()
     else
     {
         logger_info("La planificación está desactivada");
+    }
+}
+
+void listar_tripulantes(){
+    char* format = "%d/%m/%y %H:%M:%S";
+    char* timestamp = temporal_get_string_time(format);
+    printf("Estado de la nave: %s\n", timestamp);
+    
+    for(int c=0; c<list_size(lista_tripulantes); c++){
+        Tripulante* tripulante = list_get(lista_tripulantes, c);
+        printf("Tripulante: %d    Patota: %d    Status: %s\n", tripulante->id, tripulante->patota_id, get_status_string(tripulante->status));
     }
 }

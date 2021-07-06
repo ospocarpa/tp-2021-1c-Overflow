@@ -113,13 +113,9 @@ char *get_status_string(status_tripulante status)
 
 t_list *get_tripulantes_all()
 {
-    //Retorna todos los tripulantes del sistema
-    // opcines retorne una lista global        //agregado
-    //
-    t_list *tripulantes = list_create();
+    t_list *tripulantes = lista_tripulantes;
     return tripulantes;
 }
-//agregado funcion
 
 Tripulante *tripulante_segun_id(int id)
 {
@@ -131,7 +127,23 @@ Tripulante *tripulante_segun_id(int id)
     return (Tripulante *)list_find(get_tripulantes_all(), &mismo_id);
 }
 //lista_tripulante= get
+
 int existe_tripulante(int id)
 {
     return tripulante_segun_id(id) == NULL ? false : true;
+}
+
+int obtener_cantidad_argumentos(char **tokens)
+{
+
+    int i = 1;
+    int cantidad = 0;
+
+    while (*(tokens + i) != NULL)
+    {
+        cantidad++;
+        i++;
+    }
+
+    return cantidad;
 }
