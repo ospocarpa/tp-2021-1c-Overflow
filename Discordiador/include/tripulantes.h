@@ -28,9 +28,14 @@ extern sem_t grado_multiprocesamiento;
 //extern t_list *lista_NEW;
 extern t_list *lista_tripulantes; //Dentro van a estar los tripulantes en estado READY/EXEC/BLOCKED
 extern t_list *lista_READY;
+extern t_list *lista_BLOCKIO;
+extern t_list *lista_EXEC;
+extern t_list *lista_BLOCKEMERGENCIA;
 extern t_list *lista_EXIT;
 
 extern sem_t activados;
+
+bool hay_sabotaje;
 
 void crearHilosTripulantes(Patota *);
 void leerConfighilo_tripulante(Tripulante *);

@@ -12,19 +12,19 @@ void iniciar_servidor_main()
     pthread_detach(threadConsola);
     int cliente_fd;
 
-    // while (1)
-    // {
+    while (1)
+    {
 
-    //     cliente_fd = esperar_cliente(server_fd);
+        cliente_fd = esperar_cliente(server_fd);
 
-    //     pthread_t threadEscucha;
-    //     // pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
-    //     pthread_detach(threadEscucha); //corregir esto
-    //     //mandar a este hilo a ejecutar las accione pertinentes
-    //     //consola debe ser mas de mostrar mensajes
-    // }
+        pthread_t threadEscucha;
+        pthread_create(&threadEscucha, NULL, (void *)ejecutar_operacion, cliente_fd);
+        pthread_detach(threadEscucha); //corregir esto
+        //mandar a este hilo a ejecutar las accione pertinentes
+        //consola debe ser mas de mostrar mensajes
+    }
 
-    //run_tests();
+    run_tests();
 }
 
 void ejecutar_operacion(int cliente_fd)

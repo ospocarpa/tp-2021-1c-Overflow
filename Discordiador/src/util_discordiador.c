@@ -35,6 +35,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         tripulante->posicion->posx = 0;
         tripulante->posicion->posy = 0;
         tripulante->patota_id = numeroPatota;
+        tripulante->rafagas_consumidas = 0;
         //se inicializan los semaforos de los tripulantes
         pthread_mutex_init(&tripulante->activo, 0);
         pthread_mutex_init(&tripulante->seleccionado, 0);
@@ -58,7 +59,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
 
     //Falta mapeo de tareas para patota
     //list_clean(posiciones_lista);
-    list_destroy(posiciones_lista);
+    //list_destroy(posiciones_lista);
 
     liberar_puntero_doble(posiciones_string);
     return patota_new;

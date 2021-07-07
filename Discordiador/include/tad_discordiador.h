@@ -29,6 +29,7 @@ typedef struct
     //Tarea *tarea;
     t_info_tarea *tarea;
     int patota_id;
+    int rafagas_consumidas;
     pthread_mutex_t activo; //mutex o binario ?? implementar binario
                             //desabilitado por defecto
 

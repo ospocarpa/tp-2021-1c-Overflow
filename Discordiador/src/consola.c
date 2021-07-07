@@ -342,11 +342,11 @@ void detener()
     if (planificacion_activa)
     {
         planificacion_activa = false;
-        logger_info("[Planificacion detenida]");
+        log_info(logger, "[Planificacion detenida]");
     }
     else
     {
-        logger_info("[La planificacion ya está desactivada]");
+        log_info(logger, "[La planificacion ya está desactivada]");
     }
 }
 
@@ -355,12 +355,12 @@ void activar_planificacion()
     if (!planificacion_activa)
     {
         planificacion_activa = true;
-        logger_info("[Planificacion activada]");
+        log_info(logger, "[Planificacion activada]");
         planificar();
     }
     else
     {
-        logger_info("[La planificacion ya está activada]");
+        log_info(logger, "[La planificacion ya está activada]");
     }
 }
 void planificar()
@@ -377,13 +377,15 @@ void planificar()
     }
 }
 
-void listar_tripulantes(){
-    char* format = "%d/%m/%y %H:%M:%S";
-    char* timestamp = temporal_get_string_time(format);
+void listar_tripulantes()
+{
+    char *format = "%d/%m/%y %H:%M:%S";
+    char *timestamp = temporal_get_string_time(format);
     printf("Estado de la nave: %s\n", timestamp);
-    
-    for(int c=0; c<list_size(lista_tripulantes); c++){
-        Tripulante* tripulante = list_get(lista_tripulantes, c);
+
+    for (int c = 0; c < list_size(lista_tripulantes); c++)
+    {
+        Tripulante *tripulante = list_get(lista_tripulantes, c);
         printf("Tripulante: %d    Patota: %d    Status: %s\n", tripulante->id, tripulante->patota_id, get_status_string(tripulante->status));
     }
 }
