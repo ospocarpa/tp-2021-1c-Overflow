@@ -290,7 +290,7 @@ void validar_cargar_informacion_TCB_a_MP(){
     tcb.prox_tarea= 0;
     tcb.puntero_pcb=1;
 
-    iniciar_memoria_principal(sizeof(t_TCB));
+    iniciar_memoria_principal(2048);
     cargar_informacion_TCB_a_MP(tcb,0);
     tcb_res = leer_info_TCB(0);
     liberar_memoria_principal();
@@ -315,7 +315,7 @@ void validar_cargar_informacion_PCB_a_MP(){
     pcb.pid = 0;
     pcb.tareas=1;
 
-    iniciar_memoria_principal(sizeof(t_PCB));
+    iniciar_memoria_principal(1024);
 
     cargar_informacion_PCB_a_MP(pcb,0);
     pcb_res = leer_info_PCB(0);

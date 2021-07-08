@@ -19,7 +19,10 @@ void iniciar_memoria_principal(int tam_memoria){
 }
 
 void liberar_memoria_principal(){
+
     free(memoria_principal);
+    memoria_principal = NULL;
+
 }
 
 void agregar_hueco(int base, int desplazamiento){
@@ -118,9 +121,9 @@ t_PCB leer_info_PCB(int base){
 
     t_PCB  pcb;
     int offset =base;
-    memcpy(pcb.pid,memoria_principal+offset,sizeof(uint32_t));
+    memcpy(&pcb.pid,memoria_principal+offset,sizeof(uint32_t));
     offset += sizeof(uint32_t);
-    memcpy(pcb.tareas,memoria_principal+offset,sizeof(uint32_t));
+    memcpy(&pcb.tareas,memoria_principal+offset,sizeof(uint32_t));
 
     return pcb;
 
@@ -131,17 +134,22 @@ t_TCB leer_info_TCB(int base){
     t_TCB  tcb;
     
     int offset =base;
-    memcpy(tcb.tid, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.tid, memoria_principal + offset, sizeof(uint32_t));
+    printf("1\n");
     offset +=sizeof(uint32_t) ;
-    memcpy(tcb.estado, memoria_principal + offset, sizeof(char));
+    memcpy(&tcb.estado, memoria_principal + offset, sizeof(char));
+    printf("2\n");
     offset += sizeof(char);
-    memcpy(tcb.posx, memoria_principal + offset, sizeof(int));
+    memcpy(&tcb.posx, memoria_principal + offset, sizeof(int));
+    printf("3\n");
     offset +=sizeof(int);
-    memcpy(tcb.posy, memoria_principal + offset, sizeof(int));
+    memcpy(&tcb.posy, memoria_principal + offset, sizeof(int));
+    printf("4\n");
     offset +=sizeof(int);
-    memcpy(tcb.prox_tarea, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.prox_tarea, memoria_principal + offset, sizeof(uint32_t));
+    printf("5\n");
     offset +=sizeof(uint32_t);
-    memcpy(tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
 
     return tcb;
 
