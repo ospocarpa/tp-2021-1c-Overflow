@@ -7,7 +7,9 @@
 #include<unistd.h>
 #include<netdb.h>
 #include<commons/config.h>
+#include <commons/collections/list.h>
 #include <string.h>
+#include "TAD.h"
 
 typedef enum{
     FIFO,
@@ -34,7 +36,7 @@ typedef struct {
     int PUERTO;
     char* PUNTO_MONTAJE;
     int TIEMPO_SINCRONIZACION;
-    char* POSICIONES_SABOTAJE;
+    t_list* POSICIONES_SABOTAJE;
     int BLOCK_SIZE;
     int BLOCKS;
     char* IP_DISCORDIADOR;

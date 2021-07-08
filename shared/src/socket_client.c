@@ -33,8 +33,7 @@ void liberar_conexion(int socket_cliente)
 void sendMessage(t_package paquete, int socket_cliente)
 {
 	int bytes = 0;
-	void *a_enviar = malloc(sizeof(t_paquete));
-	a_enviar = serializar_paquete(paquete, &bytes);
+	void *a_enviar = serializar_paquete(paquete, &bytes);
 	send(socket_cliente, a_enviar, bytes, 0);
 	free(a_enviar);
 }
@@ -45,12 +44,12 @@ void sendMessage(t_package paquete, int socket_cliente)
 */
 void *serializar_paquete(t_package paquete, int *bytes)
 {
-	(*bytes) = paquete.tam_buffer + sizeof(int) + sizeof(uint32_t) + sizeof(bool);
-	void *a_enviar = malloc((*bytes));
+	(*bytes) = sizeof(op_code) + sizeof(uint32_t) + paquete.tam_buffer;
+	void * a_enviar = malloc((*bytes));
 	int desplazamiento = 0;
 
-	memcpy(a_enviar + desplazamiento, &(paquete.cod_operacion), sizeof(int));
-	desplazamiento += sizeof(int);
+	memcpy(a_enviar + desplazamiento, &(paquete.cod_operacion), sizeof(op_code));
+	desplazamiento+= sizeof(op_code);
 	memcpy(a_enviar + desplazamiento, &(paquete.tam_buffer), sizeof(uint32_t));
 	desplazamiento += sizeof(uint32_t);
 	memcpy(a_enviar + desplazamiento, paquete.buffer, paquete.tam_buffer);

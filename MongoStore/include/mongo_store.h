@@ -13,6 +13,8 @@
 #include "server.h"
 #include "controller.h"
 #include <signal.h>
+#include <commons/bitarray.h>
+#include <filesystem.h>
 
     void lectura_file();
 

@@ -4,7 +4,7 @@
 /* ******* DISCORDIADOR ******* */
 t_package ser_cod_iniciar_patota(t_iniciar_patota data)
 {
-    int tam_buffer = sizeof(int) * 3 + data.long_tareas + data.long_posicion;
+    int tam_buffer = sizeof(int) * 3 + data.long_tareas + data.long_posicion + sizeof(uint32_t)*2 ;
     t_package paquete;
     paquete.buffer = malloc(tam_buffer);
     paquete.cod_operacion = INICIAR_PATOTA;
@@ -24,8 +24,24 @@ t_package ser_cod_iniciar_patota(t_iniciar_patota data)
     offset+=sizeof(int);
 
     memcpy(paquete.buffer+offset, data.posiciones, data.long_posicion);
+    offset+= data.long_posicion;
+
+    memcpy(paquete.buffer+offset, &data.patota_id, sizeof(uint32_t));
+    offset+=sizeof(uint32_t);
+
+    memcpy(paquete.buffer+offset, &data.id_primer_tripulante, sizeof(uint32_t));
+    offset+=sizeof(uint32_t);
     
     return paquete;
+}
+
+bool des_res_iniciar_patota(t_package paquete)
+{
+    bool res;
+
+    memcpy(&res, paquete.buffer, sizeof(bool));
+
+    return res;
 }
 
 /* ******* MI RAM HQ ******* */
@@ -55,7 +71,26 @@ t_iniciar_patota des_cod_iniciar_patota(t_package paquete)
     paquete.buffer += size_posiciones;
     data.posiciones[size_posiciones] = '\0';
 
+    memcpy(&data.patota_id, paquete.buffer, sizeof(uint32_t));
+    paquete.buffer += sizeof(uint32_t);
+
+    memcpy(&data.id_primer_tripulante, paquete.buffer, sizeof(uint32_t));
+    paquete.buffer += sizeof(uint32_t);
+
     return data;
+}
+
+t_package ser_res_iniciar_patota(bool data)
+{
+    t_package paquete;
+    int tam_buffer = sizeof(bool);
+    paquete.buffer = malloc(tam_buffer);
+    paquete.tam_buffer = tam_buffer;
+    paquete.cod_operacion = INICIAR_PATOTA;
+
+    memcpy(paquete.buffer, &data, sizeof(bool));
+
+    return paquete;
 }
 
 t_list * convertir_a_list_posiciones(char * posiciones_string){

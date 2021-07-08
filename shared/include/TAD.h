@@ -5,6 +5,7 @@
 #include <commons/log.h>
 #include <semaphore.h>
 
+
 	typedef enum
 	{
 		SALIR = 0, //SALIDA
@@ -19,6 +20,15 @@
 		INICIAR_PLANIFICACION = 9,
 		PAUSAR_PLANIFICACION = 10,
 		OBTENER_BITACORA = 11,
+    INFORMAR_ESTADO_TRIPULANTE = 12,
+		CREAR_BITACORA = 13,
+		CREAR_RECURSO = 14,
+		GET_BITACORA = 15,
+		GET_RECURSO = 16,
+		UPDATE_BITACORA = 17,
+		AGREGAR_RECURSO = 18,
+		RETIRAR_RECURSO = 19,
+		ELIMINAR_RECURSO = 20
 	} op_code;
 
 	typedef enum
@@ -84,6 +94,8 @@
 		int long_tareas;
 		int long_posicion;
 		char * posiciones;
+		uint32_t patota_id;
+		uint32_t id_primer_tripulante;
 	}t_iniciar_patota;
 
 	typedef struct 
@@ -124,30 +136,73 @@
 	}__attribute__((packed))
 	t_informar_posicion_tripulante;
 
-//---------------------- Comunicacion con Mongo -> Discordiador ----------------------
+  // Usado para crear un archivo (recurso o bitácora)
+	typedef struct{
+		char caracter;				//Si es de tipo recurso tendrá su valor definido. Para la bitácorda
+		uint32_t long_nombre_file;
+		char* nombre_file;
+	} t_create_file;
 
-// Sabotaje
-typedef struct
-{
-	int mensaje_length;
-	char *mensaje;
+  typedef struct{
+		uint32_t patota_id;
+		uint32_t tripulante_id;
+		status_tripulante status;
+	}__attribute__((packed))
+	t_estado_tripulante;
 
-	// bool = false ---> para ver el mensaje que se envia
-	// puede servir para avisar cuando empezo y termino en todo caso
-	// Pos
-	// La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ?
-	// 1 sabotaje de superbloque
-  // 2 sabotaje en files
-	// 3 Sabotaje en bloques
-	Posicion *posicion;
-} Sabotaje;
+  // Sabotaje
+  typedef struct
+  {
+    int mensaje_length;
+    char *mensaje;
 
-// Son un struct cada tipo de sabotaje??
-//
-// o los tomo todo dentro del mismo ver si tiene la misma logica
+    // bool = false ---> para ver el mensaje que se envia
+    // puede servir para avisar cuando empezo y termino en todo caso
+    // Pos
+    // La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ?
+    // 1 sabotaje de superbloque
+    // 2 sabotaje en files
+    // 3 Sabotaje en bloques
+    Posicion *posicion;
+  } Sabotaje;
 
-// typedef struct{
+	// Usado para obtener un archivo y modificar una bitácora. El contenido será distinto si el tipo es de bitácora o recurso
+	typedef struct{
+		uint32_t long_contenido;
+		char* contenido;
+		uint32_t long_nombre_file;
+		char* nombre_file;
+	} t_file;
 
-// }Fin_fsck;
+	typedef struct{
+		uint32_t cantidad;
+		char caracter;
+		uint32_t long_nombre_file;
+		char* nombre_file;
+	} t_operation_file_recurso;
+	//---------------------- Comunicacion con Mongo -> Discordiador ----------------------
+
+	// Sabotaje
+	typedef struct
+	{
+		int mensaje_length;
+		char *mensaje;
+
+		// bool = false ---> para ver el mensaje que se envia
+		// puede servir para avisar cuando empezo y termino en todo caso
+		// Pos
+		// La pregunta sucede ambos sabotajes al mismo tiempo o se tiene que saber cual de los dos se ejecutan ?
+		// 1 sabotaje de superbloque
+	// 2 sabotaje en files
+		// 3 Sabotaje en bloques
+		Posicion *posicion;
+	} t_sabotaje;
+	// Son un struct cada tipo de sabotaje??
+	//
+	// o los tomo todo dentro del mismo ver si tiene la misma logica
+
+	// typedef struct{
+
+	// }Fin_fsck;
 
 #endif /* TAD_H_ */
