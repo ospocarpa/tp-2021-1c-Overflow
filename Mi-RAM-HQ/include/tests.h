@@ -9,6 +9,7 @@
 #include "sd_informar_tarea_tripulante.h"
 #include "sd_informar_posicion_tripulante.h"
 #include "sd_informar_estado.h"
+#include "memoria.h"
 
 int run_tests();
 
