@@ -9,6 +9,8 @@
 
 void iniciar_memoria_principal(int tam_memoria);
 void liberar_memoria_principal();
+void liberar_tabla_huecos();
+void set_algoritmo_ubicacion(char * algoritmo);
 
 
 void cargar_informacion_PCB_a_MP(t_PCB pcb,int base);
