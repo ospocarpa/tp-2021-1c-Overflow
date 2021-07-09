@@ -17,8 +17,11 @@
 #include "../include/socket_client.h"
 #include "config_utils.h"
 #include "util_discordiador.h"
+#include <commons/temporal.h>
+
 extern int conexion_mi_ram;
 extern bool planificacion_activa;
+extern t_list *lista_tripulantes;
 
 extern t_config_discordiador *config;
 void mostrar_consola();
@@ -32,5 +35,9 @@ int guardar_contenido_archivo(const char *, char **);
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 int existe_archivo(const char *); // en la shared ?
 void liberar_puntero_doble(char **);
+
+void listar_tripulantes();
+
+t_log *logger;
 
 #endif

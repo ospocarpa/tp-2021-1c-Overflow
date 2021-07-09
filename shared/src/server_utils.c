@@ -71,11 +71,22 @@ t_package recibir_mensaje(int socket_cliente)
 {
 	t_package paquete;
 
-	recv(socket_cliente, &(paquete.cod_operacion), sizeof(uint32_t), MSG_WAITALL);
-	recv(socket_cliente, &(paquete.tam_buffer), sizeof(uint32_t), MSG_WAITALL);
+	int state = 0;
+	state = recv(socket_cliente, &(paquete.cod_operacion), sizeof(op_code), MSG_WAITALL);
+	if(state == 0){
+		paquete.cod_operacion = 0;
+		return paquete;
+	}
+	//printf("State cod operacion: %d\n", state);
+	state = recv(socket_cliente, &(paquete.tam_buffer), sizeof(int), MSG_WAITALL);
+	//printf("State tam buffer: %d\n", state);
 	paquete.buffer= malloc(paquete.tam_buffer);
-	recv(socket_cliente, paquete.buffer, paquete.tam_buffer, MSG_WAITALL);
+	state = recv(socket_cliente, paquete.buffer, paquete.tam_buffer, MSG_WAITALL);
+	//printf("State buffer: %d\n", state);
 
+	//printf("Cod operacion: %d\n", paquete.cod_operacion);
+	//printf("Buffer: %d\n", paquete.tam_buffer);
+	
 	// Primero recibimos el codigo de operacion
 	/*if(recv(socket_cliente, &(paquete->codigo_operacion), sizeof(int), MSG_WAITALL) == -1)
 		paquete->codigo_operacion = -1;*/
@@ -90,7 +101,7 @@ t_package recibir_mensaje(int socket_cliente)
 }
 
 //podemos usar la lista de valores para poder hablar del for y de como recorrer la lista
-t_list* recibir_paquete(int socket_cliente)
+t_list *recibir_paquete(int socket_cliente)
 {
 	int size;
 	int desplazamiento = 0;
@@ -98,8 +109,8 @@ t_list* recibir_paquete(int socket_cliente)
 	t_list *valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size, socket_cliente,NULL);
-	while(desplazamiento < size)
+	buffer = recibir_buffer(&size, socket_cliente, NULL);
+	while (desplazamiento < size)
 	{
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento += sizeof(int);

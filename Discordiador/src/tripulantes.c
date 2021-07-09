@@ -45,73 +45,162 @@ void ejecucion_dispatcher()
     //tripulantes.listos a tripulanes.exec
 }
 //
-Tarea *pedirTarea(Tripulante *tripulante)
+
+void pedirTarea(Tripulante *tripulante, int socket_cliente)
 {
-    //Despues tendra que llamar a miram?
-    return NULL;
+    // Completa esta estructura para pedir la tarea a mi_ram
+    t_short_info_tripulante info_tripulante;
+    info_tripulante.patota_id = tripulante->patota_id;
+    info_tripulante.tripulante_id = tripulante->id;
+
+    //Se empaqueta y se envia el mensaje
+    t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
+    sendMessage(paquete, socket_cliente);
+    //Se espara una respuesta
+    paquete = recibir_mensaje(socket_cliente);
+    //En tarea se guarda la proxima tarea a ejecutar
+    t_info_tarea tarea;
+    tarea = des_res_informacion_tarea_tripulante(paquete);
+    tripulante->tarea = &tarea;
+
+    return;
 }
 void hilo_tripulante(Tripulante *tripulante)
 {
     pthread_mutex_lock(&MXTRIPULANTE);
     list_add(lista_tripulantes, tripulante);
-
-    //Tripulante *otroTripulante = list_get(lista_tripulantes, (tripulante->id) - 1);
     pthread_mutex_unlock(&MXTRIPULANTE);
-    //usar estructura patota id
-    //devolver un metodo tarea por default(por ahora)
-    //getTarea(Tar)
-    //printf("Posicione %d esta el tripulante%d\n", (tripulante->id) - 1, otroTripulante->id);
-    printf("Hilo tripulante:%d\n", tripulante->id);
+
+    //tripulante se conecta a mi ram
+
+    int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+
+    if (socket_cliente < 0)
+    {
+        log_error(logger, "Conexion Mi-RAM fallida");
+        liberar_conexion(socket_cliente);
+        // return EXIT_FAILURE; //despues descomitear
+    }
+    else
+    {
+        log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
+    }
+    //falta conexion con mongo-Store
+    _Bool mismo_id(void *param)
+    {
+        int *un_id = (int *)param;
+        return tripulante->id == *un_id;
+    }
+    // Cuando quiero saber el valor de un semaforo
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
     printf("multiTarea:%d\n", sval); */
-
+    //
     _Bool finalizo_tarea = false; //chequear
-                                  //mutex_init de los semaforos esta en la creacion de los tripulantes(mapToPatota)
+
     pthread_mutex_lock(&tripulante->activo);
+
     while (1)
     {
         if (!finalizo_tarea)
         {
-            Tarea *tarea = pedirTarea(tripulante); //agregado
+            tripulante->rafagas_consumidas = 0;
+            pedirTarea(tripulante, socket_cliente);
+
+            //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
+            //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
+            //
+
             if (tripulante->status == NEW)
             {
 
-                // 1era iter
+                // Solo en la 1era iteraccion entraria a est if
+                //Se agrega a la lista de ready
+                pthread_mutex_lock(&MXTRIPULANTE);
+                list_add(lista_READY, tripulante);
+                pthread_mutex_unlock(&MXTRIPULANTE);
+                //
+
                 tripulante->status = READY;
             }
+
             if (tripulante->tarea == NULL)
-            { //linea 77 rompe
-                //list_remove(lista_tripulantes, tripulante->id - 1);
+            {
+
                 list_add(lista_EXIT, tripulante);
-                printf("Hilo tripulante :%d bye bye\n", tripulante->id);
+                printf("Tripulante %d Bye Bye\n", tripulante->id);
+                //MI ram elimina a este tripulante de su memoria
+                //falta removerlo de la lista tripulante
+
+                Tripulante *tripulante1 = list_remove_by_condition(lista_tripulantes, mismo_id);
+                Tripulante *tripulante2 = list_remove_by_condition(lista_READY, mismo_id);
+                //list_remove_by_condition(lista_READY)
+                free(tripulante);
+                //Comprobacion :despues borrar
+                printf("id del tripulane removido:%d-%d\n", tripulante1->id, tripulante2->id);
+
                 break;
             }
-
-            sem_post(&listos); //listos++
+            //Para que el dispatcher sepa que estamos listos
+            sem_post(&listos);
+            //Esperamos ser seleccionados
             pthread_mutex_lock(&tripulante->seleccionado);
 
-            //   ir_a_la_posicion(tripulante->tarea->posicion->posx,tripulante->tarea->posicion->posy);
+            sem_post(&activados); // cantidad tripulantes:-EXEC-I/O
+            list_add(lista_EXEC, tripulante);
+            //Cuando hay sabotaje
+
+            hay_sabotaje = true; //despues borrar linea
+            if (hay_sabotaje)
+            {
+                chequear_activados();
+                pthread_mutex_lock(&tripulante->activo);
+            }
+
+            mover_tripulante_a_tarea(tripulante, socket_cliente);
+
             sem_post(&grado_multiprocesamiento);
 
-            //   if(tripulante->tarea.bloqueado == true) {
-            //      bloqueate();
+            if (tripulante->tarea->tarea != OTRA_TAREA)
+            {
+                printf("tripulante %d bloqueate\n", tripulante->id);
+                sleep(config->RETARDO_CICLO_CPU);
+                list_add(lista_BLOCKIO, tripulante);
+                Tripulante *tripulante_bloq = list_remove_by_condition(lista_READY, mismo_id);
+                printf("id del tripulane bloqueado:%d\n", tripulante_bloq->id);
+                //Consultar
+                //nos falta logica de como ejecutan los tripulantes bloqueados ??
+                //bloqueate
+                if (hay_sabotaje)
+                {
+                    chequear_activados();
+                    pthread_mutex_lock(&tripulante->activo);
+                }
+            }
+            while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)
+            {
+                if (hay_sabotaje)
+                {
+                    chequear_activados();
+                    pthread_mutex_lock(&tripulante->activo);
+                }
+                tripulante->rafagas_consumidas++;
+                sleep(config->RETARDO_CICLO_CPU);
+            }
+            //Falta que el tripulante consuma su rafa de CPU
+            //consulta de agregar ese consumo (si es bloqueado por sabataje)
+            // persistirlo
         }
     }
 
-    //tripulane pasa a cola de exit ;
-    /// -------------------------------------------------
-    //pthread_mutex_lock(&MXTRIPULANTE);
-
-    /*  printf("hilo:%d\n", process_get_thread_id());
-    pthread_mutex_unlock(&MXTRIPULANTE);
- */
+    liberar_conexion(socket_cliente);
     return;
 }
 
 /*  
         1 tiene q llamar a mi_ram  para pedir siguiente tarea
           nota: si tiene tarea pasa a estado listo
+          //TODO
           2 creamos semaforo planificacion "PAUSAR_PLANIFICACION"
           3 Cuando se pause la planificacion ,a todos los semaforos
           de los tripulantes se bloquea 
@@ -158,40 +247,164 @@ void crearHilosTripulantes(Patota *una_patota)
     }
 }
 
+void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
+{
+    int posicion_tarea_x = 2; //tripulante->tarea->posicion.posx;
+    int posicion_tarea_y = 3; //tripulante->tarea->posicion.posy;
+    //Parece que se pasa mal la tarea o algo, pero harcodeando la posicion de la tarea funca bien.
+    printf("TAREA POSICION X : %d POSICION Y: %d\n", posicion_tarea_x, posicion_tarea_y); //BORRAR
 
-void ir_a_la_posicion(Tripulante* tripulante, Posicion posicion_tarea){
-
-    int rafaga; // en primera instancia, si es RR pasaria el valor y en vez de while usaria un for 
-
-    while(tripulante->posicion->posx != posicion_tarea.posx)
+    int rafaga = 1;
+    int retardo_cpu = config->RETARDO_CICLO_CPU;
+    if (config->ALGORITMO == RR)
     {
-        /*if(esta_pausado){
-            pthread_mutex_lock(tripulante->activo);
+        rafaga = config->QUANTUM;
+    }
+    int ciclos_consumidos = 0;
+
+    while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
+    {
+        if (planificacion_activa)
+        {
+            pthread_mutex_lock(&tripulante->activo);
         }
-        */
-       
-        if (tripulante->posicion->posx < posicion_tarea.posx )
+        //Mueve uno en X
+        if (posicion_tarea_x > tripulante->posicion->posx)
         {
             tripulante->posicion->posx++;
         }
-        else{
+        else if (posicion_tarea_x < tripulante->posicion->posx)
+        {
             tripulante->posicion->posx--;
         }
+        //prueba
+        printf("Tripulante: %d  posx: %d, posy: %d, ciclos consumidos: %d,tareaPosX: %d , tareaPosY: %d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy, ciclos_consumidos, tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
+        //
+        if (config->ALGORITMO == RR)
+        {
+            ciclos_consumidos++;
+        }
+        sleep(retardo_cpu);
+        enviar_posicion_mi_ram(tripulante, socket);
     }
 
-    while (tripulante->posicion->posy != posicion_tarea.posy)
+    while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
-        /*if(esta_pausado){
-            pthread_mutex_lock(tripulante->activo);
+        if (planificacion_activa)
+        {
+            pthread_mutex_lock(&tripulante->activo);
         }
-        */
-        if (tripulante->posicion->posy < posicion_tarea.posy )
+        //Mueve uno en Y
+        if (posicion_tarea_y > tripulante->posicion->posy)
         {
             tripulante->posicion->posy++;
         }
-        else{
+        else if (posicion_tarea_y < tripulante->posicion->posy)
+        {
             tripulante->posicion->posy--;
         }
+        //prueba
+        printf("Tripulante: %d  posx: %d, posy: %d, ciclos consumidos: %d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy, ciclos_consumidos);
+        //
+        if (config->ALGORITMO == RR)
+        {
+            ciclos_consumidos++;
+        }
+        sleep(retardo_cpu);
+        enviar_posicion_mi_ram(tripulante, socket);
     }
+    printf("Tripulante %d POsicion final %d-%d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy);
+
+    //Prueba en cosola en fifo:OK
+    // mi ram nos envia una tarea con pos 3-4
+    //iniciar_patota 5 ./cfg/tareasPatota1.txt 1|1 2|2 3|3 4|4 5|5
+}
+
+void enviar_posicion_mi_ram(Tripulante *tripulante, int socket)
+{
+    t_informar_posicion_tripulante info_tripulante;
+    info_tripulante.patota_id = tripulante->patota_id;
+    info_tripulante.tripulante_id = tripulante->id;
+    info_tripulante.posicion.posx = tripulante->posicion->posx;
+    info_tripulante.posicion.posy = tripulante->posicion->posy;
+
+    t_package paquete = ser_res_informar_posicion_tripulante(info_tripulante);
+    sendMessage(paquete, socket);
+}
+void chequear_activados()
+{
+    sem_wait(&activados);
+    int cantidad_activos;
+    sem_getvalue(&activados, &cantidad_activos);
+
+    if (cantidad_activos == 0)
+    {
+        inicio_sabotaje();
+    }
+}
+//se pasa por parametro un sabotaje ?
+void inicio_sabotaje()
+{
+    bool comparador(void *tripulante1, void *tripulante2)
+    {
+        Tripulante *tripulante1_analizar = (Tripulante *)tripulante1;
+        Tripulante *tripulante2_analizar = (Tripulante *)tripulante2;
+
+        return tripulante1_analizar->id < tripulante2_analizar->id;
+    }
+
+    t_list *tripulantes = get_tripulantes_all();
+
+    list_sort(tripulantes, comparador);
+    bool estas_exec(void *_tripulante)
+    {
+
+        Tripulante *tripulante = (Tripulante *)_tripulante;
+
+        return tripulante->status == EXEC;
+    }
+
+    t_list *tripulantes_exec = list_filter(tripulantes, estas_exec);
+
+    list_add_all(lista_BLOCKEMERGENCIA, tripulantes_exec);
+    while (list_is_empty(tripulantes_exec))
+    {
+        Tripulante *un_tripulante = list_remove(tripulantes_exec, 0);
+        un_tripulante->status = BLOCKED;
+    }
+    //
+    bool estas_ready(void *_tripulante)
+    {
+        Tripulante *tripulante = (Tripulante *)_tripulante;
+
+        return tripulante->status == READY;
+    }
+
+    t_list *tripulantes_ready = list_filter(tripulantes, estas_ready);
+
+    list_add_all(lista_BLOCKEMERGENCIA, tripulantes_ready);
+    while (list_is_empty(tripulantes_ready))
+    {
+        Tripulante *un_tripulante = list_remove(tripulantes_ready, 0);
+        un_tripulante->status = BLOCKED;
+    }
+    //Tripulante *tripulante_elegido = buscar_el_mas_cercano();
+
+    //ir_a_la_posicion_sabotaje(sabotaje) //pasa a exec
+    //invocar_fsck()
+    desbloquear_tripulantes();
+    printf("soy un sabotaje");
+}
+/* Tripulante* buscar_el_mas_cercano()
+{
     
+} */
+void desbloquear_tripulantes()
+{
+    while (list_is_empty(lista_BLOCKEMERGENCIA))
+    {
+        Tripulante *un_tripulante = list_remove(lista_BLOCKEMERGENCIA, 0);
+        un_tripulante->status = READY;
+        list_add(lista_READY, un_tripulante);
+    }
 }

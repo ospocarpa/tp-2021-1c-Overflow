@@ -14,6 +14,10 @@
 #include <pthread.h>
 #include <semaphore.h>
 #include <commons/process.h>
+#include "../include/TAD.h"
+#include "../include/sd_informar_tarea_tripulante.h"    /*  */
+#include "../include/sd_informar_posicion_tripulante.h" /*  */
+#include "../include/server_utils.h"
 
 extern int numeroTripulante;
 extern int numeroPatota;
@@ -23,12 +27,20 @@ extern sem_t listos;
 extern sem_t grado_multiprocesamiento;
 //extern t_list *lista_NEW;
 extern t_list *lista_tripulantes; //Dentro van a estar los tripulantes en estado READY/EXEC/BLOCKED
+extern t_list *lista_READY;
+extern t_list *lista_BLOCKIO;
+extern t_list *lista_EXEC;
+extern t_list *lista_BLOCKEMERGENCIA;
 extern t_list *lista_EXIT;
 
+extern sem_t activados;
+
+bool hay_sabotaje;
+
 void crearHilosTripulantes(Patota *);
-void hilo_tripulante(Tripulante *);
+void leerConfighilo_tripulante(Tripulante *);
 
 void cargarTripulante(t_iniciar_patota *, char **, int);
-void ir_a_la_posicion(Tripulante*, Posicion);
+void mover_tripulante_a_tarea(Tripulante *, int);
 
 #endif

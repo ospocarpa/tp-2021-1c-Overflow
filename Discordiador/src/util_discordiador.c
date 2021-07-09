@@ -29,11 +29,13 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         Tripulante *tripulante = malloc(sizeof(Tripulante));
         tripulante->id = numeroTripulante;
         tripulante->status = NEW;
+        tripulante->tarea = malloc(sizeof(t_info_tarea));
         tripulante->tarea = NULL;
         tripulante->posicion = malloc(sizeof(Posicion));
         tripulante->posicion->posx = 0;
         tripulante->posicion->posy = 0;
         tripulante->patota_id = numeroPatota;
+        tripulante->rafagas_consumidas = 0;
         //se inicializan los semaforos de los tripulantes
         pthread_mutex_init(&tripulante->activo, 0);
         pthread_mutex_init(&tripulante->seleccionado, 0);
@@ -43,8 +45,9 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
     int posx = 0;
     int posy = 0;
 
-    for (int c = 0; c < list_size(posiciones_lista) && list_is_empty(posiciones_lista); c++)
+    for (int c = 0; c < list_size(posiciones_lista) && !list_is_empty(posiciones_lista); c++)
     {
+
         Tripulante *tripulante = list_get(patota_new->tripulantes, c);
         char *posicion_string = list_get(posiciones_lista, c);
         char **coordenadas = string_split(posicion_string, "|");
@@ -56,7 +59,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
 
     //Falta mapeo de tareas para patota
     //list_clean(posiciones_lista);
-    list_destroy(posiciones_lista);
+    //list_destroy(posiciones_lista);
 
     liberar_puntero_doble(posiciones_string);
     return patota_new;
@@ -111,13 +114,10 @@ char *get_status_string(status_tripulante status)
 
 t_list *get_tripulantes_all()
 {
-    //Retorna todos los tripulantes del sistema
-    // opcines retorne una lista global        //agregado
-    //
-    t_list *tripulantes = list_create();
+    t_list *tripulantes = lista_tripulantes;
     return tripulantes;
 }
-//agregado funcion
+
 Tripulante *tripulante_segun_id(int id)
 {
     _Bool mismo_id(void *param)
@@ -128,7 +128,23 @@ Tripulante *tripulante_segun_id(int id)
     return (Tripulante *)list_find(get_tripulantes_all(), &mismo_id);
 }
 //lista_tripulante= get
+
 int existe_tripulante(int id)
 {
     return tripulante_segun_id(id) == NULL ? false : true;
+}
+
+int obtener_cantidad_argumentos(char **tokens)
+{
+
+    int i = 1;
+    int cantidad = 0;
+
+    while (*(tokens + i) != NULL)
+    {
+        cantidad++;
+        i++;
+    }
+
+    return cantidad;
 }
