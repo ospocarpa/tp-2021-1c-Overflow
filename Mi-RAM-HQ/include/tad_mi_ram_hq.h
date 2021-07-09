@@ -28,4 +28,17 @@ typedef struct
     int desplazamiento;
 } t_hueco;
 
+typedef struct 
+{
+    uint32_t id;
+    int base;
+    int desplazamiento;
+}t_segmento;
+
+typedef struct 
+{
+    uint32_t pid;
+    t_list * segmentos;//lista de t_segmento
+}t_tabla_segmentos;
+
 #endif
