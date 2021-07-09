@@ -116,6 +116,10 @@ void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
     
 
 }
+void cargar_informacion_tareas_a_MP(char *tareas,int base){
+    memcpy(memoria_principal+base,tareas,strlen(tareas));
+
+}
 
 t_PCB leer_info_PCB(int base){
 
@@ -135,22 +139,25 @@ t_TCB leer_info_TCB(int base){
     
     int offset =base;
     memcpy(&tcb.tid, memoria_principal + offset, sizeof(uint32_t));
-    printf("1\n");
     offset +=sizeof(uint32_t) ;
     memcpy(&tcb.estado, memoria_principal + offset, sizeof(char));
-    printf("2\n");
     offset += sizeof(char);
     memcpy(&tcb.posx, memoria_principal + offset, sizeof(int));
-    printf("3\n");
     offset +=sizeof(int);
     memcpy(&tcb.posy, memoria_principal + offset, sizeof(int));
-    printf("4\n");
     offset +=sizeof(int);
     memcpy(&tcb.prox_tarea, memoria_principal + offset, sizeof(uint32_t));
-    printf("5\n");
     offset +=sizeof(uint32_t);
     memcpy(&tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
 
     return tcb;
 
+}
+
+char * leer_info_tareas(int base,int tam){
+    char * tareas= malloc(tam+1);
+    
+    memcpy(tareas,memoria_principal+base,tam);
+    tareas[tam] = '\0';
+    return tareas ;
 }

@@ -14,8 +14,10 @@ void liberar_memoria_principal();
 
 void cargar_informacion_PCB_a_MP(t_PCB pcb,int base);
 void cargar_informacion_TCB_a_MP(t_TCB tcb,int base);
+void cargar_informacion_tareas_a_MP(char *tareas,int base);
 
 t_PCB leer_info_PCB(int base);
 t_TCB leer_info_TCB(int base);
+char * leer_info_tareas(int base,int tam);
 
 #endif
