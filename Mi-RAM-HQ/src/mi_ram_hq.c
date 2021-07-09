@@ -13,7 +13,8 @@ int main(int argc, char **argv)
         logger_info("Iniciando módulo Mi-RAM-HQ");
 
         int puerto = get_puerto();
-
+        /*  char *ip = get_ip();
+        printf("ip :%s  puerto:%d\n", ip, puerto); */
         server_mi_ram_iniciar(puerto);
 
         // Libero el log y config al final

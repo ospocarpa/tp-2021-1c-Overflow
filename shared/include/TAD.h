@@ -5,7 +5,8 @@
 #include <commons/log.h>
 #include <semaphore.h>
 
-  typedef enum
+
+	typedef enum
 	{
 		SALIR = 0, //SALIDA
 		TAREA = 1,

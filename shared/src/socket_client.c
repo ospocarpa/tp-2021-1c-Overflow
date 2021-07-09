@@ -26,11 +26,12 @@ int crear_conexion(char *ip, int puerto)
 
 void liberar_conexion(int socket_cliente)
 {
+	printf("cerrando conexion\n");
 	close(socket_cliente);
 }
 
-
-void sendMessage(t_package paquete, int socket_cliente){
+void sendMessage(t_package paquete, int socket_cliente)
+{
 	int bytes = 0;
 	void *a_enviar = serializar_paquete(paquete, &bytes);
 	send(socket_cliente, a_enviar, bytes, 0);
@@ -41,7 +42,7 @@ void sendMessage(t_package paquete, int socket_cliente){
  * Recibe un paquete a serializar, y un puntero a un int en el que dejar
  * el tamaño del stream de bytes serializados que devuelve
 */
-void* serializar_paquete(t_package paquete, int *bytes)
+void *serializar_paquete(t_package paquete, int *bytes)
 {
 	(*bytes) = sizeof(op_code) + sizeof(uint32_t) + paquete.tam_buffer;
 	void * a_enviar = malloc((*bytes));
@@ -50,9 +51,9 @@ void* serializar_paquete(t_package paquete, int *bytes)
 	memcpy(a_enviar + desplazamiento, &(paquete.cod_operacion), sizeof(op_code));
 	desplazamiento+= sizeof(op_code);
 	memcpy(a_enviar + desplazamiento, &(paquete.tam_buffer), sizeof(uint32_t));
-	desplazamiento+= sizeof(uint32_t);
+	desplazamiento += sizeof(uint32_t);
 	memcpy(a_enviar + desplazamiento, paquete.buffer, paquete.tam_buffer);
-	desplazamiento+= paquete.tam_buffer;
+	desplazamiento += paquete.tam_buffer;
 
 	return a_enviar;
 }

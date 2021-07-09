@@ -26,14 +26,16 @@ typedef struct
     int id;
     status_tripulante status;
     Posicion *posicion;
-    Tarea *tarea;
+    //Tarea *tarea;
+    t_info_tarea *tarea;
     int patota_id;
+    int rafagas_consumidas;
     pthread_mutex_t activo; //mutex o binario ?? implementar binario
                             //desabilitado por defecto
 
     pthread_mutex_t seleccionado; //desahibiliado por defecto
                                   //habilitado por dispatcher
-    pthread_mutex_t sabotaje; 
+    pthread_mutex_t sabotaje;
 
 } Tripulante;
 

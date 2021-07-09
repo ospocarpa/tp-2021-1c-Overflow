@@ -101,7 +101,7 @@ t_package recibir_mensaje(int socket_cliente)
 }
 
 //podemos usar la lista de valores para poder hablar del for y de como recorrer la lista
-t_list* recibir_paquete(int socket_cliente)
+t_list *recibir_paquete(int socket_cliente)
 {
 	int size;
 	int desplazamiento = 0;
@@ -109,8 +109,8 @@ t_list* recibir_paquete(int socket_cliente)
 	t_list *valores = list_create();
 	int tamanio;
 
-	buffer = recibir_buffer(&size, socket_cliente,NULL);
-	while(desplazamiento < size)
+	buffer = recibir_buffer(&size, socket_cliente, NULL);
+	while (desplazamiento < size)
 	{
 		memcpy(&tamanio, buffer + desplazamiento, sizeof(int));
 		desplazamiento += sizeof(int);
