@@ -330,7 +330,7 @@ void validar_cargar_informacion_PCB_a_MP(){
 
 void validar_cargar_informacion_tareas_a_MP(){
 
-    char  tareas = "tarea 5; 1; 2; 7";
+    char * tareas = "tarea 5; 1; 2; 7";
     char * tareas_res;
 
     iniciar_memoria_principal(1024);
@@ -340,8 +340,8 @@ void validar_cargar_informacion_tareas_a_MP(){
     liberar_memoria_principal();
 
     
-    CU_ASSERT_EQUAL(tareas, tareas_res);
-    // free(tareas);
-    // free(tareas_res);
+    CU_ASSERT_STRING_EQUAL(tareas, tareas_res);
+    
+    free(tareas_res);
 
 }
