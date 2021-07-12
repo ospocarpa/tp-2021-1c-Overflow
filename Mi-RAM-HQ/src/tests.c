@@ -1,5 +1,6 @@
 
 #include "../include/tests.h"
+
 void validar_sd_iniciar_patota();
 void validar_sd_expulsar_tripulante();
 void validar_sd_listar_tripulante();
@@ -9,6 +10,9 @@ void validar_sd_informar_posicion_msj_disc_mi_ram();
 void validar_sd_informar_posicion_msj_mi_ram_disc();
 void validar_sd_informar_estado_msj_discordiador_a_mi_ram();
 void validar_sd_res_iniciar_patota();
+void validar_cargar_informacion_TCB_a_MP();
+void validar_cargar_informacion_PCB_a_MP();
+void validar_cargar_informacion_tareas_a_MP();
 
 int run_tests()
 {
@@ -25,6 +29,9 @@ int run_tests()
     CU_add_test(tests, "Valido informar posicion msj discordiador a mi ram", validar_sd_informar_posicion_msj_mi_ram_disc);
     CU_add_test(tests, "Valido informar estado msj discordiador a mi ram", validar_sd_informar_estado_msj_discordiador_a_mi_ram);
     CU_add_test(tests, "Valido res de iniciar patota msj mi ram a discordialor", validar_sd_res_iniciar_patota);
+    CU_add_test(tests, "Valido carga de informacion de PCB a MP", validar_cargar_informacion_PCB_a_MP);
+    CU_add_test(tests, "Valido carga de informacion de TCB a MP", validar_cargar_informacion_TCB_a_MP);
+    CU_add_test(tests, "Valido carga de informacion de TAREAS a MP", validar_cargar_informacion_tareas_a_MP);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -268,4 +275,73 @@ void validar_sd_res_iniciar_patota(){
     CU_ASSERT_TRUE(validacion_res);
 
     free(paquete.buffer);
+}
+
+// ---------------------------- Memoria .c ----------------------------------------
+
+void validar_cargar_informacion_TCB_a_MP(){
+
+    t_TCB tcb;
+    t_TCB tcb_res;
+
+    tcb.tid =0;
+    tcb.estado ='a';
+    tcb.posx =0;
+    tcb.posy =0;
+    tcb.prox_tarea= 0;
+    tcb.puntero_pcb=1;
+
+    iniciar_memoria_principal(1024);
+    cargar_informacion_TCB_a_MP(tcb,0);
+    tcb_res = leer_info_TCB(0);
+    liberar_memoria_principal();
+
+    CU_ASSERT_EQUAL(tcb.tid, tcb_res.tid);
+    CU_ASSERT_EQUAL(tcb.estado, tcb_res.estado);
+    CU_ASSERT_EQUAL(tcb.posx, tcb_res.posx);
+    CU_ASSERT_EQUAL(tcb.posy, tcb_res.posy);
+    CU_ASSERT_EQUAL(tcb.prox_tarea, tcb_res.prox_tarea);
+    CU_ASSERT_EQUAL(tcb.puntero_pcb, tcb_res.puntero_pcb);
+
+    
+
+}
+
+
+void validar_cargar_informacion_PCB_a_MP(){
+
+    t_PCB pcb;
+    t_PCB pcb_res;
+
+    pcb.pid = 0;
+    pcb.tareas=1;
+
+    iniciar_memoria_principal(1024);
+
+    cargar_informacion_PCB_a_MP(pcb,0);
+    pcb_res = leer_info_PCB(0);
+    liberar_memoria_principal();
+
+    CU_ASSERT_EQUAL(pcb.pid, pcb_res.pid);
+    CU_ASSERT_EQUAL(pcb.tareas, pcb_res.tareas);
+
+
+}
+
+void validar_cargar_informacion_tareas_a_MP(){
+
+    char * tareas = "tarea 5; 1; 2; 7";
+    char * tareas_res;
+
+    iniciar_memoria_principal(1024);
+
+    cargar_informacion_tareas_a_MP(tareas,0);
+    tareas_res = leer_info_tareas(0,strlen(tareas));
+    liberar_memoria_principal();
+
+    
+    CU_ASSERT_STRING_EQUAL(tareas, tareas_res);
+    
+    free(tareas_res);
+
 }
