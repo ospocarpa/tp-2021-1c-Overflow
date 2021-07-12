@@ -17,7 +17,8 @@ void method_sigusr1(){
     int conexion_a_discordiador = crear_conexion(config_global_mongo_store->IP_DISCORDIADOR, config_global_mongo_store->PUERTO_DISCORDIADOR);
     //printf("Ini: %d\n", conexion_a_discordiador);
 
-    t_paquete* paquete = serializar_I_SABOTAJE(sabotaje);
+    t_package paquete = serializar_I_SABOTAJE(sabotaje);
+    mostrarSabotaje(sabotaje);
     if(conexion_a_discordiador>0){
         sendMessage(paquete, conexion_a_discordiador);
     }

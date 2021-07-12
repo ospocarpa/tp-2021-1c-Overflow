@@ -43,15 +43,15 @@ void verificarTarea()
 
 void verificarSabotaje()
 {
-    Sabotaje *sabotaje = malloc(sizeof(Sabotaje));
+    t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
     sabotaje->mensaje = "test";
     sabotaje->mensaje_length = strlen(sabotaje->mensaje);
     sabotaje->posicion = malloc(sizeof(Posicion));
     sabotaje->posicion->posx = 1;
     sabotaje->posicion->posy = 2;
 
-    t_paquete *paquete = serializar_I_SABOTAJE(sabotaje);
-    Sabotaje *sabotaje2 = deserializar_I_SABOTAJE(paquete);
+    t_package paquete = serializar_I_SABOTAJE(sabotaje);
+    t_sabotaje *sabotaje2 = deserializar_I_SABOTAJE(paquete);
     /*printf("\n");
     mostrarTarea(tarea2);*/
 

@@ -11,7 +11,8 @@
 #include<TAD.h>
 #include<sd_posicion.h>
 
-    t_sabotaje* deserializar_I_SABOTAJE(t_paquete* paquete);
-    t_paquete* serializar_I_SABOTAJE(t_sabotaje* input);
+    t_sabotaje* deserializar_I_SABOTAJE(t_package paquete);
+    t_package serializar_I_SABOTAJE(t_sabotaje* input);
+    void mostrarSabotaje(t_sabotaje* sabotaje);
 
 #endif

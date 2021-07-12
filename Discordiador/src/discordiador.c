@@ -120,7 +120,6 @@ int main(int argc, char **argv)
         printf("termino la ejecucion de discordiador\n");
         config_destroy(config);
         config_destroy(g_config);
-        //run_tests();
         return 1;
     }
 }

@@ -5,18 +5,19 @@
 void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
 {
     log_info(logger, "recibo algo");
-    //Deserializacion
-    t_package new_paquete;
-    Tarea *tarea2;
+    //t_package new_paquete;
+    t_sabotaje* input;
+
     switch (paquete.cod_operacion)
     {
-    case 0:
-        exit;
-        break;
-    case TAREA:
-        //tarea2 = deserializar_I_TAREA(paquete);
-        //mostrarTarea(tarea2);
-        break;
+        case 0:
+            exit;
+            break;
+        case SABOTAJE:
+            printf("Llegó sabotaje\n");
+            input = deserializar_I_SABOTAJE(paquete);
+            mostrarSabotaje(input);
+            break;
     }
 
     return NULL;
