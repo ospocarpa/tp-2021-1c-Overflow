@@ -20,6 +20,8 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
     datosPatota->long_tareas = bytesContenido,
     datosPatota->tareas = contenido;
+    datosPatota->patota_id = numeroPatota;
+    datosPatota->id_primer_tripulante = numeroTripulante;
     free(contenido);
     //mostrar_datos_patota(datosPatota);
 }
@@ -342,7 +344,8 @@ void chequear_activados()
         inicio_sabotaje();
     }
 }
-//se pasa por parametro un sabotaje ?
+
+//se pasa por parametro un sabotaje?  Rta: sí
 void inicio_sabotaje()
 {
     bool comparador(void *tripulante1, void *tripulante2)
@@ -395,10 +398,23 @@ void inicio_sabotaje()
     desbloquear_tripulantes();
     printf("soy un sabotaje");
 }
+
 /* Tripulante* buscar_el_mas_cercano()
 {
     
 } */
+
+void invocar_fsck(){
+    int conexion_a_mongo_store = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
+    
+    t_aviso_fsck fcsk;
+    t_package paquete = ser_fcsk(fcsk);
+
+    if(conexion_a_mongo_store>0){
+        sendMessage(paquete, conexion_a_mongo_store);
+    }
+}
+
 void desbloquear_tripulantes()
 {
     while (list_is_empty(lista_BLOCKEMERGENCIA))

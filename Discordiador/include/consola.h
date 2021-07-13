@@ -26,18 +26,20 @@ extern t_list *lista_tripulantes;
 extern t_config_discordiador *config;
 void mostrar_consola();
 bool leer_consola(void);
-void detener();
-void activar_planificacion();
+
 void planificar();
 int obtener_cantidad_argumentos(char **tokens);
 void parsear_mensaje(op_code operacion, char **tokens);
-int guardar_contenido_archivo(const char *, char **);
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 int existe_archivo(const char *); // en la shared ?
 void liberar_puntero_doble(char **);
 
-void listar_tripulantes();
-
 t_log *logger;
+
+    //Métodos de la consola
+    void listar_tripulantes();
+    void activar_planificacion();
+    void detener_planificacion();
+    void iniciar_patota(char** );
 
 #endif

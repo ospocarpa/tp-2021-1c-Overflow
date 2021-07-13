@@ -93,21 +93,24 @@ char *get_status_string(status_tripulante status)
     char *texto = "";
     switch (status)
     {
-    case NEW:
-        texto = "New";
-        break;
-    case READY:
-        texto = "Ready";
-        break;
-    case EXEC:
-        texto = "Exec";
-        break;
-    case BLOCKED:
-        texto = "Blocked";
-        break;
-    case EXIT:
-        texto = "Exit";
-        break;
+        case NEW:
+            texto = "New";
+            break;
+        case READY:
+            texto = "Ready";
+            break;
+        case EXEC:
+            texto = "Exec";
+            break;
+        case BLOCKED:
+            texto = "Block I/0";
+            break;
+        case EXIT:
+            texto = "Exit";
+            break;
+        case BLOCKED_SABOTAJE:
+            texto = "Blcok sabotaje";
+            break;
     }
     return texto;
 }
@@ -147,4 +150,19 @@ int obtener_cantidad_argumentos(char **tokens)
     }
 
     return cantidad;
+}
+
+int guardar_contenido_archivo(const char *ruta, char **contenido)
+{
+
+    FILE *arch = fopen(ruta, "r");
+    int bytes;
+    *contenido = NULL;
+    fseek(arch, 0, SEEK_END);
+    bytes = ftell(arch);
+    fseek(arch, 0, SEEK_SET);
+    *contenido = malloc(bytes);
+    fread(*contenido, 1, bytes, arch);
+    fclose(arch);
+    return bytes;
 }

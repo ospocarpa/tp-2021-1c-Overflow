@@ -11,7 +11,7 @@
 		SALIR = 0, //SALIDA
 		TAREA = 1,
 		SABOTAJE = 2,
-		FIN_FSCK = 3,
+		INICIO_FSCK = 3,
 		INICIAR_PATOTA = 4,
 		LISTAR_TRIPULANTES = 5,
 		EXPULSAR_TRIPULANTE = 6,
@@ -37,6 +37,7 @@
 		READY,
 		EXEC,
 		BLOCKED,
+		BLOCKED_SABOTAJE,
 		EXIT	
 	} status_tripulante;
 
@@ -96,7 +97,7 @@
 		char * posiciones;
 		uint32_t patota_id;
 		uint32_t id_primer_tripulante;
-	}t_iniciar_patota;
+	} t_iniciar_patota;
 
 	typedef struct 
 	{
@@ -197,12 +198,8 @@
 		// 3 Sabotaje en bloques
 		Posicion *posicion;
 	} t_sabotaje;
-	// Son un struct cada tipo de sabotaje??
-	//
-	// o los tomo todo dentro del mismo ver si tiene la misma logica
-
-	// typedef struct{
-
-	// }Fin_fsck;
+	
+	typedef struct{
+	} t_aviso_fsck;
 
 #endif /* TAD_H_ */

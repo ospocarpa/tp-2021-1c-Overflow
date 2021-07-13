@@ -24,5 +24,6 @@ t_list *get_tripulantes_all();
 Tripulante *tripulante_segun_id(int); 
 int existe_tripulante(int);           
 int obtener_cantidad_argumentos(char **tokens);
+int guardar_contenido_archivo(const char *, char **);
 
 #endif
