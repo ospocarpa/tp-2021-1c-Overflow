@@ -13,6 +13,7 @@
 #include <sys/mman.h>
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
+#include "sd_sabotaje.h"
 
     extern t_config_mongo_store* config_global_mongo_store;
     extern t_filesystem filesystem;
