@@ -11,7 +11,7 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
         string_append(&posiciones, tokens[3 + i]);
         string_append(&posiciones, " ");
 
-        // printf("cadena parcial:%s\n", posiciones);
+        // printf("cadena parcial:%s\n", posiciones); .
     }
 
     string_trim_right(&posiciones);
