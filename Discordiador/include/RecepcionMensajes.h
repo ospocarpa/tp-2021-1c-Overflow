@@ -11,6 +11,7 @@
 #include "server_utils.h"
 #include "shared_utils.h"
 #include "TAD.h"
+#include "sd_sabotaje.h"
 
 void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger);
 
