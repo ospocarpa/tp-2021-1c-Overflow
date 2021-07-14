@@ -68,9 +68,9 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
             break;
-        /*case 56: //Inicio de fsck 
+        case INICIO_FSCK: //Inicio de fsck 
             init_protocolo_fsck();
-            break;*/ 
+            break;
         default: 
             exist_code = false;
             break;
