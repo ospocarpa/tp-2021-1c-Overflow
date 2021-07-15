@@ -341,12 +341,21 @@ void chequear_activados()
 
     if (cantidad_activos == 0)
     {
-        inicio_sabotaje();
+        //harcodeo un sabotaje por default
+        //despues borrar
+        t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
+        sabotaje->mensaje = "test";
+        sabotaje->mensaje_length = strlen(sabotaje->mensaje);
+        sabotaje->posicion = malloc(sizeof(Posicion));
+        sabotaje->posicion->posx = 1;
+        sabotaje->posicion->posy = 2;
+        //
+        inicio_sabotaje(sabotaje);
     }
 }
 
 //se pasa por parametro un sabotaje?  Rta: sí
-void inicio_sabotaje()
+void inicio_sabotaje(t_sabotaje *sabotaje)
 {
     bool comparador(void *tripulante1, void *tripulante2)
     {
@@ -370,8 +379,8 @@ void inicio_sabotaje()
     t_list *tripulantes_exec = list_filter(tripulantes, estas_exec);
 
     list_add_all(lista_BLOCKEMERGENCIA, tripulantes_exec);
-    while (list_is_empty(tripulantes_exec))
-    {
+    while (!list_is_empty(tripulantes_exec))
+    { // rompe linea 375 (si hay_sabotaje = true)
         Tripulante *un_tripulante = list_remove(tripulantes_exec, 0);
         un_tripulante->status = BLOCKED;
     }
@@ -386,12 +395,31 @@ void inicio_sabotaje()
     t_list *tripulantes_ready = list_filter(tripulantes, estas_ready);
 
     list_add_all(lista_BLOCKEMERGENCIA, tripulantes_ready);
-    while (list_is_empty(tripulantes_ready))
+    while (!list_is_empty(tripulantes_ready))
     {
         Tripulante *un_tripulante = list_remove(tripulantes_ready, 0);
         un_tripulante->status = BLOCKED;
     }
-    //Tripulante *tripulante_elegido = buscar_el_mas_cercano();
+
+    //funcion buscar_el_mas_cercano
+    Tripulante *buscar_el_mas_cercano()
+    {
+        Tripulante *tripulante_retornar;
+        float distancia_sabotaje = 999999999.9;
+        for (int i = 0; i < list_size(lista_BLOCKEMERGENCIA); i++)
+        {
+            Tripulante *tripulante_sabotaje = list_get(lista_BLOCKEMERGENCIA, i);
+            float distancia = sqrt(pow(sabotaje->posicion->posx - tripulante_sabotaje->posicion->posx, 2) + pow(sabotaje->posicion->posy - tripulante_sabotaje->posicion->posy, 2));
+            if (distancia < distancia_sabotaje)
+            {
+                distancia_sabotaje = distancia;
+                tripulante_retornar = tripulante_sabotaje;
+            }
+        }
+        return tripulante_retornar;
+    }
+
+    Tripulante *tripulante_elegido = buscar_el_mas_cercano();
 
     //ir_a_la_posicion_sabotaje(sabotaje) //pasa a exec
     //invocar_fsck()
@@ -404,13 +432,15 @@ void inicio_sabotaje()
     
 } */
 
-void invocar_fsck(){
+void invocar_fsck()
+{
     int conexion_a_mongo_store = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
-    
+
     t_aviso_fsck fcsk;
     t_package paquete = ser_fcsk(fcsk);
 
-    if(conexion_a_mongo_store>0){
+    if (conexion_a_mongo_store > 0)
+    {
         sendMessage(paquete, conexion_a_mongo_store);
     }
 }

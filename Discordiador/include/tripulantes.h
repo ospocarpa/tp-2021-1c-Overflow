@@ -9,6 +9,7 @@
 #include <consola.h>
 #include <tad_discordiador.h>
 #include <commons/string.h>
+#include <math.h>
 #include <ctype.h>
 #include <consola.h>
 #include <pthread.h>
