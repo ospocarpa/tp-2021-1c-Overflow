@@ -1,6 +1,6 @@
 #include "consola.h"
 //inline
-_Bool planificacion_activa = false;
+
 void mostrar_consola()
 {
 
@@ -17,8 +17,6 @@ void mostrar_consola()
         "SALIR\n"
 
     );
-
-    //system("clear");
 }
 
 void liberar_puntero_doble(char **puntero_doble)
@@ -37,6 +35,7 @@ void liberar_puntero_doble(char **puntero_doble)
 
 bool leer_consola(void)
 {
+    pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
     while (1)
     {
         mostrar_consola();
@@ -107,7 +106,6 @@ bool leer_consola(void)
             printf("\nTERMINO DE LEER CONSOLA|\n");
             printf("------------------------------------------\n");
             return false;
-            //desconexion = true;
         }
         else
         {
@@ -127,12 +125,8 @@ bool leer_consola(void)
 void parsear_mensaje(op_code operacion, char **tokens)
 {
 
-    int cantidad_argumentos;
-
-    // estado_mensaje estado;
-
-    cantidad_argumentos = obtener_cantidad_argumentos(tokens);
-
+    int cantidad_argumentos = obtener_cantidad_argumentos(tokens);
+    printf("Argumentos: %d\n", cantidad_argumentos);
     switch (operacion)
     {
 
@@ -140,6 +134,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
+            listar_tripulantes();
         }
         else
         {
@@ -158,12 +153,9 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
             if (!es_un_numero(tokens[1]))
             {
-                // se podria analizar solo hasta tokens[1]
-                printf("El argumento es invalido\n");
 
-                return;
+                printf("El argumento es invalido\n");
             }
-            //completar
         }
         else
         {
@@ -191,7 +183,7 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
         if (cantidad_argumentos == 0)
         {
-            detener();
+            detener_planificacion();
         }
         else
         {
@@ -227,9 +219,10 @@ void parsear_mensaje(op_code operacion, char **tokens)
     case INICIAR_PATOTA:
         printf("entre a iniciar patota\n");
 
-            if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2){
-                iniciar_patota(tokens);
-            }
+        if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2)
+        {
+            iniciar_patota(tokens);
+        }
 
         else
         {
@@ -241,60 +234,6 @@ void parsear_mensaje(op_code operacion, char **tokens)
     default:
         break;
     }
-}
-
-// void ejecutar_operacion(Tripulante *tripulante)
-// {
-//new
-/*
-    Estado inicial: bloqueado
-    alistate();
-    
-    ejecutar(){
-        Código de ejecutar
-        switch(siguiente_transicion){
-            case 1: 
-                bloqueate();
-                break;
-            case 2: 
-                finalizate();
-                break;
-            case 3: 
-                alistate();
-                break;
-        }
-        //sleep(1);
-    };
-
-    bloqueate(){
-        Código de bloqueo
-        alistate();
-    }
-    
-    alistate(){
-        Código de alistate
-        switch(siguiente_transicion){
-            case 1: 
-                ejecutar();
-                break;
-        }
-    }
-    //finish*/
-// }
-
-int obtener_cantidad_argumentos(char **tokens)
-{
-
-    int i = 1;
-    int cantidad = 0;
-
-    while (*(tokens + i) != NULL)
-    {
-        cantidad++;
-        i++;
-    }
-
-    return cantidad;
 }
 
 // deberia ir a la shared ?
@@ -311,32 +250,18 @@ int existe_archivo(const char *ruta)
     fclose(archivo);
     return true;
 }
-int guardar_contenido_archivo(const char *ruta, char **contenido)
-{
 
-    FILE *arch = fopen(ruta, "r");
-    int bytes;
-    *contenido = NULL;
-    fseek(arch, 0, SEEK_END);
-    bytes = ftell(arch);
-    fseek(arch, 0, SEEK_SET);
-    *contenido = malloc(bytes);
-    fread(*contenido, 1, bytes, arch);
-    fclose(arch);
-    return bytes;
-}
-
-void detener()
+void detener_planificacion()
 {
 
     if (planificacion_activa)
     {
         planificacion_activa = false;
-        logger_info("[Planificacion detenida]");
+        log_info(logger, "[Planificacion detenida]");
     }
     else
     {
-        logger_info("[La planificacion ya está desactivada]");
+        log_info(logger, "[La planificacion ya está desactivada]");
     }
 }
 
@@ -345,7 +270,7 @@ void activar_planificacion()
     if (!planificacion_activa)
     {
         planificacion_activa = true;
-        logger_info("[Planificacion activada]");
+        log_info(logger, "[Planificacion activada]");
         planificar();
     }
     else
@@ -363,6 +288,86 @@ void planificar()
     }
     else
     {
-        logger_info("La planificación está desactivada");
+        logger_info("La planificación está desactivada")
     }
+}
+void listar_tripulantes()
+{
+    char *format = "%d/%m/%y %H:%M:%S";
+    char *timestamp = temporal_get_string_time(format);
+    printf("Estado de la nave: %s\n", timestamp);
+
+    for (int c = 0; c < list_size(lista_tripulantes); c++)
+    {
+        Tripulante *tripulante = list_get(lista_tripulantes, c);
+        printf("Tripulante: %d    Patota: %d    Status: %s\n", tripulante->id, tripulante->patota_id, get_status_string(tripulante->status));
+    }
+}
+
+void iniciar_patota(char **tokens)
+{
+    int cantidad_argumentos = obtener_cantidad_argumentos(tokens);
+
+    if (!es_un_numero(tokens[1]))
+    {
+        printf("El argumento es invalido\n");
+        return;
+    }
+
+    //tokens[2]: path del archivo
+    if (!existe_archivo(tokens[2]))
+    {
+
+        log_error(logger, "No se encontro el archivo %s ", tokens[2]);
+        return;
+    }
+    for (int i = 0; i < cantidad_argumentos - 2; i++)
+    {
+        char **coordenada = string_split(tokens[3 + i], "|");
+        if (!es_un_numero(coordenada[0]) || !es_un_numero(coordenada[1]))
+        {
+            log_info(logger, "Coordenadas invalidas %s %s ", coordenada[0], coordenada[1]);
+            return;
+        }
+        liberar_puntero_doble(coordenada);
+    }
+    t_iniciar_patota datosPatota;
+
+    cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
+    mostrar_datos_patota(&datosPatota);
+
+    t_package paquete = ser_cod_iniciar_patota(datosPatota);
+
+    int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+    // printf("%s %d\n", config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+    if (socket_cliente < 0)
+    {
+        log_error(logger, "Conexion Mi-RAM fallida");
+        liberar_conexion(socket_cliente);
+        // return EXIT_FAILURE; //despues descomitear
+    }
+    else
+    {
+        log_info(logger, "Conexion con Mi-RAM-HQ exitosa");
+    }
+
+    sendMessage(paquete, socket_cliente);
+
+    //Intento de espera respuesta de confirmacion de carga de los pcb
+
+    bool respuesta;
+
+    recv(socket_cliente, &respuesta, sizeof respuesta, 0);
+    if (!respuesta)
+    {
+        log_error(logger, "No se puede crear la patota/tripulanes");
+        //return;
+    }
+
+    log_info(logger, " Empezando a crear los  tripulanes...");
+
+    Patota *patota_new = map_to_patota(datosPatota);
+    mostrar_t_patota(patota_new);
+    crearHilosTripulantes(patota_new);
+    liberar_conexion(socket_cliente);
 }
