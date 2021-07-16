@@ -33,13 +33,15 @@ void parsear_mensaje(op_code operacion, char **tokens);
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 int existe_archivo(const char *); // en la shared ?
 void liberar_puntero_doble(char **);
+//por ahora booleano para el sabotaje
+bool hay_sabotaje;
 
 t_log *logger;
 
-    //Métodos de la consola
-    void listar_tripulantes();
-    void activar_planificacion();
-    void detener_planificacion();
-    void iniciar_patota(char** );
+//Métodos de la consola
+void listar_tripulantes();
+void activar_planificacion();
+void detener_planificacion();
+void iniciar_patota(char **);
 
 #endif

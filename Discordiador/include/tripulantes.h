@@ -22,7 +22,7 @@
 #include "config_utils.h"
 #include "sd_fcsk.h"
 
-bool hay_sabotaje;
+extern bool hay_sabotaje;
 pthread_mutex_t MXTRIPULANTE;
 
 extern int numeroTripulante;
@@ -47,5 +47,6 @@ void leerConfighilo_tripulante(Tripulante *);
 void cargarTripulante(t_iniciar_patota *, char **, int);
 void mover_tripulante_a_tarea(Tripulante *, int);
 void invocar_fsck();
+Tripulante *buscar_el_mas_cercano();
 
 #endif

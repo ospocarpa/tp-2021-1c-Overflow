@@ -1,5 +1,4 @@
 #include "consola.h"
-//inline
 
 void mostrar_consola()
 {
@@ -36,6 +35,7 @@ void liberar_puntero_doble(char **puntero_doble)
 bool leer_consola(void)
 {
     pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
+    hay_sabotaje = false;
     while (1)
     {
         mostrar_consola();
@@ -275,7 +275,7 @@ void activar_planificacion()
     }
     else
     {
-        logger_info("[La planificacion ya está activada]");
+        log_info(logger, "[La planificacion ya está activada]");
     }
 }
 void planificar()
@@ -288,7 +288,7 @@ void planificar()
     }
     else
     {
-        logger_info("La planificación está desactivada")
+        log_info(logger, "[La planificacion  está desactivada]");
     }
 }
 void listar_tripulantes()

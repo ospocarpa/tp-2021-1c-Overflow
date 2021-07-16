@@ -150,13 +150,13 @@ void hilo_tripulante(Tripulante *tripulante)
 
             sem_post(&activados); // cantidad tripulantes:-EXEC-I/O
             list_add(lista_EXEC, tripulante);
-            //Cuando hay sabotaje
 
-            hay_sabotaje = true; //despues borrar linea
             if (hay_sabotaje)
             {
                 chequear_activados();
                 pthread_mutex_lock(&tripulante->activo);
+                //el tripulante debe volve a ser seleccionado
+                pthread_mutex_lock(&tripulante->seleccionado);
             }
 
             mover_tripulante_a_tarea(tripulante, socket_cliente);
@@ -177,6 +177,7 @@ void hilo_tripulante(Tripulante *tripulante)
                 {
                     chequear_activados();
                     pthread_mutex_lock(&tripulante->activo);
+                    pthread_mutex_lock(&tripulante->seleccionado);
                 }
             }
             while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)
@@ -266,7 +267,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
 
     while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
     {
-        if (planificacion_activa)
+        if (!planificacion_activa || hay_sabotaje)
         {
             pthread_mutex_lock(&tripulante->activo);
         }
@@ -292,7 +293,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
 
     while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
-        if (planificacion_activa)
+        if (!planificacion_activa || hay_sabotaje)
         {
             pthread_mutex_lock(&tripulante->activo);
         }
@@ -354,9 +355,66 @@ void chequear_activados()
     }
 }
 
+void ir_a_la_posicion_sabotaje(Tripulante *tripulante, t_sabotaje *sabotaje, int socket)
+{
+
+    sleep(config->RETARDO_CICLO_CPU);
+    enviar_posicion_mi_ram(tripulante, socket);
+
+    while (1)
+    {
+        if (!planificacion_activa)
+        {
+            continue;
+        }
+        if (tripulante->posicion->posx != sabotaje->posicion->posx)
+        {
+            //Mueve uno en X
+            if (sabotaje->posicion->posx > tripulante->posicion->posx)
+            {
+                tripulante->posicion->posx++;
+
+                //aplicamos recursividad ?
+                ir_a_la_posicion_sabotaje(tripulante, sabotaje, socket);
+            }
+            else if (sabotaje->posicion->posx < tripulante->posicion->posx)
+            {
+                tripulante->posicion->posx--;
+
+                //aplicamos recursividad ?
+                ir_a_la_posicion_sabotaje(tripulante, sabotaje, socket);
+            }
+        }
+        //
+        if (tripulante->posicion->posy != sabotaje->posicion->posy)
+        {
+            //Mueve uno en Y
+            if (sabotaje->posicion->posy > tripulante->posicion->posy)
+            {
+                tripulante->posicion->posy++;
+
+                //aplicamos recursividad ?
+                ir_a_la_posicion_sabotaje(tripulante, sabotaje, socket);
+            }
+            else if (sabotaje->posicion->posx < tripulante->posicion->posx)
+            {
+                tripulante->posicion->posy--;
+
+                //aplicamos recursividad ?
+                ir_a_la_posicion_sabotaje(tripulante, sabotaje, socket);
+            }
+        }
+        else
+        {
+            return;
+        }
+    }
+}
+
 //se pasa por parametro un sabotaje?  Rta: sí
 void inicio_sabotaje(t_sabotaje *sabotaje)
 {
+    hay_sabotaje = true;
     bool comparador(void *tripulante1, void *tripulante2)
     {
         Tripulante *tripulante1_analizar = (Tripulante *)tripulante1;
@@ -405,11 +463,11 @@ void inicio_sabotaje(t_sabotaje *sabotaje)
     Tripulante *buscar_el_mas_cercano()
     {
         Tripulante *tripulante_retornar;
-        float distancia_sabotaje = 999999999.9;
+        double distancia_sabotaje = 999999999.9;
         for (int i = 0; i < list_size(lista_BLOCKEMERGENCIA); i++)
         {
             Tripulante *tripulante_sabotaje = list_get(lista_BLOCKEMERGENCIA, i);
-            float distancia = sqrt(pow(sabotaje->posicion->posx - tripulante_sabotaje->posicion->posx, 2) + pow(sabotaje->posicion->posy - tripulante_sabotaje->posicion->posy, 2));
+            double distancia = sqrt(pow(sabotaje->posicion->posx - tripulante_sabotaje->posicion->posx, 2) + pow(sabotaje->posicion->posy - tripulante_sabotaje->posicion->posy, 2));
             if (distancia < distancia_sabotaje)
             {
                 distancia_sabotaje = distancia;
@@ -420,17 +478,13 @@ void inicio_sabotaje(t_sabotaje *sabotaje)
     }
 
     Tripulante *tripulante_elegido = buscar_el_mas_cercano();
-
-    //ir_a_la_posicion_sabotaje(sabotaje) //pasa a exec
-    //invocar_fsck()
+    int socket;
+    ir_a_la_posicion_sabotaje(tripulante_elegido, sabotaje, socket); //pasa a exec
+    invocar_fsck();
     desbloquear_tripulantes();
+    hay_sabotaje = false;
     printf("soy un sabotaje");
 }
-
-/* Tripulante* buscar_el_mas_cercano()
-{
-    
-} */
 
 void invocar_fsck()
 {
@@ -447,10 +501,12 @@ void invocar_fsck()
 
 void desbloquear_tripulantes()
 {
+
     while (list_is_empty(lista_BLOCKEMERGENCIA))
     {
         Tripulante *un_tripulante = list_remove(lista_BLOCKEMERGENCIA, 0);
         un_tripulante->status = READY;
+        pthread_mutex_unlock(&un_tripulante->activo);
         list_add(lista_READY, un_tripulante);
     }
 }

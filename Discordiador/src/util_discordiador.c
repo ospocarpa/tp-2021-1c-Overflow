@@ -15,13 +15,19 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
     patota_new->tareas = list_create();      //Lista [Tarea]
     patota_new->tripulantes = list_create(); //Lista [Tripulante]
 
-    char **posiciones_string = string_split(datosPatota.posiciones, " ");
     t_list *posiciones_lista = list_create();
-    void recorrer_posiciones(char *item)
+    char **posiciones_string;
+    if (strcmp(datosPatota.posiciones, "") != 0)
     {
-        list_add(posiciones_lista, item);
+
+        posiciones_string = string_split(datosPatota.posiciones, " ");
+
+        void recorrer_posiciones(char *item)
+        {
+            list_add(posiciones_lista, item);
+        }
+        string_iterate_lines(posiciones_string, recorrer_posiciones);
     }
-    string_iterate_lines(posiciones_string, recorrer_posiciones);
 
     for (int c = 0; c < datosPatota.cant_tripulantes; c++)
     {
@@ -39,19 +45,21 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         //se inicializan los semaforos de los tripulantes
         pthread_mutex_init(&tripulante->activo, 0);
         pthread_mutex_init(&tripulante->seleccionado, 0);
+        //pthread_mutex_init(&tripulante->sabotaje,0);
         list_add(patota_new->tripulantes, tripulante);
     }
 
     int posx = 0;
     int posy = 0;
 
-    for (int c = 0; c < list_size(posiciones_lista) && !list_is_empty(posiciones_lista); c++)
+    for (int c = 0; c < list_size(posiciones_lista); c++)
     {
 
         Tripulante *tripulante = list_get(patota_new->tripulantes, c);
         char *posicion_string = list_get(posiciones_lista, c);
         char **coordenadas = string_split(posicion_string, "|");
         posx = atoi(coordenadas[0]);
+
         posy = atoi(coordenadas[1]);
         tripulante->posicion->posx = posx;
         tripulante->posicion->posy = posy;
@@ -60,8 +68,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
     //Falta mapeo de tareas para patota
     //list_clean(posiciones_lista);
     //list_destroy(posiciones_lista);
-
-    liberar_puntero_doble(posiciones_string);
+    //liberar_puntero_doble(posiciones_string);
     return patota_new;
 }
 
@@ -93,24 +100,24 @@ char *get_status_string(status_tripulante status)
     char *texto = "";
     switch (status)
     {
-        case NEW:
-            texto = "New";
-            break;
-        case READY:
-            texto = "Ready";
-            break;
-        case EXEC:
-            texto = "Exec";
-            break;
-        case BLOCKED:
-            texto = "Block I/0";
-            break;
-        case EXIT:
-            texto = "Exit";
-            break;
-        case BLOCKED_SABOTAJE:
-            texto = "Blcok sabotaje";
-            break;
+    case NEW:
+        texto = "New";
+        break;
+    case READY:
+        texto = "Ready";
+        break;
+    case EXEC:
+        texto = "Exec";
+        break;
+    case BLOCKED:
+        texto = "Block I/0";
+        break;
+    case EXIT:
+        texto = "Exit";
+        break;
+    case BLOCKED_SABOTAJE:
+        texto = "Blcok sabotaje";
+        break;
     }
     return texto;
 }
