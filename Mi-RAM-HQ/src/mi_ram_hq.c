@@ -2,10 +2,10 @@
 
 int main(int argc, char **argv)
 {
-    //init_renderizacion_mapa();
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
-        run_tests();
+        //run_tests();
+        init_renderizacion_mapa();
     }
     else
     {

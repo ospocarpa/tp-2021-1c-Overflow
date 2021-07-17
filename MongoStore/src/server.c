@@ -36,7 +36,6 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             mostrar_file(file_a_enviar);
             break;
         case GET_BITACORA:
-            printf("Bitácora get\n");
             file = des_get_file(paquete);
             mostrar_file(file);
 
@@ -46,7 +45,8 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             paquete_a_enviar = ser_get_file_bitacora(file_a_enviar);
             sendMessage(paquete_a_enviar, cliente_fd);
             break;
-        case UPDATE_BITACORA: //Ver si debe devolver algo
+        case UPDATE_BITACORA: 
+            //Ver si debe devolver algo
             printf("Bitácora actualizar\n");
             file = des_update_bitacora(paquete);
             mostrar_update_bitacora(file);
@@ -54,14 +54,14 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             update_bitacora(file);
             break;
         case AGREGAR_RECURSO: 
-            printf("Agregar recurso\n");
+            //printf("Agregar recurso\n");
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
 
             agregar_recurso(operation_file_recurso);
             break;
         case RETIRAR_RECURSO: 
-            printf("Retirar recurso\n");
+            //printf("Retirar recurso\n");
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
             
