@@ -1,10 +1,11 @@
 #include "segmentacion_pura.h"
 
-static t_list * list_tablas_segmentos;
-static t_list * tabla_hueco;
+static t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
+static t_list * tabla_hueco; // 
 static char * alg_ubicacion = "LL";
 
 /* Declaracion de funciones privadas */
+t_hueco * hueco_create(int base, int desplazamiento);
 void agregar_hueco(int base, int desplazamiento);
 void agregar_hueco_segun_desplazamiento(int indice_hueco, int desplazamiento);
 
@@ -19,15 +20,17 @@ void iniciar_tabla_huecos(int tam_memoria){
 	agregar_hueco(0, tam_memoria);
 }
 
+void agregar_tabla_de_segmento(t_tabla_segmentos * tabla){
+    list_add(list_tablas_segmentos, tabla);
+}
+
 /* ****************** */
 void set_algoritmo_ubicacion(char * algoritmo){
     alg_ubicacion = algoritmo;
 }
 
 void agregar_hueco(int base, int desplazamiento){
-    t_hueco * nuevo_hueco = malloc(sizeof(t_hueco));
-    nuevo_hueco->base = base;
-    nuevo_hueco->desplazamiento = desplazamiento;
+    t_hueco * nuevo_hueco = hueco_create(base, desplazamiento);
 
     list_add(tabla_hueco, nuevo_hueco);
 }
@@ -64,25 +67,26 @@ void agregar_hueco_segun_desplazamiento(int indice_hueco, int desplazamiento){
 
 }
 
-int algoritmo_primer_ajuste(desplazamiento){
-    int indice = 0;
-    int base;
-    t_hueco * hueco = malloc(sizeof(t_hueco));
-
-    do
-    {
-        hueco = list_get(tabla_hueco, indice);
-        indice += 1;
-    } while (hueco->desplazamiento >= desplazamiento);
+int algoritmo_primer_ajuste(t_data_segmento * data_segmento){
     
-    base = hueco->base;
-    agregar_hueco_segun_desplazamiento(indice, desplazamiento);
-    hueco_detroy(hueco); //ver
+    int base;
 
-    return base;
+    for (size_t i = 0; i < list_size(tabla_hueco); i++)
+    {
+        t_hueco * hueco = list_get(tabla_hueco, i);
+
+        if (hueco->desplazamiento >= data_segmento->tam_data)
+        {
+            base = hueco->base;
+            agregar_hueco_segun_desplazamiento(i, data_segmento->tam_data);
+            break;
+        } 
+    }
+
+return base;
 }
 
-int algoritmo_mejor_ajuste(int desplazamiento){
+t_hueco * algoritmo_mejor_ajuste(int desplazamiento){
     int base;
 
     bool hay_espacio(t_hueco * h){
@@ -100,12 +104,94 @@ int algoritmo_mejor_ajuste(int desplazamiento){
     
     t_hueco * hueco_seleccionado = list_get(huecos_ordenados, 0);
 
+    int indice = 0;
+    /* 
+    while (!son_huecos_iguales(list_get(tabla_hueco, indice), hueco_seleccionado)){
+        indice++;
+    }
+    
+    hueco_seleccionado = list_get(tabla_hueco, indice);
+
+    t_hueco * hueco_aux = list_replace(tabla_hueco, indice, hueco_create(hueco_seleccionado->base, hueco_seleccionado->desplazamiento));
+        
+    hueco_detroy(hueco_aux);
+    */
+
     base = hueco_seleccionado->base;
 
     //ver liberar lista
-    return base;
+    return hueco_seleccionado;
 }
 
 void liberar_tabla_huecos(){
     list_destroy_and_destroy_elements(tabla_hueco, hueco_detroy);
+}
+
+
+bool se_puede_escribir(int tam_info){
+    int tam_memoria_libre = 0;
+
+    void sumar_espacios_libres(t_hueco * hueco){
+        tam_memoria_libre += hueco->desplazamiento;
+    }
+
+    list_iterate(tabla_hueco, sumar_espacios_libres);
+
+    return (tam_memoria_libre >= tam_info);
+}
+
+void escribir_memoria_principal(t_data_segmento * data_semento,int base){ 
+
+}
+
+//completar
+t_segmento * elegir_segmento(t_data_segmento * data_segmento){
+    int base = 0;
+    t_segmento * segmento = malloc(sizeof(t_segmento));
+
+    if (alg_ubicacion == "LL")
+    {
+       base = algoritmo_primer_ajuste(data_segmento);
+    }
+    else
+    {
+        /* code */
+    }
+
+    escribir_memoria_principal(data_segmento, base);
+
+    uint32_t id;
+    //memcpy la estructura si es tcb
+    
+    segmento->id = id;
+    segmento->base = base;
+    segmento->desplazamiento = data_segmento->tam_data;
+}
+
+//validamos si hay un hueco para ese tamaño
+bool hay_segmento_disponible(int tamanio){
+
+    bool hay_hueco_para_segmento(t_hueco * hueco){
+        return (hueco->desplazamiento >= tamanio);
+    }
+
+    bool satisfy = list_any_satisfy(tabla_hueco, hay_hueco_para_segmento);
+
+    return satisfy;
+}
+
+t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
+    t_segmento * segmento;
+
+    if(hay_segmento_disponible(data->tam_data)){
+        segmento = elegir_segmento(data);
+    }
+    else
+    {
+        /* compactacion() */
+        segmento = elegir_segmento(data);
+    }
+    
+
+    return segmento;
 }

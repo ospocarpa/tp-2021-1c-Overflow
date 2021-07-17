@@ -41,4 +41,11 @@ typedef struct
     t_list * segmentos;//lista de t_segmento
 }t_tabla_segmentos;
 
+typedef struct 
+{
+    void * data;
+    int tam_data;
+}t_data_segmento;
+
+
 #endif
