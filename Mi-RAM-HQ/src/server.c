@@ -49,6 +49,7 @@ static void *ejecutar_operacion(int tripulante)
 		/* interpreto el contenido del mensaje */
 		ex_tripulante = des_cod_expulsar_tripulante(paquete);
 		//mi funcion expulsar tripulante
+		printf("Tripulante: %d\n", ex_tripulante.id_tripulante);
 		break;
 
 	case INFORMAR_TAREA_TRIPULANTE:
