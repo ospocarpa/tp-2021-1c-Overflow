@@ -2,6 +2,7 @@
 
 void mostrar_consola()
 {
+
     printf(
         "\n------------------------------------------\n"
         "BIENVENIDO A LA CONSOLA DEL DISCORDIADOR\n"
@@ -13,29 +14,35 @@ void mostrar_consola()
         "OBTENER_BITACORA [Numero de tripulante]\n"
         "INICIAR_PATOTA [Cantidad de tripulantes] [Ruta] [Coordenadas]\n"
         "SALIR\n"
+
     );
 }
 
 void liberar_puntero_doble(char **puntero_doble)
 {
+
     int i = 0;
-    while (*(puntero_doble + i) != NULL){
+    while (*(puntero_doble + i) != NULL)
+    {
 
         free(*(puntero_doble + i));
         i++;
     }
+
     free(puntero_doble);
 }
 
-bool leer_consola(void){
+bool leer_consola(void)
+{
     pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
-
+    hay_sabotaje = false;
     while (1)
     {
         mostrar_consola();
         int tamanio_buffer = 128;
 
         char *buffer = malloc(tamanio_buffer + 1);
+
         fgets(buffer, tamanio_buffer, stdin);
 
         string_trim_right(&buffer);
@@ -120,84 +127,109 @@ void parsear_mensaje(op_code operacion, char **tokens)
 
     int cantidad_argumentos = obtener_cantidad_argumentos(tokens);
     printf("Argumentos: %d\n", cantidad_argumentos);
-
     switch (operacion)
     {
-        case LISTAR_TRIPULANTES:
-            if (cantidad_argumentos == 0){
-                listar_tripulantes();
-            }
-            else{
-                printf("Cantidad de argumentos invalido\n");
-            }
-        break;
-        case EXPULSAR_TRIPULANTE:
-            if (cantidad_argumentos == 1){
-                if (!es_un_numero(tokens[1]))
-                {
-                    printf("El argumento es invalido\n");
-                }else{
-                    expulsar_tripulante(atoi(tokens[1]));
-                }
-            }
-            else{
-                printf("Cantidad de argumentos invalido\n");
-            }
-        break;
-        case INICIAR_PLANIFICACION:
-            printf("Entro a iniciar planificacion\n");
-            if (cantidad_argumentos == 0){
-                activar_planificacion();
-            }
-            else{
-                printf("Cantidad de argumentos invalido\n");
-            }
+
+    case LISTAR_TRIPULANTES:
+
+        if (cantidad_argumentos == 0)
+        {
+            listar_tripulantes();
+        }
+        else
+        {
+
+            printf("Cantidad de argumentos invalido\n");
+        }
 
         break;
-        case PAUSAR_PLANIFICACION:
-            printf("Entro a pausar planificacion\n");
-
-            if (cantidad_argumentos == 0){
-                detener_planificacion();
-            }
-            else{
-                printf("Cantidad de argumentos invalido\n");
-            }
-        break;
-        case OBTENER_BITACORA:
-            printf("entre a obtener bitacora\n");
-
-            if (cantidad_argumentos == 1)
+    case EXPULSAR_TRIPULANTE:
+        if (cantidad_argumentos == 1)
+        {
+            if (!es_un_numero(tokens[1]))
             {
-                printf("cantidad de argumentos correctos\n");
-                if (!es_un_numero(tokens[1]))
-                { 
-                    printf("El argumento es invalido\n");
-                    return;
-                }else{
-                    obtener_bitacora(atoi(tokens[1]));
-                }
+                printf("El argumento es invalido\n");
             }
             else
             {
-                printf("Cantidad de argumentos invalido\n");
+                expulsar_tripulante(atoi(tokens[1]));
             }
-        break;
-        case INICIAR_PATOTA:
-            printf("entre a iniciar patota\n");
+        }
+        else
+        {
+            printf("Cantidad de argumentos invalido\n");
+        }
 
-            if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2){
-                iniciar_patota(tokens);
-            }
-            else{
-                printf("Cantidad de argumentos invalido\n");
-            }
         break;
-        default:
-            break;
+
+    case INICIAR_PLANIFICACION:
+        printf("Entro a iniciar planificacion\n");
+
+        if (cantidad_argumentos == 0)
+        {
+            activar_planificacion();
+        }
+        else
+        {
+            printf("Cantidad de argumentos invalido\n");
+        }
+
+        break;
+
+    case PAUSAR_PLANIFICACION:
+        printf("Entro a pausar planificacion\n");
+
+        if (cantidad_argumentos == 0)
+        {
+            detener_planificacion();
+        }
+        else
+        {
+            printf("Cantidad de argumentos invalido\n");
+        }
+
+        break;
+    case OBTENER_BITACORA:
+        if (cantidad_argumentos == 1)
+        {
+            printf("cantidad de argumentos correctos\n");
+            if (!es_un_numero(tokens[1]))
+            {
+                printf("El argumento es invalido\n");
+                return;
+            }
+            else
+            {
+                obtener_bitacora(atoi(tokens[1]));
+            }
+        }
+
+        else
+        {
+            printf("Cantidad de argumentos invalido\n");
+        }
+
+        break;
+
+    case INICIAR_PATOTA:
+        printf("entre a iniciar patota\n");
+
+        if (cantidad_argumentos >= 2 && cantidad_argumentos <= atoi(tokens[1]) + 2)
+        {
+            iniciar_patota(tokens);
+        }
+
+        else
+        {
+            printf("Cantidad de argumentos invalido\n");
+        }
+
+        break;
+
+    default:
+        break;
     }
 }
-
 // deberia ir a la shared ?
 int existe_archivo(const char *ruta)
 {
@@ -240,19 +272,18 @@ void activar_planificacion()
         log_info(logger, "[La planificacion ya está activada]");
     }
 }
-
 void planificar()
 {
-    t_list* tripulantes = get_tripulantes_all();
-    for(int c=0; c<list_size(tripulantes);c++){
-        Tripulante* tripulante = list_get(tripulantes, c);
+    t_list *tripulantes = get_tripulantes_all();
+    for (int c = 0; c < list_size(tripulantes); c++)
+    {
+        Tripulante *tripulante = list_get(tripulantes, c);
         pthread_mutex_unlock(&tripulante->activo);
     }
 }
-
 void listar_tripulantes()
 {
-    t_list* tripulantes = get_tripulantes_all();
+    t_list *tripulantes = get_tripulantes_all();
     char *format = "%d/%m/%y %H:%M:%S";
     char *timestamp = temporal_get_string_time(format);
     printf("Estado de la nave: %s\n", timestamp);
@@ -264,10 +295,12 @@ void listar_tripulantes()
     }
 }
 
-void iniciar_patota(char** tokens){
+void iniciar_patota(char **tokens)
+{
     int cantidad_argumentos = obtener_cantidad_argumentos(tokens);
 
-    if (!es_un_numero(tokens[1])){   
+    if (!es_un_numero(tokens[1]))
+    {
         printf("El argumento es invalido\n");
         return;
     }
@@ -330,32 +363,36 @@ void iniciar_patota(char** tokens){
     liberar_conexion(socket_cliente);
 }
 
-void expulsar_tripulante(int tripulante_id){
+void expulsar_tripulante(int tripulante_id)
+{
     int conexion_a_miram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
-    
+
     t_expulsar_tripulante data;
     data.id_tripulante = tripulante_id;
     t_package paquete = ser_cod_expulsar_tripulante(data);
 
-    if(conexion_a_miram>0){
+    if (conexion_a_miram > 0)
+    {
         sendMessage(paquete, conexion_a_miram);
     }
 }
 
-void obtener_bitacora(int tripulante_id){
+void obtener_bitacora(int tripulante_id)
+{
     int conexion_a_mongostore = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
-    
-    char* nombre_file = string_new(); 
+
+    char *nombre_file = string_new();
     string_append_with_format(&nombre_file, "tripulante%s.ims", string_itoa(tripulante_id));
-    
+
     t_file file;
     file.nombre_file = malloc(strlen(nombre_file));
     file.contenido = "";
     file.long_contenido = strlen(file.contenido);
-	strcpy(file.nombre_file, nombre_file);
-	file.long_nombre_file = strlen(file.nombre_file);
+    strcpy(file.nombre_file, nombre_file);
+    file.long_nombre_file = strlen(file.nombre_file);
 
-    if(conexion_a_mongostore>0){
+    if (conexion_a_mongostore > 0)
+    {
         t_package paquete = ser_get_file_bitacora(file);
         sendMessage(paquete, conexion_a_mongostore);
 
