@@ -5,7 +5,7 @@ int run_tests()
     CU_pSuite tests = CU_add_suite("Cliente Suite", NULL, NULL);
     CU_add_test(tests, "Verificar serializacion y deserializacion tarea", verificarTarea);
     CU_add_test(tests, "Verificar serializacion y deserializacion sabotaje", verificarSabotaje);
-    CU_add_test(tests, "Verificar funcion buscar_el_mas_cercano(t_sabotaje) y desbloquear tripulante ", verificar_buscar_el_mas_cercano_y_desbloquear_tripulantes);
+    CU_add_test(tests, "Verificar funcion buscar_el_mas_cercano(t_sabotaje),desbloquear tripulante e ir a la pos_sabotaje ", verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje);
     // CU_add_test(tests, "Verificar funcion desbloquear_tripulantes()", verificar_desbloquear_tripulantes);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
@@ -61,7 +61,7 @@ void verificarSabotaje()
     CU_ASSERT_EQUAL(sabotaje->posicion->posx, sabotaje2->posicion->posx);
     CU_ASSERT_EQUAL(sabotaje->posicion->posy, sabotaje2->posicion->posy);
 }
-void verificar_buscar_el_mas_cercano_y_desbloquear_tripulantes()
+void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje()
 {
     //defino un sabotaje pos 4-4
     t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
@@ -112,6 +112,11 @@ void verificar_buscar_el_mas_cercano_y_desbloquear_tripulantes()
     CU_ASSERT_EQUAL(tripulante3->status, READY);
     CU_ASSERT_EQUAL(list_size(lista_BLOCKEMERGENCIA), 0);
     CU_ASSERT_EQUAL(list_size(lista_READY), 3);
+    int socket;
+    planificacion_activa = true;
+    ir_a_la_posicion_sabotaje(tripulante_elegido, sabotaje, socket);
+    CU_ASSERT_EQUAL(tripulante_elegido->posicion->posx, sabotaje->posicion->posx);
+    CU_ASSERT_EQUAL(tripulante_elegido->posicion->posy, sabotaje->posicion->posy)
 }
 // void verificar_desbloquear_tripulantes()
 // {
