@@ -3,10 +3,10 @@ int run_tests()
 {
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite", NULL, NULL);
-
     CU_add_test(tests, "Verificar serializacion y deserializacion tarea", verificarTarea);
     CU_add_test(tests, "Verificar serializacion y deserializacion sabotaje", verificarSabotaje);
-    CU_add_test(tests, "Verificar funcion buscar_el_mas_cercano(t_sabotaje) ", verificar_buscar_el_mas_cercano);
+    CU_add_test(tests, "Verificar funcion buscar_el_mas_cercano(t_sabotaje) y desbloquear tripulante ", verificar_buscar_el_mas_cercano_y_desbloquear_tripulantes);
+    // CU_add_test(tests, "Verificar funcion desbloquear_tripulantes()", verificar_desbloquear_tripulantes);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -61,7 +61,7 @@ void verificarSabotaje()
     CU_ASSERT_EQUAL(sabotaje->posicion->posx, sabotaje2->posicion->posx);
     CU_ASSERT_EQUAL(sabotaje->posicion->posy, sabotaje2->posicion->posy);
 }
-void verificar_buscar_el_mas_cercano()
+void verificar_buscar_el_mas_cercano_y_desbloquear_tripulantes()
 {
     //defino un sabotaje pos 4-4
     t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
@@ -80,6 +80,7 @@ void verificar_buscar_el_mas_cercano()
     tripulante1->posicion = malloc(sizeof(Posicion));
     tripulante1->posicion->posx = 1;
     tripulante1->posicion->posy = 1;
+    tripulante1->status = BLOCKED_SABOTAJE;
     list_add(lista_BLOCKEMERGENCIA, tripulante1);
     //
     Tripulante *tripulante2 = malloc(sizeof(Tripulante));
@@ -87,6 +88,7 @@ void verificar_buscar_el_mas_cercano()
     tripulante2->posicion = malloc(sizeof(Posicion));
     tripulante2->posicion->posx = 2;
     tripulante2->posicion->posy = 2;
+    tripulante1->status = BLOCKED_SABOTAJE;
     list_add(lista_BLOCKEMERGENCIA, tripulante2);
     //
     Tripulante *tripulante3 = malloc(sizeof(Tripulante));
@@ -94,14 +96,52 @@ void verificar_buscar_el_mas_cercano()
     tripulante3->posicion = malloc(sizeof(Posicion));
     tripulante3->posicion->posx = 3;
     tripulante3->posicion->posy = 3;
+    tripulante1->status = BLOCKED_SABOTAJE;
     list_add(lista_BLOCKEMERGENCIA, tripulante3);
     //
     Tripulante *tripulante_elegido = buscar_el_mas_cercano(sabotaje);
-    CU_ASSERT_EQUAL(tripulante_elegido->id, tripulante3->id);
-}
 
-/*void suma_proceso1(){
-    CU_ASSERT_EQUAL(2+2, 4);
-}*/
+    CU_ASSERT_EQUAL(tripulante_elegido->id, tripulante3->id);
+    CU_ASSERT_NOT_EQUAL(tripulante_elegido->id, tripulante2->id);
+    CU_ASSERT_NOT_EQUAL(tripulante_elegido->id, tripulante1->id);
+
+    lista_READY = list_create();
+    desbloquear_tripulantes();
+    CU_ASSERT_EQUAL(tripulante1->status, READY);
+    CU_ASSERT_EQUAL(tripulante2->status, READY);
+    CU_ASSERT_EQUAL(tripulante3->status, READY);
+    CU_ASSERT_EQUAL(list_size(lista_BLOCKEMERGENCIA), 0);
+    CU_ASSERT_EQUAL(list_size(lista_READY), 3);
+}
+// void verificar_desbloquear_tripulantes()
+// {
+//     // iniciliazo la lista vacia
+
+//     lista_BLOCKEMERGENCIA = NULL;
+//     //defino 4 tripulantes :status:BLOCKEMERGENCIA
+//     Tripulante *tripulante1 = malloc(sizeof(Tripulante));
+//     tripulante1->status = BLOCKED_SABOTAJE;
+//     list_add(lista_BLOCKEMERGENCIA, tripulante1);
+//     //
+//     Tripulante *tripulante2 = malloc(sizeof(Tripulante));
+//     tripulante2->status = BLOCKED_SABOTAJE,
+//     list_add(lista_BLOCKEMERGENCIA, tripulante2);
+//     //
+//     Tripulante *tripulante3 = malloc(sizeof(Tripulante));
+//     tripulante3->status = BLOCKED_SABOTAJE;
+//     list_add(lista_BLOCKEMERGENCIA, tripulante3);
+//     //
+//     Tripulante *tripulante4 = malloc(sizeof(Tripulante));
+//     tripulante4->status = BLOCKED_SABOTAJE;
+//     list_add(lista_BLOCKEMERGENCIA, tripulante4);
+
+//     desbloquear_tripulantes();
+
+//     CU_ASSERT_EQUAL(tripulante1->status, READY);
+//     CU_ASSERT_EQUAL(tripulante2->status, READY);
+//     CU_ASSERT_EQUAL(tripulante3->status, READY);
+//     CU_ASSERT_EQUAL(tripulante4->status, READY);
+//     CU_ASSERT_EQUAL(list_size(lista_BLOCKEMERGENCIA), 0);
+// }
 
 //

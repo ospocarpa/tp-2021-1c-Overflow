@@ -425,6 +425,7 @@ Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje)
             tripulante_retornar = tripulante_sabotaje;
         }
     }
+    //printf("%d\n", distancia_sabotaje);
     return tripulante_retornar;
 }
 
@@ -457,7 +458,7 @@ void inicio_sabotaje(t_sabotaje *sabotaje)
     while (!list_is_empty(tripulantes_exec))
     { // rompe linea 375 (si hay_sabotaje = true)
         Tripulante *un_tripulante = list_remove(tripulantes_exec, 0);
-        un_tripulante->status = BLOCKED;
+        un_tripulante->status = BLOCKED_SABOTAJE;
     }
     //
     bool estas_ready(void *_tripulante)
@@ -473,7 +474,7 @@ void inicio_sabotaje(t_sabotaje *sabotaje)
     while (!list_is_empty(tripulantes_ready))
     {
         Tripulante *un_tripulante = list_remove(tripulantes_ready, 0);
-        un_tripulante->status = BLOCKED;
+        un_tripulante->status = BLOCKED_SABOTAJE;
     }
 
     //funcion buscar_el_mas_cercano
@@ -503,7 +504,7 @@ void invocar_fsck()
 void desbloquear_tripulantes()
 {
 
-    while (list_is_empty(lista_BLOCKEMERGENCIA))
+    while (!list_is_empty(lista_BLOCKEMERGENCIA))
     {
         Tripulante *un_tripulante = list_remove(lista_BLOCKEMERGENCIA, 0);
         un_tripulante->status = READY;
