@@ -411,6 +411,23 @@ void ir_a_la_posicion_sabotaje(Tripulante *tripulante, t_sabotaje *sabotaje, int
     }
 }
 
+Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje)
+{
+    Tripulante *tripulante_retornar;
+    double distancia_sabotaje = 999999999.9;
+    for (int i = 0; i < list_size(lista_BLOCKEMERGENCIA); i++)
+    {
+        Tripulante *tripulante_sabotaje = list_get(lista_BLOCKEMERGENCIA, i);
+        double distancia = sqrt(pow(sabotaje->posicion->posx - tripulante_sabotaje->posicion->posx, 2) + pow(sabotaje->posicion->posy - tripulante_sabotaje->posicion->posy, 2));
+        if (distancia < distancia_sabotaje)
+        {
+            distancia_sabotaje = distancia;
+            tripulante_retornar = tripulante_sabotaje;
+        }
+    }
+    return tripulante_retornar;
+}
+
 //se pasa por parametro un sabotaje?  Rta: sí
 void inicio_sabotaje(t_sabotaje *sabotaje)
 {
@@ -460,24 +477,8 @@ void inicio_sabotaje(t_sabotaje *sabotaje)
     }
 
     //funcion buscar_el_mas_cercano
-    Tripulante *buscar_el_mas_cercano()
-    {
-        Tripulante *tripulante_retornar;
-        double distancia_sabotaje = 999999999.9;
-        for (int i = 0; i < list_size(lista_BLOCKEMERGENCIA); i++)
-        {
-            Tripulante *tripulante_sabotaje = list_get(lista_BLOCKEMERGENCIA, i);
-            double distancia = sqrt(pow(sabotaje->posicion->posx - tripulante_sabotaje->posicion->posx, 2) + pow(sabotaje->posicion->posy - tripulante_sabotaje->posicion->posy, 2));
-            if (distancia < distancia_sabotaje)
-            {
-                distancia_sabotaje = distancia;
-                tripulante_retornar = tripulante_sabotaje;
-            }
-        }
-        return tripulante_retornar;
-    }
 
-    Tripulante *tripulante_elegido = buscar_el_mas_cercano();
+    Tripulante *tripulante_elegido = buscar_el_mas_cercano(sabotaje);
     int socket;
     ir_a_la_posicion_sabotaje(tripulante_elegido, sabotaje, socket); //pasa a exec
     invocar_fsck();
