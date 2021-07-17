@@ -25,7 +25,7 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     free(contenido);
     //mostrar_datos_patota(datosPatota);
 }
-
+//borrar esta funcion ??
 void ejecucion_dispatcher()
 {
     //son todos los tripulantes listos
@@ -252,10 +252,10 @@ void crearHilosTripulantes(Patota *una_patota)
 
 void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
 {
+    //prueba de fifo en test.c
     int posicion_tarea_x = 2; //tripulante->tarea->posicion.posx;
     int posicion_tarea_y = 3; //tripulante->tarea->posicion.posy;
     //Parece que se pasa mal la tarea o algo, pero harcodeando la posicion de la tarea funca bien.
-    printf("TAREA POSICION X : %d POSICION Y: %d\n", posicion_tarea_x, posicion_tarea_y); //BORRAR
 
     int rafaga = 1;
     int retardo_cpu = config->RETARDO_CICLO_CPU;
@@ -280,9 +280,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
         {
             tripulante->posicion->posx--;
         }
-        //prueba
-        printf("Tripulante: %d  posx: %d, posy: %d, ciclos consumidos: %d,tareaPosX: %d , tareaPosY: %d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy, ciclos_consumidos, tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
-        //
+
         if (config->ALGORITMO == RR)
         {
             ciclos_consumidos++;
@@ -306,9 +304,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
         {
             tripulante->posicion->posy--;
         }
-        //prueba
-        printf("Tripulante: %d  posx: %d, posy: %d, ciclos consumidos: %d\n", tripulante->id, tripulante->posicion->posx, tripulante->posicion->posy, ciclos_consumidos);
-        //
+
         if (config->ALGORITMO == RR)
         {
             ciclos_consumidos++;

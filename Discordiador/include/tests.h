@@ -15,10 +15,11 @@
 int run_tests();
 void verificarTarea();
 void verificarSabotaje();
-void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje();
+void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje_mover_tripulante_a_tarea();
 
 extern t_list *lista_BLOCKEMERGENCIA;
 extern t_list *lista_READY;
 extern bool planificacion_activa;
+extern bool hay_sabotaje;
 
 #endif
