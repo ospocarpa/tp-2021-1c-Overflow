@@ -63,7 +63,7 @@ static void *ejecutar_operacion(int tripulante)
 		tarea.tiempo = 5;
 		tarea.posicion.posx = 3;
 		tarea.posicion.posy = 4;
-		tarea.parametro = 0;
+		tarea.parametro = 5;
 
 		/* serializo la respuesta al tripulante */
 		paquete_res = ser_res_informar_tarea_tripulante(tarea);

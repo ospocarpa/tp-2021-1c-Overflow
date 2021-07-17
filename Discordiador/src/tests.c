@@ -75,11 +75,19 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
 
     lista_BLOCKEMERGENCIA = list_create();
     //defino 3 tripulantes :posiciones  1-1 ,2-2,3-3
+    t_info_tarea* tarea = malloc(sizeof(t_info_tarea));
+    tarea->tarea = 0;
+    tarea->parametro = 1;
+	tarea->posicion.posx = 2;
+    tarea->posicion.posy = 3;
+    tarea->tiempo = 3;
+    
     Tripulante *tripulante1 = malloc(sizeof(Tripulante));
     tripulante1->id = 1;
     tripulante1->posicion = malloc(sizeof(Posicion));
     tripulante1->posicion->posx = 1;
     tripulante1->posicion->posy = 1;
+    tripulante1->tarea = tarea;
     tripulante1->status = BLOCKED_SABOTAJE;
     list_add(lista_BLOCKEMERGENCIA, tripulante1);
     //
@@ -88,6 +96,7 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     tripulante2->posicion = malloc(sizeof(Posicion));
     tripulante2->posicion->posx = 2;
     tripulante2->posicion->posy = 2;
+    tripulante2->tarea = tarea;
     tripulante1->status = BLOCKED_SABOTAJE;
     list_add(lista_BLOCKEMERGENCIA, tripulante2);
     //
@@ -96,6 +105,7 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     tripulante3->posicion = malloc(sizeof(Posicion));
     tripulante3->posicion->posx = 3;
     tripulante3->posicion->posy = 3;
+    tripulante3->tarea = tarea;
     tripulante1->status = BLOCKED_SABOTAJE;
     list_add(lista_BLOCKEMERGENCIA, tripulante3);
     //

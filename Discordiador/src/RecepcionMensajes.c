@@ -15,6 +15,7 @@ void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             break;
         case SABOTAJE:
             printf("Llegó sabotaje\n");
+            //hay_sabotaje = true;
             input = deserializar_I_SABOTAJE(paquete);
             mostrarSabotaje(input);
             //void inicio_sabotaje()

@@ -23,7 +23,7 @@
 #include "sd_fcsk.h"
 
 extern bool hay_sabotaje;
-pthread_mutex_t MXTRIPULANTE;
+extern pthread_mutex_t MXTRIPULANTE;
 
 extern int numeroTripulante;
 extern int numeroPatota;
@@ -38,7 +38,7 @@ extern t_list *lista_EXEC;
 extern t_list *lista_BLOCKEMERGENCIA;
 extern t_list *lista_EXIT;
 
-extern sem_t activados;
+extern int cantidad_activos;
 extern t_config_discordiador *config;
 
 void crearHilosTripulantes(Patota *);
