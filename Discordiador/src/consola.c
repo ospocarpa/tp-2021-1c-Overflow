@@ -143,18 +143,16 @@ void parsear_mensaje(op_code operacion, char **tokens)
         }
 
         break;
-
     case EXPULSAR_TRIPULANTE:
-        printf("Entro expulsar tripulante\n");
-
         if (cantidad_argumentos == 1)
         {
-            //completar
-
             if (!es_un_numero(tokens[1]))
             {
-
                 printf("El argumento es invalido\n");
+            }
+            else
+            {
+                expulsar_tripulante(atoi(tokens[1]));
             }
         }
         else
@@ -191,24 +189,21 @@ void parsear_mensaje(op_code operacion, char **tokens)
         }
 
         break;
-
     case OBTENER_BITACORA:
-        printf("entre a obtener bitacora\n");
-
         if (cantidad_argumentos == 1)
         {
             printf("cantidad de argumentos correctos\n");
-            //completar
             if (!es_un_numero(tokens[1]))
-            { // existe el tripulante?
-
+            {
                 printf("El argumento es invalido\n");
-
                 return;
             }
-            printf("argumentos correctos\n");
-            //completar
+            else
+            {
+                obtener_bitacora(atoi(tokens[1]));
+            }
         }
+
         else
         {
             printf("Cantidad de argumentos invalido\n");
@@ -235,7 +230,6 @@ void parsear_mensaje(op_code operacion, char **tokens)
         break;
     }
 }
-
 // deberia ir a la shared ?
 int existe_archivo(const char *ruta)
 {
@@ -280,26 +274,23 @@ void activar_planificacion()
 }
 void planificar()
 {
-
-    if (planificacion_activa)
+    t_list *tripulantes = get_tripulantes_all();
+    for (int c = 0; c < list_size(tripulantes); c++)
     {
-
-        //TODO
-    }
-    else
-    {
-        log_info(logger, "[La planificacion  está desactivada]");
+        Tripulante *tripulante = list_get(tripulantes, c);
+        pthread_mutex_unlock(&tripulante->activo);
     }
 }
 void listar_tripulantes()
 {
+    t_list *tripulantes = get_tripulantes_all();
     char *format = "%d/%m/%y %H:%M:%S";
     char *timestamp = temporal_get_string_time(format);
     printf("Estado de la nave: %s\n", timestamp);
 
-    for (int c = 0; c < list_size(lista_tripulantes); c++)
+    for (int c = 0; c < list_size(tripulantes); c++)
     {
-        Tripulante *tripulante = list_get(lista_tripulantes, c);
+        Tripulante *tripulante = list_get(tripulantes, c);
         printf("Tripulante: %d    Patota: %d    Status: %s\n", tripulante->id, tripulante->patota_id, get_status_string(tripulante->status));
     }
 }
@@ -370,4 +361,44 @@ void iniciar_patota(char **tokens)
     mostrar_t_patota(patota_new);
     crearHilosTripulantes(patota_new);
     liberar_conexion(socket_cliente);
+}
+
+void expulsar_tripulante(int tripulante_id)
+{
+    int conexion_a_miram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
+
+    t_expulsar_tripulante data;
+    data.id_tripulante = tripulante_id;
+    t_package paquete = ser_cod_expulsar_tripulante(data);
+
+    if (conexion_a_miram > 0)
+    {
+        sendMessage(paquete, conexion_a_miram);
+    }
+}
+
+void obtener_bitacora(int tripulante_id)
+{
+    int conexion_a_mongostore = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
+
+    char *nombre_file = string_new();
+    string_append_with_format(&nombre_file, "tripulante%s.ims", string_itoa(tripulante_id));
+
+    t_file file;
+    file.nombre_file = malloc(strlen(nombre_file));
+    file.contenido = "";
+    file.long_contenido = strlen(file.contenido);
+    strcpy(file.nombre_file, nombre_file);
+    file.long_nombre_file = strlen(file.nombre_file);
+
+    if (conexion_a_mongostore > 0)
+    {
+        t_package paquete = ser_get_file_bitacora(file);
+        sendMessage(paquete, conexion_a_mongostore);
+
+        t_file sabotaje;
+        t_package paquete_respuesta = recibir_mensaje(conexion_a_mongostore);
+        sabotaje = des_get_file(paquete_respuesta);
+        mostrar_file(sabotaje);
+    }
 }

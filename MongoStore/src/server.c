@@ -6,12 +6,13 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
     log_info(logger, "recibo algo %d", paquete.cod_operacion);
     
     //Deserializacion
-    t_package new_paquete;
+    t_package paquete_a_enviar;
     
     t_create_file create_get_file;
     t_file file;
     t_file file_a_enviar;
     t_operation_file_recurso operation_file_recurso;
+
     switch (paquete.cod_operacion)
     {
         case CREAR_RECURSO: 
@@ -34,13 +35,16 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             file_a_enviar = get_recurso(file.nombre_file);
             mostrar_file(file_a_enviar);
             break;
-        case GET_BITACORA: //Pendiente en devolver
+        case GET_BITACORA:
             printf("Bitácora get\n");
             file = des_get_file(paquete);
             mostrar_file(file);
 
             file_a_enviar = get_bitacora_tripulante(file);
             mostrar_file(file_a_enviar);
+
+            paquete_a_enviar = ser_get_file_bitacora(file_a_enviar);
+            sendMessage(paquete_a_enviar, cliente_fd);
             break;
         case UPDATE_BITACORA: //Ver si debe devolver algo
             printf("Bitácora actualizar\n");
