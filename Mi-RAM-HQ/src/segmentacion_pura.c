@@ -86,41 +86,50 @@ int algoritmo_primer_ajuste(t_data_segmento * data_segmento){
 return base;
 }
 
-t_hueco * algoritmo_mejor_ajuste(int desplazamiento){
+int algoritmo_mejor_ajuste(int desplazamiento){
     int base;
 
-    bool hay_espacio(t_hueco * h){
-        return ((h->desplazamiento - desplazamiento) >= 0);
-    }
-
-    t_list * huecos_candidatos = list_filter(tabla_hueco, hay_espacio);
-
-
-    t_hueco * hueco_menor_para_desplazamiento(t_hueco * hueco1, t_hueco * hueco2){
-    return (hueco1->desplazamiento - desplazamiento <= hueco2->desplazamiento - desplazamiento) ? hueco1 : hueco2;
-    }
-
-    t_list * huecos_ordenados = list_sorted( huecos_candidatos, hueco_menor_para_desplazamiento);
-    
-    t_hueco * hueco_seleccionado = list_get(huecos_ordenados, 0);
-
+    //Ver el primer hueco disponible
     int indice = 0;
-    /* 
-    while (!son_huecos_iguales(list_get(tabla_hueco, indice), hueco_seleccionado)){
-        indice++;
+    t_hueco * hueco_seleccionado = NULL;
+    for(int c=0; c<list_size(tabla_hueco);c++){
+        if(hueco_temp->desplazamiento >= desplazamiento){
+            hueco_seleccionado = list_get(tabla_hueco, c);
+            indice = c;
+            break;
+        }
     }
-    
-    hueco_seleccionado = list_get(tabla_hueco, indice);
 
-    t_hueco * hueco_aux = list_replace(tabla_hueco, indice, hueco_create(hueco_seleccionado->base, hueco_seleccionado->desplazamiento));
-        
-    hueco_detroy(hueco_aux);
-    */
+    int pivote_titular = hueco_seleccionado->desplazamiento - desplazamiento; //2
+    
+    int pivote_auxiliar;
+    int indice_a_borrar = indice;
+    
+    for(int c=indice+1; c<list_size(tabla_hueco);c++){
+        t_hueco* hueco_temp = list_get(tabla_hueco, c);
+        pivote_auxiliar = hueco_temp->desplazamiento - desplazamiento; //1
+        if(pivote_auxiliar>=0){
+            if(pivote_auxiliar<pivote_titular){
+                hueco_seleccionado = hueco_temp;
+                pivote_titular = pivote_auxiliar;
+                indice_a_borrar = c;
+            }
+        }
+    }
 
     base = hueco_seleccionado->base;
+    if(hueco_seleccionado->desplazamiento == desplazamiento){
+        //int indice = indice_a_borrar;
+        //eliminarlo de la lista;
+        //hueco_detroy(hueco_aux);
+    }else{
+        
+        hueco_seleccionado->base = hueco_seleccionado->base + desplazamiento; 
+    }
+
 
     //ver liberar lista
-    return hueco_seleccionado;
+    return base;
 }
 
 void liberar_tabla_huecos(){
