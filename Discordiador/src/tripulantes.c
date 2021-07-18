@@ -64,10 +64,9 @@ void pedirTarea(Tripulante *tripulante, int socket_cliente)
     //En tarea se guarda la proxima tarea a ejecutar
     t_info_tarea tarea;
     tarea = des_res_informacion_tarea_tripulante(paquete);
-    
 
-    t_info_tarea* tarea_tripulante = malloc(sizeof(t_info_tarea));
-    
+    t_info_tarea *tarea_tripulante = malloc(sizeof(t_info_tarea));
+
     tarea_tripulante->tarea = tarea.tarea;
     tarea_tripulante->parametro = tarea.parametro;
     tarea_tripulante->tiempo = tarea.tiempo;
@@ -85,8 +84,8 @@ void hilo_tripulante(Tripulante *tripulante)
     pthread_mutex_unlock(&MXTRIPULANTE);
 
     printf("Pedí antes: %d\n", tripulante->id);
-    pthread_mutex_lock(&tripulante->activo);        //Activo: se refiere a si la planificación está activa //TO DO
-    
+    pthread_mutex_lock(&tripulante->activo); //Activo: se refiere a si la planificación está activa //TO DO
+
     int socket_cliente_mongo_store = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
     if (socket_cliente_mongo_store < 0)
     {
@@ -98,7 +97,7 @@ void hilo_tripulante(Tripulante *tripulante)
     {
         log_info(logger, "Tripulante %d Conexion con MongoStore exitosa", tripulante->id);
     }
-    
+
     //tripulante se conecta a mi ram
     int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
 
@@ -118,13 +117,13 @@ void hilo_tripulante(Tripulante *tripulante)
         int *un_id = (int *)param;
         return tripulante->id == *un_id;
     }
-    
+
     // Cuando quiero saber el valor de un semaforo
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
     printf("multiTarea:%d\n", sval); */
     //
-    
+
     _Bool finalizo_tarea = true;
 
     while (1)
@@ -133,7 +132,7 @@ void hilo_tripulante(Tripulante *tripulante)
         {
             tripulante->rafagas_consumidas = 0;
             pedirTarea(tripulante, socket_cliente);
-            
+
             /*printf("Tiempo: %d\n", tripulante->tarea->tiempo);
             printf("Parámetro: %d\n", tripulante->tarea->parametro);
             printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);*/
@@ -178,11 +177,10 @@ void hilo_tripulante(Tripulante *tripulante)
 
             pthread_mutex_lock(&MXTRIPULANTE);
             list_remove_by_condition(lista_READY, mismo_id);
-            cantidad_activos ++;
-            tripulante->status = EXEC; 
+            cantidad_activos++;
+            tripulante->status = EXEC;
             list_add(lista_EXEC, tripulante);
             pthread_mutex_unlock(&MXTRIPULANTE);
-
 
             if (hay_sabotaje)
             {
@@ -213,8 +211,8 @@ void hilo_tripulante(Tripulante *tripulante)
                     pthread_mutex_lock(&tripulante->activo);
                 }
             }
-            
-            while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)  
+
+            while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)
             {
                 if (hay_sabotaje)
                 {
@@ -325,6 +323,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante, int socket)
     {
         if (!planificacion_activa || hay_sabotaje)
         {
+            chequear_activados();
             pthread_mutex_lock(&tripulante->activo);
         }
         //Mueve uno en Y
@@ -366,7 +365,7 @@ void enviar_posicion_mi_ram(Tripulante *tripulante, int socket)
 
 void chequear_activados()
 {
-    cantidad_activos --;
+    cantidad_activos--;
     if (cantidad_activos == 0)
     {
         //harcodeo un sabotaje por default
@@ -454,12 +453,14 @@ Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje)
         }
     }
     //printf("%d\n", distancia_sabotaje);
+    tripulante_retornar->status = EXEC;
     return tripulante_retornar;
 }
 
 void inicio_sabotaje(t_sabotaje *sabotaje)
 {
-    hay_sabotaje = true;        //TO DO, se va a hacer en recepcion mensajes
+    printf("imprimo dos veces ?\n");
+    hay_sabotaje = true; //TO DO, se va a hacer en recepcion mensajes
     bool comparador(void *tripulante1, void *tripulante2)
     {
         Tripulante *tripulante1_analizar = (Tripulante *)tripulante1;
@@ -504,12 +505,17 @@ void inicio_sabotaje(t_sabotaje *sabotaje)
         un_tripulante->status = BLOCKED_SABOTAJE;
     }
 
-    //funcion buscar_el_mas_cercano
+    //dentro funcion buscar_el_mas_cercano pasa a exec al tripulante que es elegido
+    //comprobacion : en tests
 
     Tripulante *tripulante_elegido = buscar_el_mas_cercano(sabotaje);
+
+    printf("entro dos veces a iniciar_sabotaje?\n");
     int socket;
     ir_a_la_posicion_sabotaje(tripulante_elegido, sabotaje, socket); //TO DO pasa a exec al tripulante
     invocar_fsck();
+    list_add(lista_BLOCKEMERGENCIA, tripulante_elegido);
+    tripulante_elegido->status = BLOCKED_SABOTAJE;
     desbloquear_tripulantes();
     hay_sabotaje = false;
     printf("soy un sabotaje\n");

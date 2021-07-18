@@ -75,13 +75,13 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
 
     lista_BLOCKEMERGENCIA = list_create();
     //defino 3 tripulantes :posiciones  1-1 ,2-2,3-3
-    t_info_tarea* tarea = malloc(sizeof(t_info_tarea));
+    t_info_tarea *tarea = malloc(sizeof(t_info_tarea));
     tarea->tarea = 0;
     tarea->parametro = 1;
-	tarea->posicion.posx = 2;
+    tarea->posicion.posx = 2;
     tarea->posicion.posy = 3;
     tarea->tiempo = 3;
-    
+
     Tripulante *tripulante1 = malloc(sizeof(Tripulante));
     tripulante1->id = 1;
     tripulante1->posicion = malloc(sizeof(Posicion));
@@ -112,6 +112,7 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     Tripulante *tripulante_elegido = buscar_el_mas_cercano(sabotaje);
 
     CU_ASSERT_EQUAL(tripulante_elegido->id, tripulante3->id);
+    CU_ASSERT_EQUAL(tripulante_elegido->status, EXEC);
     CU_ASSERT_NOT_EQUAL(tripulante_elegido->id, tripulante2->id);
     CU_ASSERT_NOT_EQUAL(tripulante_elegido->id, tripulante1->id);
 
