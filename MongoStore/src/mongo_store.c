@@ -2,6 +2,11 @@
 
 int main(int argc, char **argv)
 {   
+    t_list* files = lectura_archivos("/home/utnso/polus/Files/Bitacoras");
+    for(int c=0; c<list_size(files); c++){
+        printf("Prueba: %s\n", list_get(files, c));
+    }
+    return 1;
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();

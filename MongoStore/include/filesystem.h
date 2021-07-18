@@ -12,6 +12,9 @@
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
 #include <commons/string.h>
+#include <filesystem.h>
+#include <stdlib.h>
+#include <sys/stat.h>
 
     //Estructura
     typedef struct{
@@ -21,13 +24,14 @@
 		uint32_t blocks_cant;
 		uint32_t blocks_size;
 		t_bitarray* bitmap;
-        void* blocks;                       //Es el conjunto de bloques
+        void* blocks;                       //Es el conjunto de bloques}
 	} t_filesystem;
 
     t_filesystem filesystem;
 
     // Creación
     void implementar_sincronizacion();
+    void eliminar_archivos_filesystem();
     char* get_path_file_recurso(char* file_name);
     char* get_path_file_bitacora(char* file_name);
     char* get_contenido_recurso(char* filename);
@@ -50,12 +54,18 @@
     extern t_config_mongo_store* config_global_mongo_store;
 
     void init_filesystem();
+    bool existe_nombre_file(char* filename);
     bool existePath(char* path);
     char* get_path_punto_montaje();
     char* get_path_files();
     char* get_path_bitacoras();
+    char* get_path_super_bloque();
     void print_bit_map(t_bitarray* bitarray);
     void clean_bit_map(t_bitarray* bitarray);
     int create_file(char* path);
+
+    //Sabotaje
+    void resolver_sabotaje_super_bloque();
+    void resolver_sabotaje_files();
 
 #endif

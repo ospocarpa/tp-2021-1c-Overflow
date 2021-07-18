@@ -15,6 +15,8 @@
 #include <signal.h>
 #include <commons/bitarray.h>
 #include <filesystem.h>
+#include <stdlib.h>
+#include "util_mongostore.h"
 
     void lectura_file();
 

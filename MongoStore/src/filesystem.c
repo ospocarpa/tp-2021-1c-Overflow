@@ -25,12 +25,23 @@ void init_filesystem(){
     //printf("Size: %d\n", filesystem.blocks_size);
 }
 
+bool existe_nombre_file(char* filename){
+    char* path_ims = get_path_file_recurso(filename);
+    return existePath(path_ims);
+}
+
 bool existePath(char* path){
     //printf("%s\n", path);
     FILE* file = fopen(path, "r");
 	if(file==NULL)
 		return false;
     return true;
+}
+
+void eliminar_archivos_filesystem(char* filename){
+    char* path_ims = get_path_file_recurso(filename);
+    printf("Archivo: %s\n", path_ims);
+    remove(path_ims);
 }
 
 char* get_contenido_recurso(char* filename){
@@ -295,6 +306,14 @@ char* get_path_bitacoras(){
     return path_bitacoras;
 }
 
+char* get_path_super_bloque(){
+    char* path_super_bloque = string_new();
+    char* punto_montaje = get_path_punto_montaje();
+    string_append_with_format(&path_super_bloque, "%s", punto_montaje);
+    string_append_with_format(&path_super_bloque, "%s", "/Blocks.ims");
+    return path_super_bloque;
+}
+
 void print_bit_map(t_bitarray* bitarray){
     //bitarray_set_bit(bitarray, 3);
     //bitarray_set_bit(bitarray, 10);
@@ -333,3 +352,26 @@ int create_file(char* path){
 	}
     return status;
 }
+
+void resolver_sabotaje_super_bloque(){
+    struct stat sb;
+    stat(get_path_super_bloque(), &sb);
+    printf("Size: %d\n", sb.st_size);
+    int tamanio_bloque = sb.st_size;
+    
+    //Cantidad de bloques
+    int cant_bloques = tamanio_bloque/filesystem.blocks_size;
+    filesystem.blocks_cant = cant_bloques; 
+    
+    //Analizar bitmap
+    /*
+    Obtener los nombres en una lista
+    files
+    bitacoras
+    
+    nombres
+    */
+
+}
+
+void resolver_sabotaje_files(){}

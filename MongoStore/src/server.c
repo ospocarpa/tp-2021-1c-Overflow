@@ -27,13 +27,16 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             mostrar_create_file(create_get_file);
             create_tripulante_bitacora(create_get_file);
             break;
-        case GET_RECURSO:  //Pendiente en devolver
+        case GET_RECURSO: 
             printf("Recurso get\n");
             file = des_get_file(paquete);
             mostrar_file(file);
 
             file_a_enviar = get_recurso(file.nombre_file);
             mostrar_file(file_a_enviar);
+
+            paquete_a_enviar = ser_get_file_recurso(file_a_enviar);
+            sendMessage(paquete_a_enviar, cliente_fd);
             break;
         case GET_BITACORA:
             file = des_get_file(paquete);
@@ -46,7 +49,6 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             sendMessage(paquete_a_enviar, cliente_fd);
             break;
         case UPDATE_BITACORA: 
-            //Ver si debe devolver algo
             printf("Bitácora actualizar\n");
             file = des_update_bitacora(paquete);
             mostrar_update_bitacora(file);
@@ -67,13 +69,19 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             
             retirar_recurso(operation_file_recurso);
             break;
-        case ELIMINAR_RECURSO: //PENDIENTE
-            printf("Eliminar recurso\n");
+        case ELIMINAR_RECURSO:
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
+            
+            eliminar_recurso(operation_file_recurso);
             break;
         case INICIO_FSCK: //Inicio de fsck 
             init_protocolo_fsck();
+            
+            //Indica finalización del protocolo fsck
+            t_aviso_fsck aviso;
+            paquete_a_enviar = ser_fin_fcsk(aviso);
+            sendMessage(paquete_a_enviar, cliente_fd);
             break;
         default: 
             exist_code = false;

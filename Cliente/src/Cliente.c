@@ -10,8 +10,12 @@ int main(int argc, char **argv)
     printf("%s %d\n", config->IP_MODULO, config->PUERTO_MODULO);
     int conexion_servidor = crear_conexion("127.0.0.1", 5002);
 
+    inicio_FSCK(conexion_servidor);
+    crear_recurso(conexion_servidor);
+    sleep(20);
+    eliminar_recurso(conexion_servidor);
     //printf("Conexion servidor: %d\n", conexion_servidor);
-    get_recurso(conexion_servidor);
+    //get_recurso(conexion_servidor);
     /*sleep(5);
     retirar_recurso(conexion_servidor);
     sleep(5);
@@ -26,11 +30,17 @@ int main(int argc, char **argv)
     return 0;
 }
 
+void inicio_FSCK(int conexion_servidor){
+    t_aviso_fsck fcsk;
+    t_package paquete = ser_fcsk(fcsk);
+    sendMessage(paquete, conexion_servidor);
+}
+
 void agregar_recurso(int conexion_servidor){
     t_operation_file_recurso file;
     file.cantidad = 10;
     file.caracter = 'o';
-    file.nombre_file = "oxigeno.ims";
+    file.nombre_file = "basura.ims";
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_agregar_recurso(file);
@@ -52,7 +62,7 @@ void eliminar_recurso(int conexion_servidor){
     t_operation_file_recurso file;
     file.cantidad = 4;
     file.caracter = 'c';
-    file.nombre_file = "eliminar_recurso.ims";
+    file.nombre_file = "basura.ims";
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_eliminar_recurso(file);
@@ -95,7 +105,7 @@ void get_bitacora(int conexion_servidor){
 void crear_recurso(int conexion_servidor){
     t_create_file file;
     file.caracter = 'o';
-	file.nombre_file = "oxigeno.ims";
+	file.nombre_file = "basura.ims";
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_create_file_recurso(file);
