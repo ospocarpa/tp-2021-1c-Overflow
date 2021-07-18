@@ -367,6 +367,21 @@ void expulsar_tripulante(int tripulante_id)
 {
     int conexion_a_miram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
 
+    Tripulante *tripulante_a_expulsar = NULL;
+    tripulante_a_expulsar = tripulante_segun_id(tripulante_id);
+    if (tripulante_a_expulsar == NULL)
+    {
+        printf("tripulante no exite\n");
+        return;
+    }
+    if (tripulante_a_expulsar->status == EXIT)
+    {
+        printf("tripulante %d ya fue expulsado antes\n", tripulante_a_expulsar->id);
+        return;
+    }
+    tripulante_a_expulsar->status = EXIT;
+    printf("tripulante %d se va expulsar\n", tripulante_a_expulsar->id);
+    // una opcion podria ser forzar terminar el hilo de ese tripulante para no modificar disenio
     t_expulsar_tripulante data;
     data.id_tripulante = tripulante_id;
     t_package paquete = ser_cod_expulsar_tripulante(data);
