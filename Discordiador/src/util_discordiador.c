@@ -47,6 +47,9 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         pthread_mutex_init(&tripulante->seleccionado, NULL);
         //pthread_mutex_init(&tripulante->sabotaje,0);
         list_add(patota_new->tripulantes, tripulante);
+        // defino los sockets en -1
+        tripulante->socket_cliente_mongo_store = -1;
+        tripulante->socket_cliente_mi_ram = -1;
     }
 
     int posx = 0;
@@ -116,7 +119,7 @@ char *get_status_string(status_tripulante status)
         texto = "Exit";
         break;
     case BLOCKED_SABOTAJE:
-        texto = "Blcok sabotaje";
+        texto = "Block sabotaje";
         break;
     }
     return texto;
