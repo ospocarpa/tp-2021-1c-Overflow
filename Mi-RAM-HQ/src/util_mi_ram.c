@@ -33,24 +33,22 @@
         t_info_tarea tarea_aux;
         char* tarea = dame_tarea(char* lista_tareas, int n_tarea);//"ARREGLAR_REACTOR;7;2;5";
         partes = string_split(tarea,';');
-        partes_aux = string_split(pares[0],' '); // nose si lo toma asi o tendre q usar \s
+                //borrar este spit y cambiar los campos.
 
         if((strlen(partes)-1 ) > 3){
-            tarea_aux.tarea = partes_aux[0];
-            tarea_aux.parametro = atoi(partes_aux[1]);
-            tarea_aux.posicion.pox = atoi(partes[1]);
-            tarea_aux.posicion.pox = atoi(partes[2]);
+            tarea_aux.tarea = partes[0];
+            tarea_aux.posicion.posx = atoi(partes[1]);
+            tarea_aux.posicion.posy = atoi(partes[2]);
             tarea_aux.timepo = atoi(partes[3]);
         }else{
             if (strlen(partes)-1 ) == 3){
                 tarea_aux.tarea = partes[0];
-                tarea_aux.parametro = atoi(partes_aux[1]);
-                tarea_aux.posicion.pox = atoi(partes[1]);
-                tarea_aux.posicion.pox = atoi(partes[2]);
+                tarea_aux.posicion.posx = atoi(partes[1]);
+                tarea_aux.posicion.posy= atoi(partes[2]);
             }
-            else{
-                // Que hago en el caso de que sea menor a 3?
-            }
+            // else{
+            //     // Que hago en el caso de que sea menor a 3?
+            // }
 
         }
         return tarea_aux;
