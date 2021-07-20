@@ -5,6 +5,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 #include <commons/collections/list.h>
+#include <commons/string.h>
 #include "tad_mi_ram_hq.h"
 #include "log_utils.h"
 #include <string.h>
