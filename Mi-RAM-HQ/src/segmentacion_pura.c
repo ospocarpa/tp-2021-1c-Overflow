@@ -92,7 +92,11 @@ int algoritmo_mejor_ajuste(int desplazamiento){
     //Ver el primer hueco disponible
     int indice = 0;
     t_hueco * hueco_seleccionado = NULL;
+    t_hueco * hueco_temp = NULL;
+
     for(int c=0; c<list_size(tabla_hueco);c++){
+        hueco_temp = list_get(tabla_hueco, c);
+
         if(hueco_temp->desplazamiento >= desplazamiento){
             hueco_seleccionado = list_get(tabla_hueco, c);
             indice = c;
@@ -106,7 +110,7 @@ int algoritmo_mejor_ajuste(int desplazamiento){
     int indice_a_borrar = indice;
     
     for(int c=indice+1; c<list_size(tabla_hueco);c++){
-        t_hueco* hueco_temp = list_get(tabla_hueco, c);
+        //t_hueco* hueco_temp = list_get(tabla_hueco, c);
         pivote_auxiliar = hueco_temp->desplazamiento - desplazamiento; //1
         if(pivote_auxiliar>=0){
             if(pivote_auxiliar<pivote_titular){
@@ -119,16 +123,15 @@ int algoritmo_mejor_ajuste(int desplazamiento){
 
     base = hueco_seleccionado->base;
     if(hueco_seleccionado->desplazamiento == desplazamiento){
-        //int indice = indice_a_borrar;
+        indice = indice_a_borrar;
         //eliminarlo de la lista;
-        //hueco_detroy(hueco_aux);
+        list_remove_and_destroy_element(tabla_hueco, indice, (void *) hueco_detroy);
+        hueco_detroy(hueco_temp);
     }else{
         
         hueco_seleccionado->base = hueco_seleccionado->base + desplazamiento; 
     }
 
-
-    //ver liberar lista
     return base;
 }
 
@@ -150,7 +153,7 @@ bool se_puede_escribir(int tam_info){
 }
 
 void escribir_memoria_principal(t_data_segmento * data_semento,int base){ 
-
+    cargar_data_segmento(data_semento,base);
 }
 
 //completar
@@ -164,14 +167,33 @@ t_segmento * elegir_segmento(t_data_segmento * data_segmento){
     }
     else
     {
-        /* code */
+        base = algoritmo_mejor_ajuste(data_segmento);
     }
 
     escribir_memoria_principal(data_segmento, base);
 
+    //genero el id del segmento
     uint32_t id;
-    //memcpy la estructura si es tcb
     
+    switch (data_segmento->tipo)
+    {
+    case TAREAS:
+        id = 0;
+        break;
+    
+    case PCB:
+        id = 1;
+        break;
+
+    case TCB:
+        memcpy(&id,data_segmento->data, sizeof(uint32_t));
+        break;
+    
+    default:
+        break;
+    }
+    
+    // asigno valor al segmento
     segmento->id = id;
     segmento->base = base;
     segmento->desplazamiento = data_segmento->tam_data;

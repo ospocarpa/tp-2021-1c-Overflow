@@ -6,6 +6,13 @@
 #include <stdlib.h>
 #include <netdb.h>
 
+typedef enum
+{
+    TAREAS,
+    PCB,
+    TCB
+} type_data_seg;
+
 typedef struct 
 {
     uint32_t pid;
@@ -45,6 +52,7 @@ typedef struct
 {
     void * data;
     int tam_data;
+    type_data_seg tipo;
 }t_data_segmento;
 
 
