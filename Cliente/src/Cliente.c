@@ -9,24 +9,33 @@ int main(int argc, char **argv)
     t_log* logger = iniciar_logger(config->ARCHIVO_LOG, "CLIENTE");
     printf("%s %d\n", config->IP_MODULO, config->PUERTO_MODULO);
     int conexion_servidor = crear_conexion("127.0.0.1", 5002);
-
     inicio_FSCK(conexion_servidor);
-    crear_recurso(conexion_servidor);
-    sleep(20);
-    eliminar_recurso(conexion_servidor);
-    //printf("Conexion servidor: %d\n", conexion_servidor);
-    //get_recurso(conexion_servidor);
-    /*sleep(5);
-    retirar_recurso(conexion_servidor);
+    return 1;
+    crear_recurso(conexion_servidor, "oxigeno.ims");
+    sleep(2);
+    agregar_recurso(conexion_servidor, "oxigeno.ims");
     sleep(5);
-    get_recurso(conexion_servidor);*/
-    //agregar_recurso(conexion_servidor);
-    //crear_recurso(conexion_servidor);
-    //crear_sabotaje(conexion_servidor);
-    //update_bitacora(conexion_servidor);
+    inicio_FSCK(conexion_servidor);
+    sleep(20);
+    retirar_recurso(conexion_servidor, "oxigeno.ims");
+    sleep(5);
+    inicio_FSCK(conexion_servidor);
+    sleep(20);
+    crear_recurso(conexion_servidor, "basura.ims");
+    sleep(2);
+    agregar_recurso(conexion_servidor, "basura.ims");
+    sleep(2);
+    crear_sabotaje(conexion_servidor, "tripulante1.ims");
+    sleep(3);
+    update_bitacora(conexion_servidor, "tripulante1.ims", "hola");
+    sleep(3);
+    update_bitacora(conexion_servidor, "tripulante1.ims", " mundo");
+    sleep(3);
+    inicio_FSCK(conexion_servidor);
+    
+    //eliminar_recurso(conexion_servidor);
+    //get_recurso(conexion_servidor);
     //get_bitacora(conexion_servidor);
-    /*
-    eliminar_recurso(conexion_servidor);*/
     return 0;
 }
 
@@ -36,55 +45,55 @@ void inicio_FSCK(int conexion_servidor){
     sendMessage(paquete, conexion_servidor);
 }
 
-void agregar_recurso(int conexion_servidor){
+void agregar_recurso(int conexion_servidor, char* filename){
     t_operation_file_recurso file;
     file.cantidad = 10;
     file.caracter = 'o';
-    file.nombre_file = "basura.ims";
+    file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_agregar_recurso(file);
     sendMessage(paquete, conexion_servidor);
 }
 
-void retirar_recurso(int conexion_servidor){
+void retirar_recurso(int conexion_servidor, char* filename){
     t_operation_file_recurso file;
-    file.cantidad = 2;
+    file.cantidad = 4;
     file.caracter = 'o';
-    file.nombre_file = "oxigeno.ims";
+    file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_retirar_recurso(file);
     sendMessage(paquete, conexion_servidor);
 }
 
-void eliminar_recurso(int conexion_servidor){
+void eliminar_recurso(int conexion_servidor, char* filename){
     t_operation_file_recurso file;
     file.cantidad = 4;
     file.caracter = 'c';
-    file.nombre_file = "basura.ims";
+    file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_eliminar_recurso(file);
     sendMessage(paquete, conexion_servidor);
 }
 
-void update_bitacora(int conexion_servidor){
+void update_bitacora(int conexion_servidor, char* filename, char* contenido){
     t_file file;
-    file.contenido = "Prueba aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa\n";
+    file.contenido = contenido;
     file.long_contenido = strlen(file.contenido);
-	file.nombre_file = "tripulante4.ims";
+	file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_update_bitacora(file);
     sendMessage(paquete, conexion_servidor);
 }
 
-void get_recurso(int conexion_servidor){
+void get_recurso(int conexion_servidor, char* filename){
     t_file file;
     file.contenido = "";
     file.long_contenido = strlen(file.contenido);
-	file.nombre_file = "oxigeno.ims";
+	file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_get_file_recurso(file);
@@ -102,20 +111,20 @@ void get_bitacora(int conexion_servidor){
     sendMessage(paquete, conexion_servidor);
 }
 
-void crear_recurso(int conexion_servidor){
+void crear_recurso(int conexion_servidor, char* filename){
     t_create_file file;
     file.caracter = 'o';
-	file.nombre_file = "basura.ims";
+	file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_create_file_recurso(file);
     sendMessage(paquete, conexion_servidor);
 }
 
-void crear_sabotaje(int conexion_servidor){ //es bitacora
+void crear_sabotaje(int conexion_servidor, char* filename){ //es bitacora
     t_create_file file;
     file.caracter = ' ';
-	file.nombre_file = "tripulante4.ims";
+	file.nombre_file = filename;
 	file.long_nombre_file = strlen(file.nombre_file);
 
     t_package paquete = ser_create_file_bitacora(file);

@@ -7,7 +7,6 @@
 #include "log_utils.h"
 #include "server_utils.h"
 #include <stdlib.h>
-#include "controller.h"
 #include "sd_create_file.h"
 #include "sd_get_file.h"
 #include "sd_update_bitacora.h"
@@ -17,7 +16,8 @@
 #include <sys/types.h>
 #include <dirent.h>
 
-t_list* lectura_archivos(char* directorio);
+int get_length_parts(char* filename);                           //Obtiene la cantidad de partes del archivos a partir del puntos
+t_list* get_archivos_de_directorio(char* directorio);
 /* Función para devolver un error en caso de que ocurra */
 void error(const char *s);
 /* Función que hace algo con un archivo */

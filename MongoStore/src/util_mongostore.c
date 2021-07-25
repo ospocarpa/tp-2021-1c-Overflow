@@ -1,6 +1,17 @@
 #include "util_mongostore.h"
 
-t_list* lectura_archivos(char* directorio)
+int get_length_parts(char* filename){
+  char** parts = string_split(filename, ".");
+
+  int contador = 0;
+  void recorrer_posiciones(char *item){
+        contador ++;
+  }
+  string_iterate_lines(parts, recorrer_posiciones);
+  return contador;
+}
+
+t_list* get_archivos_de_directorio(char* directorio)
 {
     t_list* path_files = list_create();
   /* Con un puntero a DIR abriremos el directorio */
@@ -25,7 +36,11 @@ t_list* lectura_archivos(char* directorio)
       /* Una vez tenemos el archivo, lo pasamos a una función para procesarlo. */
       procesoArchivo(ent->d_name);
       
-      list_add(path_files, ent->d_name);
+      if(get_length_parts(ent->d_name)>1){
+        char* a = malloc(strlen(ent->d_name));
+        strcpy(a, ent->d_name);
+        list_add(path_files, a);
+      }
     }
     }
   closedir (dir);

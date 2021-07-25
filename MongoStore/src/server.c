@@ -3,8 +3,8 @@
 bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
 {
     bool exist_code = true;
-    log_info(logger, "recibo algo %d", paquete.cod_operacion);
-    
+    log_info(logger, "recibo algo %s (%d)", get_string_operacion(paquete.cod_operacion), paquete.cod_operacion);
+
     //Deserializacion
     t_package paquete_a_enviar;
     
@@ -97,7 +97,10 @@ void ejecutar_operacion(int cliente_fd)
     while (1)
     {
         t_package paquete = recibir_mensaje(cliente_fd);
-        if (paquete.cod_operacion == 0) fallos--;
+        if (
+            paquete.cod_operacion == 0 
+            //|| (paquete.tam_buffer==0 && (paquete.cod_operacion != FIN_FSCK || paquete.cod_operacion != INICIO_FSCK))
+        ) fallos--;
         if(fallos <= 0) break;
         bool existe_codigo = recepcionMensaje(paquete, cliente_fd, logger);
         if (!existe_codigo) fallos--;

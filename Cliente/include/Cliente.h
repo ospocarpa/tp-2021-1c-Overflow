@@ -15,7 +15,6 @@
 #include "sd_fcsk.h"
 #include "TAD.h"
 
-void eliminar_recurso(int conexion_servidor);
 // ----------------------------------- INICIO DE DECLARACIONES --------------------------------------
 
 // ----------------------------------- FIN DE DECLARACIONES -----------------------------------------

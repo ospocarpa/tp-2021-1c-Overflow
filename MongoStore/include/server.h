@@ -13,6 +13,7 @@
 #include "sd_update_bitacora.h"
 #include "sd_operation_file_recurso.h"
 #include "sd_fcsk.h"
+#include "shared_utils.h"
 
 bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger);
 void server_mongo_store_iniciar(int puerto);

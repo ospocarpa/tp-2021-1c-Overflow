@@ -85,6 +85,7 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
     int block_size = config_mongo_store->BLOCK_SIZE;
     int blocks = config_mongo_store->BLOCKS;
     int file_size = sizeof(uint32_t) * 2 + blocks/8;
+    ftruncate(fd, file_size);
 
     if(!existe_super_bloque){
         //Bitmap
@@ -95,9 +96,8 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
 
         int offset = 0;
         if(debug) printf("File size: %d\n", file_size);
-        ftruncate(fd, file_size);
 
-        void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+        /*void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
         memcpy(punteroBits+offset, &block_size, sizeof(uint32_t));
         offset+=sizeof(uint32_t);
         memcpy(punteroBits+offset, &blocks, sizeof(uint32_t));
@@ -105,7 +105,20 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
         memcpy(punteroBits+offset, puntero_bitmap, blocks/8);
         offset+=sizeof(uint32_t);
 
-        memcpy(filesystem.stream, punteroBits, file_size);        
+        memcpy(filesystem.stream, punteroBits, file_size);  
+        printf("Blocks size: %d Blocks: %d\n", block_size, blocks);*/
+
+        filesystem.stream = malloc(file_size);
+        filesystem.stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+        memcpy(filesystem.stream+offset, &block_size, sizeof(uint32_t));
+        offset+=sizeof(uint32_t);
+        memcpy(filesystem.stream+offset, &blocks, sizeof(uint32_t));
+        offset+=sizeof(uint32_t);
+        memcpy(filesystem.stream+offset, puntero_bitmap, blocks/8);
+        offset+=blocks/8;
+  
+        printf("Blocks size: %d Blocks: %d\n", block_size, blocks);
+
         /*
         //Prueba
         printf("\nInicio\n");
@@ -125,6 +138,7 @@ void create_file_super_bloque(t_config_mongo_store* config_mongo_store){
     }else{
         filesystem.stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
     }
+
     memcpy(filesystem.stream_copy, filesystem.stream, file_size);      //Lo paso a la copia que se usará
 }
 
@@ -218,7 +232,8 @@ void create_tripulante_bitacora(t_create_file create_get_file){
 t_file get_recurso(char* nombre_file){
     t_file file;
 
-    if(existe_nombre_file(nombre_file)){
+    printf("Archivo: %s\n", nombre_file);
+    if(existe_nombre_file_recurso(nombre_file)){
         file.nombre_file = nombre_file;
         file.contenido = get_contenido_recurso(nombre_file);
         file.long_nombre_file = strlen(file.nombre_file);
@@ -232,7 +247,8 @@ t_file get_recurso(char* nombre_file){
 t_file get_bitacora_tripulante(t_file file_input){
     t_file file;
 
-    if(existe_nombre_file(file_input.nombre_file)){
+    printf("Archivo: %s\n", file_input.nombre_file);
+    if(existe_nombre_file_bitacora(file_input.nombre_file)){
         file.nombre_file = file_input.nombre_file;
         file.contenido = get_contenido_bitacora(file.nombre_file);
         file.long_nombre_file = strlen(file.nombre_file);
@@ -245,7 +261,8 @@ t_file get_bitacora_tripulante(t_file file_input){
 }
 
 void update_bitacora(t_file file_input){
-    if(existe_nombre_file(file_input.nombre_file)){
+    printf("Archivo: %s\n", file_input.nombre_file);
+    if(existe_nombre_file_bitacora(file_input.nombre_file)){
         t_file file_to_update = get_bitacora_tripulante(file_input);
     
         char* contenido = string_new();
@@ -275,6 +292,9 @@ void agregar_recurso(t_operation_file_recurso file_input){
 }
 
 void retirar_recurso(t_operation_file_recurso file_input){
+    printf("Retirar recurso\n");
+    print_bit_map(get_bitmap());
+    printf("\n");
     t_file file_to_update = get_recurso(file_input.nombre_file);
     int cantidad_que_tiene = strlen(file_to_update.contenido);
     int cantidad_a_restar = file_input.cantidad;
@@ -289,7 +309,8 @@ void eliminar_recurso(t_operation_file_recurso file_input){
     /*
         Implica indicar los bloques como disponibles
     */
-    if(existe_nombre_file(file_input.nombre_file)){
+    printf("Archivo: %s\n", file_input.nombre_file);
+    if(existe_nombre_file_recurso(file_input.nombre_file)){
         t_file file_to_update = get_recurso(file_input.nombre_file);
         file_to_update.contenido = "";
         save_recurso(file_to_update);
