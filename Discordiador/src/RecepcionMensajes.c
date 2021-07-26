@@ -5,7 +5,7 @@
 void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
 {
     log_info(logger, "recibo algo");
-    //t_package new_paquete;
+    t_package paquete_a_enviar;
     t_sabotaje* input;
 
     switch (paquete.cod_operacion)
@@ -18,6 +18,10 @@ void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             input = deserializar_I_SABOTAJE(paquete);
             mostrarSabotaje(input);
             //void inicio_sabotaje()
+
+            t_aviso_fsck data_buffer;
+            paquete_a_enviar = ser_fcsk(data_buffer);
+            sendMessage(paquete_a_enviar, cliente_fd);
             break;
     }
 

@@ -1,6 +1,6 @@
 #include "memoria.h"
 
-static void * memoria_principal = NULL;
+void * memoria_principal = NULL;
 
 /* Declaracion de funciones privadas */
 

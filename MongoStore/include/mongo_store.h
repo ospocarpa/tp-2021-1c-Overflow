@@ -2,6 +2,7 @@
 #define MONGO_STORE_H
 
 #include <stdio.h>
+#include <stdlib.h>
 #include <stdbool.h>
 #include "log_utils.h"
 #include "shared_utils.h"
@@ -15,6 +16,7 @@
 #include <signal.h>
 #include <commons/bitarray.h>
 #include <filesystem.h>
+#include <commons/string.h>
 
     void lectura_file();
 

@@ -2,6 +2,8 @@
 
 int main(int argc, char **argv)
 {   
+    printf("MD5: %s\n", getMD5("Pepe"));
+    return 1;
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
