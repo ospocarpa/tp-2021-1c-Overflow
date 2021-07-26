@@ -26,9 +26,12 @@ static void *ejecutar_operacion(int tripulante)
 		init_patota = des_cod_iniciar_patota(paquete);
 
 		//mi funcion iniciar patota
+		
 
 		//se envia un booleano de confirmacion
 		bool respuesta = true;
+
+		respuesta = iniciar_patota_segmentacion(init_patota);
 
 		send(tripulante, &respuesta, sizeof(respuesta), 0);
 
