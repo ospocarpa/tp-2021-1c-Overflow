@@ -3,7 +3,9 @@
 
 #include <stdlib.h>
 #include <stdio.h>
+#include "TAD.h"
 #include "tad_mi_ram_hq.h"
 #include <commons/string.h> 
+#include <commons/collections/list.h>
 
 #endif

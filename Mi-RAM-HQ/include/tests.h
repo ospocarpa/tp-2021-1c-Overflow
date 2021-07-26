@@ -10,6 +10,8 @@
 #include "sd_informar_posicion_tripulante.h"
 #include "sd_informar_estado.h"
 #include "memoria.h"
+#include <commons/collections/list.h>
+#include <commons/string.h>
 
 int run_tests();
 
