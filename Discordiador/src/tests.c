@@ -3,9 +3,10 @@ int run_tests()
 {
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite", NULL, NULL);
-
     CU_add_test(tests, "Verificar serializacion y deserializacion tarea", verificarTarea);
     CU_add_test(tests, "Verificar serializacion y deserializacion sabotaje", verificarSabotaje);
+    CU_add_test(tests, "Verificar funciones:buscar_el_mas_cercano(t_sabotaje),desbloquear tripulante,ir a la pos_sabotaje,mover el tripulante a tarea ", verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje_mover_tripulante_a_tarea);
+    // CU_add_test(tests, "Verificar funcion desbloquear_tripulantes()", verificar_desbloquear_tripulantes);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -60,8 +61,111 @@ void verificarSabotaje()
     CU_ASSERT_EQUAL(sabotaje->posicion->posx, sabotaje2->posicion->posx);
     CU_ASSERT_EQUAL(sabotaje->posicion->posy, sabotaje2->posicion->posy);
 }
-/*void suma_proceso1(){
-    CU_ASSERT_EQUAL(2+2, 4);
-}*/
+void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje_mover_tripulante_a_tarea()
+{
+    //defino un sabotaje pos 4-4
+    t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
+    sabotaje->mensaje = "test";
+    sabotaje->mensaje_length = strlen(sabotaje->mensaje);
+    sabotaje->posicion = malloc(sizeof(Posicion));
+    sabotaje->posicion->posx = 4;
+    sabotaje->posicion->posy = 4;
+
+    // iniciliazo la lista vacia
+
+    lista_BLOCKEMERGENCIA = list_create();
+    //defino 3 tripulantes :posiciones  1-1 ,2-2,3-3
+    t_info_tarea* tarea = malloc(sizeof(t_info_tarea));
+    tarea->tarea = 0;
+    tarea->parametro = 1;
+	tarea->posicion.posx = 2;
+    tarea->posicion.posy = 3;
+    tarea->tiempo = 3;
+    
+    Tripulante *tripulante1 = malloc(sizeof(Tripulante));
+    tripulante1->id = 1;
+    tripulante1->posicion = malloc(sizeof(Posicion));
+    tripulante1->posicion->posx = 1;
+    tripulante1->posicion->posy = 1;
+    tripulante1->tarea = tarea;
+    tripulante1->status = BLOCKED_SABOTAJE;
+    list_add(lista_BLOCKEMERGENCIA, tripulante1);
+    //
+    Tripulante *tripulante2 = malloc(sizeof(Tripulante));
+    tripulante2->id = 2;
+    tripulante2->posicion = malloc(sizeof(Posicion));
+    tripulante2->posicion->posx = 2;
+    tripulante2->posicion->posy = 2;
+    tripulante2->tarea = tarea;
+    tripulante1->status = BLOCKED_SABOTAJE;
+    list_add(lista_BLOCKEMERGENCIA, tripulante2);
+    //
+    Tripulante *tripulante3 = malloc(sizeof(Tripulante));
+    tripulante3->id = 3;
+    tripulante3->posicion = malloc(sizeof(Posicion));
+    tripulante3->posicion->posx = 3;
+    tripulante3->posicion->posy = 3;
+    tripulante3->tarea = tarea;
+    tripulante1->status = BLOCKED_SABOTAJE;
+    list_add(lista_BLOCKEMERGENCIA, tripulante3);
+    //
+    Tripulante *tripulante_elegido = buscar_el_mas_cercano(sabotaje);
+
+    CU_ASSERT_EQUAL(tripulante_elegido->id, tripulante3->id);
+    CU_ASSERT_NOT_EQUAL(tripulante_elegido->id, tripulante2->id);
+    CU_ASSERT_NOT_EQUAL(tripulante_elegido->id, tripulante1->id);
+
+    lista_READY = list_create();
+    desbloquear_tripulantes();
+    CU_ASSERT_EQUAL(tripulante1->status, READY);
+    CU_ASSERT_EQUAL(tripulante2->status, READY);
+    CU_ASSERT_EQUAL(tripulante3->status, READY);
+    CU_ASSERT_EQUAL(list_size(lista_BLOCKEMERGENCIA), 0);
+    CU_ASSERT_EQUAL(list_size(lista_READY), 3);
+    int socket;
+    planificacion_activa = true;
+    ir_a_la_posicion_sabotaje(tripulante_elegido, sabotaje, socket);
+    CU_ASSERT_EQUAL(tripulante_elegido->posicion->posx, sabotaje->posicion->posx);
+    CU_ASSERT_EQUAL(tripulante_elegido->posicion->posy, sabotaje->posicion->posy)
+
+    hay_sabotaje = false;
+    mover_tripulante_a_tarea(tripulante1, socket);
+    mover_tripulante_a_tarea(tripulante2, socket);
+
+    CU_ASSERT_EQUAL(tripulante1->posicion->posx, 2);
+    CU_ASSERT_EQUAL(tripulante1->posicion->posy, 3);
+    CU_ASSERT_EQUAL(tripulante2->posicion->posx, 2);
+    CU_ASSERT_EQUAL(tripulante2->posicion->posy, 3);
+}
+// void verificar_desbloquear_tripulantes()
+// {
+//     // iniciliazo la lista vacia
+
+//     lista_BLOCKEMERGENCIA = NULL;
+//     //defino 4 tripulantes :status:BLOCKEMERGENCIA
+//     Tripulante *tripulante1 = malloc(sizeof(Tripulante));
+//     tripulante1->status = BLOCKED_SABOTAJE;
+//     list_add(lista_BLOCKEMERGENCIA, tripulante1);
+//     //
+//     Tripulante *tripulante2 = malloc(sizeof(Tripulante));
+//     tripulante2->status = BLOCKED_SABOTAJE,
+//     list_add(lista_BLOCKEMERGENCIA, tripulante2);
+//     //
+//     Tripulante *tripulante3 = malloc(sizeof(Tripulante));
+//     tripulante3->status = BLOCKED_SABOTAJE;
+//     list_add(lista_BLOCKEMERGENCIA, tripulante3);
+//     //
+//     Tripulante *tripulante4 = malloc(sizeof(Tripulante));
+//     tripulante4->status = BLOCKED_SABOTAJE;
+//     list_add(lista_BLOCKEMERGENCIA, tripulante4);
+
+//     desbloquear_tripulantes();
+
+//     CU_ASSERT_EQUAL(tripulante1->status, READY);
+//     CU_ASSERT_EQUAL(tripulante2->status, READY);
+//     CU_ASSERT_EQUAL(tripulante3->status, READY);
+//     CU_ASSERT_EQUAL(tripulante4->status, READY);
+//     CU_ASSERT_EQUAL(list_size(lista_BLOCKEMERGENCIA), 0);
+// }
 
 //
