@@ -17,5 +17,11 @@ void iniciar_lista_tabla_segmento();
 void iniciar_tabla_huecos(int tam_memoria);
 bool se_puede_escribir(int tam_info);
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla);
+void liberar_lista_de_tablas_segmentos();
+
+/* --------FUNCIONES QUE SE UTILIZAN EN LOS TEST ----- */
+int cantidad_de_tablas_de_segmento_test();
+int cantidad_huecos_test();
+t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice);
 
 #endif

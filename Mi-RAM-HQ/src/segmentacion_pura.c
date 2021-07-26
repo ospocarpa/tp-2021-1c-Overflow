@@ -139,6 +139,14 @@ void liberar_tabla_huecos(){
     list_destroy_and_destroy_elements(tabla_hueco, hueco_detroy);
 }
 
+void tabla_segmentos_detroy(t_tabla_segmentos * tabla){
+    list_destroy_and_destroy_elements(tabla->segmentos, free);
+    free(tabla);
+}
+
+void liberar_lista_de_tablas_segmentos(){
+    list_destroy_and_destroy_elements(list_tablas_segmentos, tabla_segmentos_detroy);
+}
 
 bool se_puede_escribir(int tam_info){
     int tam_memoria_libre = 0;
@@ -225,4 +233,18 @@ t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
     
 
     return segmento;
+}
+
+/* *********************FENCIONES PARA TESTEAR************************ */
+
+int cantidad_de_tablas_de_segmento_test(){
+    return list_size(list_tablas_segmentos);
+}
+
+int cantidad_huecos_test(){
+    return list_size(tabla_hueco);
+}
+
+t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
+    return list_get(list_tablas_segmentos, indice);
 }

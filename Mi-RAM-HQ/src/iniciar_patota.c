@@ -74,13 +74,13 @@ Posicion get_posicion(char* posiciones, int indice){
 t_list * create_list_data_segmento(t_iniciar_patota data){
     t_list * lista_data = list_create();
 
-    t_data_segmento * seg_tarea = malloc(sizeof(t_segmento));
-    seg_tarea = malloc(strlen(data.tareas));
+    t_data_segmento * seg_tarea = malloc(sizeof(t_data_segmento));
+    seg_tarea->data = malloc(strlen(data.tareas));
     seg_tarea->tam_data = strlen(data.tareas);
     seg_tarea->tipo = TAREAS;
 
-    t_data_segmento * seg_pcb = malloc(sizeof(t_segmento));
-    seg_pcb->tam_data = malloc(8); //8 tamaño de pcb
+    t_data_segmento * seg_pcb = malloc(sizeof(t_data_segmento));
+    seg_pcb->data = malloc(8); //8 tamaño de pcb
     seg_pcb->tam_data = 8;
     seg_pcb->tipo = PCB;
 
