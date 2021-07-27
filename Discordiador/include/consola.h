@@ -37,14 +37,15 @@ pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 int existe_archivo(const char *); // en la shared ?
 void liberar_puntero_doble(char **);
 
+
 t_log *logger;
 
-    //Métodos de la consola
-    void listar_tripulantes();
-    void activar_planificacion();
-    void detener_planificacion();
-    void iniciar_patota(char** );
-    void expulsar_tripulante(int tripulante_id);
-    void obtener_bitacora(int tripulante_id);
+//Métodos de la consola
+void listar_tripulantes();
+void activar_planificacion();
+void detener_planificacion();
+void iniciar_patota(char **);
+void expulsar_tripulante(int tripulante_id);
+void obtener_bitacora(int tripulante_id);
 
 #endif

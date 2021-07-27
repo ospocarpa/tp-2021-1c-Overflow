@@ -99,3 +99,7 @@ char * leer_info_tareas(int base,int tam){
     tareas[tam] = '\0';
     return tareas ;
 }
+
+void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
+    memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
+}

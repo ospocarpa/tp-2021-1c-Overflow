@@ -9,6 +9,7 @@
 #include <consola.h>
 #include <tad_discordiador.h>
 #include <commons/string.h>
+#include <math.h>
 #include <ctype.h>
 #include <consola.h>
 #include <pthread.h>
@@ -21,8 +22,8 @@
 #include "config_utils.h"
 #include "sd_fcsk.h"
 
-bool hay_sabotaje;
-pthread_mutex_t MXTRIPULANTE;
+extern bool hay_sabotaje;
+extern pthread_mutex_t MXTRIPULANTE;
 
 extern int numeroTripulante;
 extern int numeroPatota;
@@ -37,7 +38,7 @@ extern t_list *lista_EXEC;
 extern t_list *lista_BLOCKEMERGENCIA;
 extern t_list *lista_EXIT;
 
-extern sem_t activados;
+extern int cantidad_activos;
 extern t_config_discordiador *config;
 
 void crearHilosTripulantes(Patota *);
@@ -46,5 +47,6 @@ void leerConfighilo_tripulante(Tripulante *);
 void cargarTripulante(t_iniciar_patota *, char **, int);
 void mover_tripulante_a_tarea(Tripulante *, int);
 void invocar_fsck();
+Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje);
 
 #endif
