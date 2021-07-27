@@ -8,6 +8,7 @@
 #include "tad_mi_ram_hq.h"
 #include "log_utils.h"
 #include <string.h>
+#include "segmentacion_pura.h"
 
 void iniciar_memoria_principal(int tam_memoria);
 void liberar_memoria_principal();

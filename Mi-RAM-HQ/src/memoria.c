@@ -105,7 +105,6 @@ void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
 }
 
 t_TCB get_TCB(int patota_id, int tripulante_id){
-    int base = 0;
-     
-    return leer_info_TCB(base);
+    t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
+    return tcb;
 }
