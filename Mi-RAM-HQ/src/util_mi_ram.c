@@ -20,20 +20,20 @@
 
     t_info_tarea get_tarea(char* lista_tareas, int n_tarea){
         t_info_tarea tarea_aux;
-        char* tarea = dame_tarea(char* lista_tareas, int n_tarea);
+        char* tarea = dame_tarea(lista_tareas, n_tarea);
         //"ARREGLAR_REACTOR;7;2;5";
         // ' Generaroxigeno 12 ;4;5;6:
         
-        partes = string_split(tarea,';');
+        char** partes = string_split(tarea,';');
                 //borrar este spit y cambiar los campos.
-        partes_aux = string_split(partes[0],' ');
+        char** partes_aux = string_split(partes[0],' ');
 
         
-        tarea_aux.tarea = partes_aux[0];
-        tarea_aux.parametro = partes_aux[1]
+        tarea_aux.tarea = 1;//partes_aux[0];
+        tarea_aux.parametro = partes_aux[1];
         tarea_aux.posicion.posx = atoi(partes[1]);
         tarea_aux.posicion.posy = atoi(partes[2]);
-        tarea_aux.timepo = atoi(partes[3]);
+        tarea_aux.tiempo = atoi(partes[3]);
     
     
        
