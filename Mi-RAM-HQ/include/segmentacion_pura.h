@@ -8,7 +8,7 @@
 #include "tad_mi_ram_hq.h"
 #include "memoria.h"
 
-
+extern void * memoria_principal;
 
 /* ****************** */
 void liberar_tabla_huecos();
@@ -19,6 +19,8 @@ bool se_puede_escribir(int tam_info);
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla);
 void liberar_lista_de_tablas_segmentos();
 t_TCB get_TCB_segmentacion_pura(int patota_id, int tripulante_id);
+void compactacion();
+void mover_segmento(t_segmento *segmento, int base_pivote);
 
 /* --------FUNCIONES QUE SE UTILIZAN EN LOS TEST ----- */
 int cantidad_de_tablas_de_segmento_test();
