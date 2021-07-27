@@ -8,7 +8,7 @@
 #include "tad_mi_ram_hq.h"
 #include "memoria.h"
 
-
+extern void * memoria_principal;
 
 /* ****************** */
 void liberar_tabla_huecos();
@@ -18,6 +18,8 @@ void iniciar_tabla_huecos(int tam_memoria);
 bool se_puede_escribir(int tam_info);
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla);
 void liberar_lista_de_tablas_segmentos();
+void compactacion();
+void mover_segmento(t_segmento *segmento, int base_pivote);
 
 /* --------FUNCIONES QUE SE UTILIZAN EN LOS TEST ----- */
 int cantidad_de_tablas_de_segmento_test();

@@ -248,3 +248,37 @@ int cantidad_huecos_test(){
 t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
     return list_get(list_tablas_segmentos, indice);
 }
+
+void compactacion(){
+    t_list* segmentos_global = list_create();           //Representa a todos los segmentos del sistema
+    bool comparador(t_segmento *segmento1, t_segmento *segmento2)
+    {
+        return segmento1->base < segmento2->base;
+    }
+    list_sort(segmentos_global, comparador);            // Se ordena los segmentos por la base
+
+    int base_pivote = 0; 
+    for(int c=0; c<list_size(segmentos_global); c++){
+        t_segmento *s = list_get(segmentos_global, c);
+        if(base_pivote == s->base ){
+            base_pivote += s->desplazamiento;
+            continue;
+        }else{
+            mover_segmento(s, base_pivote);
+        }
+    }
+}
+
+void mover_segmento(t_segmento *segmento, int base_pivote){
+    //Reescribir el contenido de la memoria
+    int offset = segmento->base;
+
+    void* informacion = malloc(segmento->desplazamiento);
+    memcpy(informacion, memoria_principal + offset, segmento->desplazamiento);
+
+    offset = base_pivote;
+    memcpy(memoria_principal + offset, informacion, segmento->desplazamiento);
+
+    //Actualizar el segmento de la tabla de página => implica modifcar la base
+    segmento->base = base_pivote;
+}
