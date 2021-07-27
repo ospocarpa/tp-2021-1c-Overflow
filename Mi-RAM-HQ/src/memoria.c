@@ -103,3 +103,9 @@ char * leer_info_tareas(int base,int tam){
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
     memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
 }
+
+t_TCB get_TCB(int patota_id, int tripulante_id){
+    int base = 0;
+     
+    return leer_info_TCB(base);
+}
