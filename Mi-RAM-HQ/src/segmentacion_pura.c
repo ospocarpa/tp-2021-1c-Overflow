@@ -235,6 +235,23 @@ t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
     return segmento;
 }
 
+t_TCB get_TCB_segmentacion_pura(int patota_id, int tripulante_id){
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == patota_id;
+    }
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);
+    
+    bool mismo_segmento_id(t_segmento *item){
+        return item->id == tripulante_id;
+    }
+    t_segmento* segmento = list_find(tabla_segmento->segmentos, &mismo_segmento_id);
+
+    int base = segmento->base; 
+
+    t_TCB tcb = leer_info_TCB(base);
+    return tcb;
+}
+
 /* *********************FENCIONES PARA TESTEAR************************ */
 
 int cantidad_de_tablas_de_segmento_test(){
