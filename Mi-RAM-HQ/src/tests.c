@@ -13,6 +13,7 @@ void validar_sd_res_iniciar_patota();
 void validar_cargar_informacion_TCB_a_MP();
 void validar_cargar_informacion_PCB_a_MP();
 void validar_cargar_informacion_tareas_a_MP();
+void validar_get_tarea();
 
 int run_tests()
 {
@@ -32,6 +33,7 @@ int run_tests()
     CU_add_test(tests, "Valido carga de informacion de PCB a MP", validar_cargar_informacion_PCB_a_MP);
     CU_add_test(tests, "Valido carga de informacion de TCB a MP", validar_cargar_informacion_TCB_a_MP);
     CU_add_test(tests, "Valido carga de informacion de TAREAS a MP", validar_cargar_informacion_tareas_a_MP);
+    CU_add_test(tests, "Valido get tarea", validar_get_tarea);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -343,5 +345,31 @@ void validar_cargar_informacion_tareas_a_MP(){
     CU_ASSERT_STRING_EQUAL(tareas, tareas_res);
     
     free(tareas_res);
+
+}
+
+
+void validar_get_tarea(){
+
+    char * lista_tareas = "ARREGLAR_REACTOR;7;2;5\nGeneraroxigeno 12 ;4;5;6";
+    t_info_tarea tarea;
+    t_info_tarea tarea_res;
+   // tarea.tarea = ARREGLAR_REACTOR;
+    tarea.parametro = 0;
+    tarea.posicion.posx = 7;
+    tarea.posicion.posy = 2;
+    tarea.tiempo = 5;
+
+    tarea_res = get_tarea(lista_tareas,1);
+
+    
+    //CU_ASSERT_STRING_EQUAL(tarea.tarea, tarea_res.tarea);
+    CU_ASSERT_STRING_EQUAL(tarea.parametro, tarea_res.parametro);
+    CU_ASSERT_STRING_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
+    CU_ASSERT_STRING_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
+    CU_ASSERT_STRING_EQUAL(tarea.tiempo, tarea_res.tiempo);
+
+
+
 
 }

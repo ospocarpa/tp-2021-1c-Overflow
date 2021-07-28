@@ -8,4 +8,6 @@
 #include <commons/string.h> 
 #include <commons/collections/list.h>
 
+t_info_tarea get_tarea(char* lista_tareas,int n_tarea);
+
 #endif
