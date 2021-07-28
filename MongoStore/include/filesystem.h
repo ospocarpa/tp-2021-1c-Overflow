@@ -51,6 +51,7 @@
     void guardar_partes_contenido(char* contenido, t_list* bloques);
     void llenar_bloque(char* informacion, int bloque);
     t_list* get_contenido_por_partes(char* contenido, int longitud);
+    char* getMD5(char* text);
 
     extern t_config_mongo_store* config_global_mongo_store;
 

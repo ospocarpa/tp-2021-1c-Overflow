@@ -205,7 +205,7 @@ void create_recurso(t_create_file create_get_file){
 	config_set_value(file_ims, "BLOCK_COUNT", "0");
 	config_set_value(file_ims, "BLOCKS", "[]");
 	config_set_value(file_ims, "CARACTER_LLENADO", caracter_llenado);
-	config_set_value(file_ims, "MD5_ARCHIVO", "sin dato");              //PENDIENTE
+	config_set_value(file_ims, "MD5_ARCHIVO", "");
 	config_save_in_file(file_ims, path_file_ims);
 }
 

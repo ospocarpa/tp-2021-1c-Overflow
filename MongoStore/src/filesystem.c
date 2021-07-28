@@ -124,6 +124,7 @@ void save_recurso(t_file file_to_update){
 
     int block_count = list_size(get_bloques_from_metadata(info));
     config_set_value(info, "BLOCK_COUNT", string_itoa(block_count));
+    config_set_value(info, "MD5_ARCHIVO", getMD5(file_to_update.contenido));
 
     config_save_in_file(info, path_ims);
 }
@@ -410,3 +411,31 @@ void resolver_sabotaje_super_bloque(){
 }
 
 void resolver_sabotaje_files(){}
+
+char* getMD5(char* text){
+    FILE *fp;
+    char path[1035];
+    //char* final = []; 
+
+    /* Open the command for reading. */
+    char *terminal = string_new();
+    string_append_with_format(&terminal, "echo -n \"%s\"| md5sum", text);
+
+    fp = popen(terminal, "r");
+    if (fp == NULL) {
+        printf("Failed to run command\n" );
+        exit(1);
+    }
+
+    /* Read the output a line at a time - output it. */
+    char** parts; 
+    while (fgets(path, sizeof(path), fp) != NULL) {
+        parts = string_split(path, "  -");
+        //printf("%s", path);
+        //printf("%s\n", parts[0]);
+    }
+
+    /* close */
+    pclose(fp);
+    return parts[0];
+}

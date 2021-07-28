@@ -23,15 +23,18 @@
 t_log *logger;
 t_config_discordiador *config;
 
+//por ahora booleano para el sabotaje
+bool hay_sabotaje = false;
 bool planificacion_activa = false;
 int numeroTripulante = 0;
 int numeroPatota = 0;
-
+int cantidad_activos = 0;
 //Semáforos
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 sem_t listos;
 sem_t grado_multiprocesamiento;
 sem_t activados; //Incluye a los tripulantes que se encuentran en exec, ready y bloqueado por I/O
+pthread_mutex_t MXTRIPULANTE;
 
 //Listas de estados
 t_list *lista_tripulantes;          //[Tripulante]

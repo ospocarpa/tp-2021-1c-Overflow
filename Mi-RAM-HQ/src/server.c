@@ -26,9 +26,12 @@ static void *ejecutar_operacion(int tripulante)
 		init_patota = des_cod_iniciar_patota(paquete);
 
 		//mi funcion iniciar patota
+		
 
 		//se envia un booleano de confirmacion
 		bool respuesta = true;
+
+		respuesta = iniciar_patota_segmentacion(init_patota);
 
 		send(tripulante, &respuesta, sizeof(respuesta), 0);
 
@@ -63,7 +66,7 @@ static void *ejecutar_operacion(int tripulante)
 		tarea.tiempo = 5;
 		tarea.posicion.posx = 3;
 		tarea.posicion.posy = 4;
-		tarea.parametro = 0;
+		tarea.parametro = 5;
 
 		/* serializo la respuesta al tripulante */
 		paquete_res = ser_res_informar_tarea_tripulante(tarea);

@@ -10,6 +10,9 @@
 #include "sd_informar_posicion_tripulante.h"
 #include "sd_informar_estado.h"
 #include "memoria.h"
+#include "tad_mi_ram_hq.h"
+#include "segmentacion_pura.h"
+#include "iniciar_patota.h"
 
 int run_tests();
 

@@ -28,3 +28,23 @@ int main(int argc, char **argv)
         return 1;
     }
 }
+
+void experimento(){
+    t_list* huecos = list_create();
+    t_hueco* hueco1 = malloc(sizeof(t_hueco));
+    hueco1->base = 1;
+    hueco1->desplazamiento = 1;
+    t_hueco* hueco2 = malloc(sizeof(t_hueco));
+    hueco2->base = 2;
+    hueco2->desplazamiento = 2;
+    list_add(huecos, hueco1);
+    list_add(huecos, hueco2);
+
+    t_hueco* hueco_temp = list_get(huecos, 0);
+    hueco_temp->base = 100;
+
+    for(int c=0; c<list_size(huecos);c++){
+        t_hueco* hueco_temp = list_get(huecos, c);
+        printf("Base: %d Desplazamiento: %d\n", hueco_temp->base, hueco_temp->desplazamiento);
+    }
+}
