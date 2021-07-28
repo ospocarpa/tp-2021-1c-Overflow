@@ -2,7 +2,10 @@
 
 void iniciar_servidor_main()
 {
-    //Dato: posiblemente mapear con '\ņ'
+    //Iniciar dispatcher
+    pthread_t threadDispatcher;
+    pthread_create(&threadDispatcher, NULL, (void *)init_dispatcher, NULL);
+    pthread_detach(threadDispatcher);
 
     //Iniciar Server
     int server_fd = iniciar_servidor(config->PUERTO_MODULO);

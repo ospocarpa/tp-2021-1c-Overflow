@@ -126,7 +126,7 @@ void hilo_tripulante(Tripulante *tripulante)
     //
     
     _Bool finalizo_tarea = true;
-
+    //pthread_mutex_lock(&tripulante->activo);
     while (1)
     {
         if (finalizo_tarea)
@@ -139,8 +139,7 @@ void hilo_tripulante(Tripulante *tripulante)
             printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);*/
             //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
             //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
-            //
-
+            
             if (tripulante->status == NEW)
             {
 
@@ -153,7 +152,6 @@ void hilo_tripulante(Tripulante *tripulante)
 
                 tripulante->status = READY;
             }
-
             if (tripulante->tarea == NULL)
             {
                 //Analizar si se eliminó en otra lista // TO DO
@@ -171,63 +169,64 @@ void hilo_tripulante(Tripulante *tripulante)
 
                 break;
             }
-            //Para que el dispatcher sepa que estamos listos
-            sem_post(&listos);
-            //Esperamos ser seleccionados
+        }
+
+        //Para que el dispatcher sepa que estamos listos
+        sem_post(&listos);
+        //Esperamos ser seleccionados
+        pthread_mutex_lock(&tripulante->seleccionado);
+
+        pthread_mutex_lock(&MXTRIPULANTE);
+        list_remove_by_condition(lista_READY, mismo_id);
+        cantidad_activos ++;
+        tripulante->status = EXEC; 
+        list_add(lista_EXEC, tripulante);
+        pthread_mutex_unlock(&MXTRIPULANTE);
+
+
+        if (hay_sabotaje)
+        {
+            chequear_activados();
+            pthread_mutex_lock(&tripulante->activo);
+            //el tripulante debe volve a ser seleccionado
             pthread_mutex_lock(&tripulante->seleccionado);
+        }
 
-            pthread_mutex_lock(&MXTRIPULANTE);
-            list_remove_by_condition(lista_READY, mismo_id);
-            cantidad_activos ++;
-            tripulante->status = EXEC; 
-            list_add(lista_EXEC, tripulante);
-            pthread_mutex_unlock(&MXTRIPULANTE);
+        mover_tripulante_a_tarea(tripulante, socket_cliente);
 
+        //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
+        sem_post(&grado_multiprocesamiento);
 
+        if (tripulante->tarea->tarea != OTRA_TAREA)
+        {
+            printf("tripulante %d bloqueate\n", tripulante->id);
+            sleep(config->RETARDO_CICLO_CPU);
+            list_add(lista_BLOCKIO, tripulante);
+            Tripulante *tripulante_bloq = list_remove_by_condition(lista_READY, mismo_id);
+            printf("id del tripulane bloqueado:%d\n", tripulante_bloq->id);
+            //Consultar
+            //nos falta logica de como ejecutan los tripulantes bloqueados ??
+            //bloqueate
             if (hay_sabotaje)
             {
                 chequear_activados();
                 pthread_mutex_lock(&tripulante->activo);
-                //el tripulante debe volve a ser seleccionado
-                pthread_mutex_lock(&tripulante->seleccionado);
             }
-
-            mover_tripulante_a_tarea(tripulante, socket_cliente);
-
-            //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
-            sem_post(&grado_multiprocesamiento);
-
-            if (tripulante->tarea->tarea != OTRA_TAREA)
-            {
-                printf("tripulante %d bloqueate\n", tripulante->id);
-                sleep(config->RETARDO_CICLO_CPU);
-                list_add(lista_BLOCKIO, tripulante);
-                Tripulante *tripulante_bloq = list_remove_by_condition(lista_READY, mismo_id);
-                printf("id del tripulane bloqueado:%d\n", tripulante_bloq->id);
-                //Consultar
-                //nos falta logica de como ejecutan los tripulantes bloqueados ??
-                //bloqueate
-                if (hay_sabotaje)
-                {
-                    chequear_activados();
-                    pthread_mutex_lock(&tripulante->activo);
-                }
-            }
-            
-            while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)  
-            {
-                if (hay_sabotaje)
-                {
-                    chequear_activados();
-                    pthread_mutex_lock(&tripulante->activo);
-                }
-                tripulante->rafagas_consumidas++;
-                sleep(config->RETARDO_CICLO_CPU);
-            }
-            //Falta que el tripulante consuma su rafa de CPU
-            //consulta de agregar ese consumo (si es bloqueado por sabataje)
-            // persistirlo
         }
+        
+        while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)  
+        {
+            if (hay_sabotaje)
+            {
+                chequear_activados();
+                pthread_mutex_lock(&tripulante->activo);
+            }
+            tripulante->rafagas_consumidas++;
+            sleep(config->RETARDO_CICLO_CPU);
+        }
+        //Falta que el tripulante consuma su rafa de CPU
+        //consulta de agregar ese consumo (si es bloqueado por sabataje)
+        // persistirlo
     }
 
     liberar_conexion(socket_cliente);
