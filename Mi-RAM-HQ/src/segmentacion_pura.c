@@ -282,3 +282,40 @@ void mover_segmento(t_segmento *segmento, int base_pivote){
     //Actualizar el segmento de la tabla de página => implica modifcar la base
     segmento->base = base_pivote;
 }
+
+void set_tripulante_por_segmentacion(t_TCB tcb, int patota_id){
+    //Capaz no sea necesario pasarle la patotaid
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == patota_id;
+    }
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);
+    bool mismo_segmento_id(t_segmento *item){
+        return item->id == tcb.tid;
+    }
+    t_segmento* segmento = list_find(tabla_segmento->segmentos, &mismo_segmento_id);
+    int base = segmento->base; 
+
+    cargar_informacion_TCB_a_MP(tcb, base);
+}
+
+void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){ 
+    // uint32_t tid;
+    // char estado;
+    // int posx;
+    // int posy;
+    // uint32_t prox_tarea;
+    // uint32_t puntero_pcb;
+
+    int offset = base;
+    memcpy(memoria_principal + offset, &tcb.tid,sizeof(uint32_t));
+    offset +=sizeof(uint32_t) ;
+    memcpy(memoria_principal + offset, &tcb.estado,sizeof(char));
+    offset += sizeof(char);
+    memcpy(memoria_principal + offset, &tcb.posx,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(memoria_principal + offset, &tcb.posy,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
+    offset +=sizeof(uint32_t);
+    memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
+}
