@@ -1,6 +1,6 @@
 #include "memoria.h"
 
-static void * memoria_principal = NULL;
+void * memoria_principal = NULL;
 
 /* Declaracion de funciones privadas */
 
@@ -98,4 +98,13 @@ char * leer_info_tareas(int base,int tam){
     memcpy(tareas,memoria_principal+base,tam);
     tareas[tam] = '\0';
     return tareas ;
+}
+
+void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
+    memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
+}
+
+t_TCB get_TCB(int patota_id, int tripulante_id){
+    t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
+    return tcb;
 }

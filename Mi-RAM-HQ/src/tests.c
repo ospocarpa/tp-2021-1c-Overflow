@@ -15,6 +15,7 @@ void validar_cargar_informacion_PCB_a_MP();
 void validar_cargar_informacion_tareas_a_MP();
 void validar_get_tarea();
 void validar_get_tarea2();
+void validar_iniciar_patota_segmentada();
 
 int run_tests()
 {
@@ -36,7 +37,7 @@ int run_tests()
     CU_add_test(tests, "Valido carga de informacion de TAREAS a MP", validar_cargar_informacion_tareas_a_MP);
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
-
+    CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
@@ -307,8 +308,6 @@ void validar_cargar_informacion_TCB_a_MP(){
     CU_ASSERT_EQUAL(tcb.prox_tarea, tcb_res.prox_tarea);
     CU_ASSERT_EQUAL(tcb.puntero_pcb, tcb_res.puntero_pcb);
 
-    
-
 }
 
 
@@ -329,7 +328,6 @@ void validar_cargar_informacion_PCB_a_MP(){
     CU_ASSERT_EQUAL(pcb.pid, pcb_res.pid);
     CU_ASSERT_EQUAL(pcb.tareas, pcb_res.tareas);
 
-
 }
 
 void validar_cargar_informacion_tareas_a_MP(){
@@ -349,7 +347,6 @@ void validar_cargar_informacion_tareas_a_MP(){
     free(tareas_res);
 
 }
-
 
 void validar_get_tarea(){
 
@@ -392,4 +389,47 @@ void validar_get_tarea2(){
     CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
     CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
     CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
+}
+
+void validar_iniciar_patota_segmentada(){
+
+    t_iniciar_patota data_input;
+
+    data_input.cant_tripulantes = 1;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2";
+    data_input.long_posicion = strlen("1|2");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    iniciar_memoria_principal(128);
+    iniciar_lista_tabla_segmento();
+    iniciar_tabla_huecos(128);
+
+    printf("tamanio tareas %d", data_input.long_tareas);
+    bool res = iniciar_patota_segmentacion(data_input);
+    bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
+    int cant_huecos = cantidad_huecos_test();
+    t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);
+
+    CU_ASSERT_TRUE(res);
+    CU_ASSERT_FALSE(hay_memoria_libre);
+    CU_ASSERT_EQUAL(cant_tablas_segmemtos, 1);
+    CU_ASSERT_EQUAL(cant_huecos, 1);
+    CU_ASSERT_EQUAL(list_size(tabla->segmentos), 3);
+
+    liberar_tabla_huecos();
+    liberar_memoria_principal();
+    
+
+    void tabla_destroy(t_segmento * seg){
+        free(seg);
+    }
+
+    //list_destroy_and_destroy_elements(tabla, tabla_destroy);
+    //free(tabla);
+
+    //liberar_lista_de_tablas_segmentos();
 }
