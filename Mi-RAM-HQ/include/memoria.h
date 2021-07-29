@@ -22,6 +22,5 @@ t_TCB get_TCB(int patota_id, int tripulante_id);
 
 t_PCB leer_info_PCB(int base);
 t_TCB leer_info_TCB(int base);
-char * leer_info_tareas(int base,int tam);
 
 #endif

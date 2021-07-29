@@ -299,3 +299,23 @@ void mover_segmento(t_segmento *segmento, int base_pivote){
     //Actualizar el segmento de la tabla de página => implica modifcar la base
     segmento->base = base_pivote;
 }
+
+char* get_tareas(int patota_id){
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == patota_id;
+    }
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);    
+    t_segmento* segmento = list_find(tabla_segmento->segmentos, 0);
+
+    char* tareas = leer_info_tareas(segmento->base, segmento->desplazamiento);
+    return tareas;
+}
+
+/* -------- ACCESO A LA MEMORIA ----- */
+char * leer_info_tareas(int base,int tam){
+    char * tareas= malloc(tam+1);
+    
+    memcpy(tareas,memoria_principal+base,tam);
+    tareas[tam] = '\0';
+    return tareas ;
+}

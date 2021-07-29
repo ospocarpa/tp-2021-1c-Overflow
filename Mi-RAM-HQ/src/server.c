@@ -54,16 +54,19 @@ static void *ejecutar_operacion(int tripulante)
 		logger_info("INFORMAR TAREA");
 		/* interpreto el contenido del mensaje */
 		tripulante_info = des_cod_informar_tarea_tripulante(paquete);
-		char* tareas = string_new();
+		
+		char* tareas = get_tareas(tripulante_info.patota_id);
 		tcb = get_TCB(tripulante_info.patota_id, tripulante_info.tripulante_id);
-		//tarea = ; mi funcion que devuelve una tarea
+		tarea = get_tarea(tareas, tcb.prox_tarea);
+		tcb.prox_tarea++;
 
 		//un ejemplo de tarea(despues borrar)
-		tarea.tarea = OTRA_TAREA;
+		/*tarea.tarea = OTRA_TAREA;
 		tarea.tiempo = 5;
 		tarea.posicion.posx = 3;
 		tarea.posicion.posy = 4;
-		tarea.parametro = 5;
+		tarea.parametro = 5;*/
+		//Pendiente set_tripulante
 
 		/* serializo la respuesta al tripulante */
 		paquete_res = ser_res_informar_tarea_tripulante(tarea);

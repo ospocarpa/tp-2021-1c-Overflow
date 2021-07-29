@@ -40,7 +40,7 @@ typedef struct
     uint32_t id;
     int base;
     int desplazamiento;
-}t_segmento;
+} t_segmento;
 
 typedef struct 
 {
