@@ -15,6 +15,8 @@
 #include "socket_client.h"
 #include "tad_mi_ram_hq.h"
 #include "memoria.h"
+#include "TAD.h"
+#include "util_mi_ram.h"
 
 void server_mi_ram_iniciar(int puerto);
 

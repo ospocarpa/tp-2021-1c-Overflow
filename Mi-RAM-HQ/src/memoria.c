@@ -30,30 +30,6 @@ void cargar_informacion_PCB_a_MP(t_PCB pcb,int base){
 
 }
 
-void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
-    
-    // uint32_t tid;
-    // char estado;
-    // int posx;
-    // int posy;
-    // uint32_t prox_tarea;
-    // uint32_t puntero_pcb;
-
-    int offset = base;
-    memcpy(memoria_principal + offset, &tcb.tid,sizeof(uint32_t));
-    offset +=sizeof(uint32_t) ;
-    memcpy(memoria_principal + offset, &tcb.estado,sizeof(char));
-    offset += sizeof(char);
-    memcpy(memoria_principal + offset, &tcb.posx,sizeof(int));
-    offset +=sizeof(int);
-    memcpy(memoria_principal + offset, &tcb.posy,sizeof(int));
-    offset +=sizeof(int);
-    memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
-    offset +=sizeof(uint32_t);
-    memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));
-    
-
-}
 void cargar_informacion_tareas_a_MP(char *tareas,int base){
     memcpy(memoria_principal+base,tareas,strlen(tareas));
 }
@@ -93,6 +69,10 @@ t_TCB leer_info_TCB(int base){
 
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
     memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
+}
+
+void set_tripulante(t_TCB tcb, int patotaid){
+    set_tripulante_por_segmentacion(tcb, patotaid);
 }
 
 t_TCB get_TCB(int patota_id, int tripulante_id){

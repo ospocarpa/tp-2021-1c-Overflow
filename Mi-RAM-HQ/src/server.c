@@ -59,6 +59,7 @@ static void *ejecutar_operacion(int tripulante)
 		tcb = get_TCB(tripulante_info.patota_id, tripulante_info.tripulante_id);
 		tarea = get_tarea(tareas, tcb.prox_tarea);
 		tcb.prox_tarea++;
+		set_tripulante(tcb, tripulante_info.patota_id);
 
 		//un ejemplo de tarea(despues borrar)
 		/*tarea.tarea = OTRA_TAREA;
@@ -79,14 +80,14 @@ static void *ejecutar_operacion(int tripulante)
 		tcb = get_TCB(informe_tripulante.patota_id, informe_tripulante.tripulante_id);
 		tcb.posx = informe_tripulante.posicion.posx;
     	tcb.posy = informe_tripulante.posicion.posy;
-		//Pendiente set_tripulante
+		set_tripulante(tcb, informe_tripulante.patota_id);
 		break;
 
 	case INFORMAR_ESTADO_TRIPULANTE:
 		estado_tripulante = des_cod_informar_estado(paquete);
 		tcb = get_TCB(estado_tripulante.patota_id, estado_tripulante.tripulante_id);
 		tcb.estado = map_estado(estado_tripulante.status);
-		//Pendiente set_tripulante
+		set_tripulante(tcb, estado_tripulante.patota_id);
 		break;
 
 	default:
