@@ -79,8 +79,8 @@ void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
     memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
 }
 
-void set_tripulante(t_TCB tcb){
-    set_tripulante_por_segmentacion(tcb);
+void set_tripulante(t_TCB tcb, int patotaid){
+    set_tripulante_por_segmentacion(tcb, patotaid);
 }
 
 t_TCB get_TCB(int patota_id, int tripulante_id){
