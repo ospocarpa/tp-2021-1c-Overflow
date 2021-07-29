@@ -15,6 +15,11 @@ static void *ejecutar_operacion(int tripulante)
 	t_info_tarea tarea;
 
 	/* INFORMAR POSICION */
+	t_informar_posicion_tripulante informe_tripulante;
+	t_TCB tcb;
+
+	/* INFORMAR ESTADO*/
+	t_estado_tripulante estado_tripulante;
 
 	paquete = recibir_mensaje(tripulante);
 
@@ -24,7 +29,7 @@ static void *ejecutar_operacion(int tripulante)
 		logger_info("INICIAR PATOTA");
 		/* interpreto el contenido del mensaje */
 		init_patota = des_cod_iniciar_patota(paquete);
-
+		//printf("Posiciones: %s\n", init_patota.posiciones);
 		//mi funcion iniciar patota
 		
 
@@ -35,16 +40,6 @@ static void *ejecutar_operacion(int tripulante)
 
 		send(tripulante, &respuesta, sizeof(respuesta), 0);
 
-		break;
-
-	case LISTAR_TRIPULANTES:
-		logger_info("LISTAR TRIPULANTES");
-		/* no deserializo el contenido del mensaje porque me envia la operacion */
-		//tripulantes = mi funcion listar tripulantes
-		/* serializo la respuesta al tripulante */
-		paquete_res = ser_res_listar_tripulantes(tripulantes);
-		/* envio respuesta */
-		sendMessage(paquete_res, tripulante);
 		break;
 
 	case EXPULSAR_TRIPULANTE:
@@ -59,6 +54,8 @@ static void *ejecutar_operacion(int tripulante)
 		logger_info("INFORMAR TAREA");
 		/* interpreto el contenido del mensaje */
 		tripulante_info = des_cod_informar_tarea_tripulante(paquete);
+		char* tareas = string_new();
+		tcb = get_TCB(tripulante_info.patota_id, tripulante_info.tripulante_id);
 		//tarea = ; mi funcion que devuelve una tarea
 
 		//un ejemplo de tarea(despues borrar)
@@ -75,7 +72,18 @@ static void *ejecutar_operacion(int tripulante)
 		break;
 
 	case INFORMAR_POSICION_TRIPULANTE:
-		/* code */
+		informe_tripulante = des_res_informar_posicion_tripulante(paquete);
+		tcb = get_TCB(informe_tripulante.patota_id, informe_tripulante.tripulante_id);
+		tcb.posx = informe_tripulante.posicion.posx;
+    	tcb.posy = informe_tripulante.posicion.posy;
+		//Pendiente set_tripulante
+		break;
+
+	case INFORMAR_ESTADO_TRIPULANTE:
+		estado_tripulante = des_cod_informar_estado(paquete);
+		tcb = get_TCB(estado_tripulante.patota_id, estado_tripulante.tripulante_id);
+		tcb.estado = map_estado(estado_tripulante.status);
+		//Pendiente set_tripulante
 		break;
 
 	default:

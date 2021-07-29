@@ -27,7 +27,7 @@ typedef struct
     int posy;
     uint32_t prox_tarea;
     uint32_t puntero_pcb;
-}t_TCB;
+} t_TCB;
 
 typedef struct 
 {
