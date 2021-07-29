@@ -7,6 +7,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <ctype.h>
+#include "TAD.h"
 
 //Funcion de ejemplo del git de VSCODE
 char *mi_funcion_compartida();
@@ -18,6 +19,7 @@ void escribir_log_warning(t_log *, char *, char *);
 void escribir_log_error(t_log *, char *, char *);
 
 void borrar_log(t_log *);
-
 bool es_un_numero(char *numero_aux);
+char* get_string_operacion(op_code code);
+
 #endif

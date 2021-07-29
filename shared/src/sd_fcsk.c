@@ -11,6 +11,17 @@ t_package ser_fcsk(t_aviso_fsck data_buffer){
     return paquete;
 }
 
+t_package ser_fin_fcsk(t_aviso_fsck data_buffer){
+    t_package paquete;
+    int tam_buffer = 0;
+    paquete.buffer = malloc(tam_buffer); 
+    paquete.cod_operacion = FIN_FSCK;
+    paquete.tam_buffer = tam_buffer;
+    int offset = 0;
+
+    return paquete;
+}
+
 t_aviso_fsck des_fcsk(t_package paquete){
     t_aviso_fsck data;
     return data;
