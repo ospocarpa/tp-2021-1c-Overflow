@@ -55,5 +55,29 @@ typedef struct
     type_data_seg tipo;
 }t_data_segmento;
 
+//--------------------- Paginacion ----------------------
+	
+
+typedef struct {
+    char *pages;
+    int cantCaracteresTarea;
+	int cant_tripulantes;
+	int patotaid;
+}t_lista_paginas;
+
+typedef struct {
+	int page;
+	int frame;
+    bool presencia; 	//Con SWAP
+    bool uso;  		//Con CLOCK
+    char* timestamp; 	//LRU
+}t_page;
+
+
+typedef struct {		// Usemos otro struct
+    void* stream;
+    int tamaño;pa
+    int cantTripulantes;
+}t_segmento;
 
 #endif
