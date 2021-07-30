@@ -396,6 +396,7 @@ void resolver_sabotaje_super_bloque(){
     t_list* bloques;
     for(int c=0; c<list_size(path_files_ims); c++){
         char* path_file_ims = list_get(path_files_ims, c);
+        printf("FIle: %s\n", path_file_ims);
         info = config_create(path_file_ims);    
         bloques = get_bloques_from_metadata(info);
         int cant_bloques = list_size(bloques);
@@ -410,7 +411,57 @@ void resolver_sabotaje_super_bloque(){
     }
 }
 
-void resolver_sabotaje_files(){}
+void resolver_sabotaje_files(){
+    /* Obtener los nombres en una lista: recursos y bitacoras */
+    t_list* name_recursos = get_archivos_de_directorio(get_path_files());
+    t_list* path_files_ims = list_create();
+    for(int c=0; c<list_size(name_recursos); c++)
+        list_add(path_files_ims, get_path_file_recurso(list_get(name_recursos, c)));
+
+    t_config* info;
+    t_list* bloques;
+
+    int size = 0, block_count;
+    char* contenido;
+    char* contenido_md5;
+    char* file_md5;
+    char* caracter;
+    char caracter_simple;
+    for(int c=0; c<list_size(path_files_ims); c++){
+        char* path_file_ims = list_get(path_files_ims, c);
+        info = config_create(path_file_ims);    
+        bloques = get_bloques_from_metadata(info);
+
+        // Revisar el size de los archivos del recurso 
+        contenido = getContenido(path_file_ims);
+        size = strlen(contenido);
+        config_set_value(info, "SIZE", string_itoa(size));
+
+        // Revisar consistencia entre block_count y blocks
+        block_count = list_size(bloques);
+        config_set_value(info, "BLOCK_COUNT", string_itoa(block_count));
+
+        // Reparar archivos por MD5 
+        contenido_md5 = getMD5(contenido);
+        file_md5 = config_get_string_value(info, "MD5_ARCHIVO");
+        caracter = config_get_string_value(info, "CARACTER_LLENADO");
+
+        if(!string_equals_ignore_case(contenido_md5, file_md5)){
+            t_file file_to_update;
+            
+            printf("Test 2\n");
+            caracter_simple = caracter[0];
+            file_to_update.contenido = string_repeat(caracter_simple , size);
+            file_to_update.long_contenido = strlen(file_to_update.contenido);
+            file_to_update.nombre_file = list_get(name_recursos, c);
+            file_to_update.long_nombre_file = strlen(file_to_update.nombre_file);
+            
+            printf("Test 3\n");
+            save_recurso(file_to_update);
+            printf("Test 4\n");
+        }
+    }
+}
 
 char* getMD5(char* text){
     FILE *fp;

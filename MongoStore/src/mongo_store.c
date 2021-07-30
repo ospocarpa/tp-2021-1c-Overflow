@@ -2,37 +2,6 @@
 
 int main(int argc, char **argv)
 {   
-    /*lectura_file();
-    return 1;*/
-
-    /*int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
-    printf("State fd: %d\n", fd);
-    int block_size = 32;
-    int blocks = 32;
-    int file_size = blocks/8 + 2*sizeof(int);
-    void* puntero_bitmap = malloc(blocks/8);
-    t_bitarray* bitmap = bitarray_create_with_mode(puntero_bitmap, blocks/8, LSB_FIRST);
-    bitarray_set_bit(bitmap, 30);
-    bitarray_set_bit(bitmap, 31);
-    
-    int offset = 0;
-    void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-    ftruncate(fd, file_size);
-    memcpy(punteroBits+offset, &block_size, sizeof(uint32_t));
-    offset+=sizeof(uint32_t);
-    memcpy(punteroBits+offset, &blocks, sizeof(uint32_t));
-    offset+=sizeof(uint32_t);
-    memcpy(punteroBits+offset, puntero_bitmap, blocks/8);
-
-    bitarray_set_bit(bitmap, 1);
-    bitarray_set_bit(bitmap, 2);
-    memcpy(punteroBits+offset, bitmap->bitarray, blocks/8);
-    
-
-    void* stream;
-    memcpy(stream, punteroBits, file_size);  
-    printf("Blocks size: %d Blocks: %d\n", block_size, blocks);
-    return 1;*/
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
