@@ -67,7 +67,7 @@
     
        
         return tarea_aux;
-}
+    }
 
 
 // Entrada: "1|1,2|2,3|3" 
@@ -92,5 +92,21 @@ Posicion get_posicion_STR(char *posiciones, int indice){
 
 
     return pos;
+ }
 
-}
+ char map_estado(status_tripulante status){
+        switch (status)
+        {
+            case NEW:
+                return 'N';
+            case READY:
+                return 'R';
+            case EXEC:
+                return 'E';
+            case BLOCKED:
+                return 'B';
+            case BLOCKED_SABOTAJE:
+                return 'B';
+        }
+        return ' ';
+    }

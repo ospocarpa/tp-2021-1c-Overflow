@@ -128,7 +128,7 @@
 		int parametro;
 		Posicion posicion;
 		int tiempo;	
-	}t_info_tarea;
+	} t_info_tarea;
 	
 	typedef struct{
 		uint32_t patota_id;
