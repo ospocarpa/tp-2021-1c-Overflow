@@ -76,8 +76,8 @@ typedef struct {
 
 typedef struct {		// Usemos otro struct
     void* stream;
-    int tamaño;pa
+    int tam;
     int cantTripulantes;
-}t_segmento;
+}t_segmentos_paginacion;
 
 #endif
