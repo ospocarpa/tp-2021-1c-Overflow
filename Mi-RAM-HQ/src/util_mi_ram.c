@@ -67,4 +67,21 @@
     
        
         return tarea_aux;
-}
+    }
+
+    char map_estado(status_tripulante status){
+        switch (status)
+        {
+            case NEW:
+                return 'N';
+            case READY:
+                return 'R';
+            case EXEC:
+                return 'E';
+            case BLOCKED:
+                return 'B';
+            case BLOCKED_SABOTAJE:
+                return 'B';
+        }
+        return ' ';
+    }

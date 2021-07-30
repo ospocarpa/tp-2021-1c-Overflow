@@ -10,8 +10,13 @@
 #include "sd_expulsar_tripulante.h"
 #include "sd_iniciar_patota.h"
 #include "sd_listar_tripulantes.h"
+#include "sd_informar_posicion_tripulante.h"
+#include "sd_informar_estado.h"
 #include "socket_client.h"
-#include <TAD.h>
+#include "tad_mi_ram_hq.h"
+#include "memoria.h"
+#include "TAD.h"
+#include "util_mi_ram.h"
 
 void server_mi_ram_iniciar(int puerto);
 

@@ -9,5 +9,6 @@
 #include <commons/collections/list.h>
 
 t_info_tarea get_tarea(char* lista_tareas,int n_tarea);
+char map_estado(status_tripulante status);
 
 #endif

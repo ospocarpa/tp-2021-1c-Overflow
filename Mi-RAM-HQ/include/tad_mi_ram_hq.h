@@ -27,7 +27,7 @@ typedef struct
     int posy;
     uint32_t prox_tarea;
     uint32_t puntero_pcb;
-}t_TCB;
+} t_TCB;
 
 typedef struct 
 {
@@ -40,7 +40,7 @@ typedef struct
     uint32_t id;
     int base;
     int desplazamiento;
-}t_segmento;
+} t_segmento;
 
 typedef struct 
 {
