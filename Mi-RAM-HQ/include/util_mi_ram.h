@@ -9,5 +9,6 @@
 #include <commons/collections/list.h>
 
 t_info_tarea get_tarea(char* lista_tareas,int n_tarea);
+Posicion get_posicion_STR(char *posicion, int indice);
 
 #endif
