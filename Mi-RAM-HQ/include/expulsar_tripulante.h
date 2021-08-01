@@ -10,7 +10,8 @@
 #include "memoria.h"
 #include "TAD.h"
 #include "segmentacion_pura.h"
+#include "read_config_mi_ram_hq.h"
 
-void expulsar_tripulante_segmentacion(t_expulsar_tripulante tripulante);
+void expulsar_tripulante(t_expulsar_tripulante tripulante);
 
 #endif

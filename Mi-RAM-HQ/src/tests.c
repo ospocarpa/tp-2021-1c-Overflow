@@ -16,6 +16,7 @@ void validar_cargar_informacion_tareas_a_MP();
 void validar_get_tarea();
 void validar_get_tarea2();
 void validar_iniciar_patota_segmentada();
+void validar_expulsar_tripulante_segmentada();
 
 int run_tests()
 {
@@ -38,6 +39,8 @@ int run_tests()
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
+    CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
+
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
@@ -84,11 +87,12 @@ void validar_sd_expulsar_tripulante()
     t_expulsar_tripulante data_res;
     t_package paquete ;
 
-    data_input.id_tripulante = 2;
+    data_input.patota_id = 1;
+    data_input.tripulante_id = 2;
 
     paquete = ser_cod_expulsar_tripulante(data_input);
     data_res = des_cod_expulsar_tripulante(paquete);
-    CU_ASSERT_EQUAL(data_input.id_tripulante, data_res.id_tripulante);
+    CU_ASSERT_EQUAL(data_input.tripulante_id, data_res.tripulante_id);
 
     free(paquete.buffer);
 }
@@ -424,6 +428,51 @@ void validar_iniciar_patota_segmentada(){
     liberar_memoria_principal();
     
 
+    void tabla_destroy(t_segmento * seg){
+        free(seg);
+    }
+
+    //list_destroy_and_destroy_elements(tabla, tabla_destroy);
+    //free(tabla);
+
+    //liberar_lista_de_tablas_segmentos();
+}
+
+void validar_expulsar_tripulante_segmentada(){
+    t_iniciar_patota data_input;
+
+    cfg_create("cfg/mi_ram_hq.config");
+
+    data_input.cant_tripulantes = 1;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2";
+    data_input.long_posicion = strlen("1|2");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    t_expulsar_tripulante data;
+
+    data.patota_id = 1;
+    data.tripulante_id = 2;
+
+    iniciar_memoria_principal(128);
+    iniciar_lista_tabla_segmento();
+    iniciar_tabla_huecos(128);
+
+    bool res = iniciar_patota_segmentacion(data_input);
+    expulsar_tripulante(data);
+
+    t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);
+
+    int cant_seg = list_size(tabla->segmentos);
+    printf("segmentos: %d \n", cant_seg);
+
+    CU_ASSERT_EQUAL(cant_seg, 2);
+
+    liberar_tabla_huecos();
+    liberar_memoria_principal();
+    
     void tabla_destroy(t_segmento * seg){
         free(seg);
     }

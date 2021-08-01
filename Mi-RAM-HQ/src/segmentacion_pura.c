@@ -356,3 +356,34 @@ void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
     offset +=sizeof(uint32_t);
     memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
 }
+
+void destroy_segmento(t_segmento * segmento){
+    free(segmento);
+}
+
+void eliminar_segmento_tripulante(t_expulsar_tripulante tripulante){
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == tripulante.patota_id;//ver
+    }
+
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, (void * ) mismo_tabla_id);
+
+    bool is_segmento_para_tripulante(t_segmento * seg){
+        printf("id tripulante: %d \n", tripulante.tripulante_id);
+        return seg->id == tripulante.tripulante_id;
+    }
+
+    t_segmento * seg_eliminado = list_find(tabla_segmento->segmentos, is_segmento_para_tripulante);
+    agregar_hueco(seg_eliminado->base, seg_eliminado->desplazamiento);
+
+    list_remove_and_destroy_by_condition(tabla_segmento->segmentos, is_segmento_para_tripulante,destroy_segmento);
+
+    //ordeno la lista de huecos por base
+    void * ordenar_por_base_menor(t_hueco * hueco1, t_hueco * hueco2){
+        return hueco1->base <= hueco2->base ? hueco1 : hueco2;
+    }
+
+    list_sort(tabla_hueco, (void *) ordenar_por_base_menor);
+
+    free(seg_eliminado);//ver
+}

@@ -7,6 +7,7 @@
 #include <commons/collections/list.h>
 #include "tad_mi_ram_hq.h"
 #include "memoria.h"
+#include "TAD.h"
 
 extern void * memoria_principal;
 
@@ -24,6 +25,7 @@ void mover_segmento(t_segmento *segmento, int base_pivote);
 char* get_tareas(int patota_id);
 void set_tripulante_por_segmentacion(t_TCB tcb, int patota_id);
 void cargar_informacion_TCB_a_MP(t_TCB tcb,int base);
+void eliminar_segmento_tripulante(t_expulsar_tripulante tripulante);
 
 /* -------- ACCESO A LA MEMORIA ----- */
 char * leer_info_tareas(int base,int tam);
