@@ -15,10 +15,10 @@ int main(int argc, char **argv)
         int puerto = get_puerto();
       
         int tam_memoria = get_tamanio_memoria();
-
         iniciar_memoria_principal(tam_memoria);
-
         server_mi_ram_iniciar(puerto);
+
+        signal(SIGUSR1, method_sigusr1);
 
         // Libero el log y config al final
         cfg_free();

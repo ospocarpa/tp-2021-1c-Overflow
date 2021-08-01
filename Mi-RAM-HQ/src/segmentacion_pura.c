@@ -266,6 +266,10 @@ t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
     return list_get(list_tablas_segmentos, indice);
 }
 
+t_list* get_todos_los_segmentos(){  //t_segmento
+    //list_tablas_segmentos
+}
+
 void compactacion(){
     t_list* segmentos_global = list_create();           //Representa a todos los segmentos del sistema
     bool comparador(t_segmento *segmento1, t_segmento *segmento2)
@@ -355,4 +359,17 @@ void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
     memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
     offset +=sizeof(uint32_t);
     memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
+}
+
+void dump_segmentacion_pura(){
+    char *format = "%d/%m/%y %H:%M:%S";
+    char *timestamp = temporal_get_string_time(format);
+    
+    char* contenido = string_new();
+    string_append_with_format(&contenido, "Dump: %s\n", timestamp);
+    
+    /*
+    Obtener todos los segmentos 
+    */
+    printf("%s\n", contenido);
 }

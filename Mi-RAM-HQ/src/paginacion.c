@@ -6,5 +6,8 @@
 
 void iniciar_tabla_paginacion(){
     list_tablas_paginacion = list_create();
+}
 
+void dump_paginacion(){
+    
 }
