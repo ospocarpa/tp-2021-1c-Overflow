@@ -2,6 +2,37 @@
 
 int main(int argc, char **argv)
 {   
+    /*lectura_file();
+    return 1;*/
+
+    /*int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    printf("State fd: %d\n", fd);
+    int block_size = 32;
+    int blocks = 32;
+    int file_size = blocks/8 + 2*sizeof(int);
+    void* puntero_bitmap = malloc(blocks/8);
+    t_bitarray* bitmap = bitarray_create_with_mode(puntero_bitmap, blocks/8, LSB_FIRST);
+    bitarray_set_bit(bitmap, 30);
+    bitarray_set_bit(bitmap, 31);
+    
+    int offset = 0;
+    void* punteroBits = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    ftruncate(fd, file_size);
+    memcpy(punteroBits+offset, &block_size, sizeof(uint32_t));
+    offset+=sizeof(uint32_t);
+    memcpy(punteroBits+offset, &blocks, sizeof(uint32_t));
+    offset+=sizeof(uint32_t);
+    memcpy(punteroBits+offset, puntero_bitmap, blocks/8);
+
+    bitarray_set_bit(bitmap, 1);
+    bitarray_set_bit(bitmap, 2);
+    memcpy(punteroBits+offset, bitmap->bitarray, blocks/8);
+    
+
+    void* stream;
+    memcpy(stream, punteroBits, file_size);  
+    printf("Blocks size: %d Blocks: %d\n", block_size, blocks);
+    return 1;*/
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests();
@@ -51,23 +82,32 @@ void sincronizacion(){
 }
 
 void lectura_file(){
+    int tam_bit_map = 4;
+    void* puntero_bitmap = malloc(tam_bit_map);
+    
     int block_size = 0;
     int blocks = 0;
-    int bitmap = 0;
 
     int fd = open("/home/utnso/polus/SuperBloque.ims", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
-    int file_size = sizeof(uint32_t) * 2 + 4;
+    printf("Fd: %d\n", fd);
+    int file_size = sizeof(uint32_t) * 2 + tam_bit_map;
+    ftruncate(fd, file_size);
     void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-    t_bitarray* bitarray = NULL;
 
-    memcpy(&block_size, stream, sizeof(uint32_t));
-	stream += sizeof(uint32_t);
-	memcpy(&blocks, stream, sizeof(uint32_t));
-	stream += sizeof(uint32_t);
-    memcpy(&bitmap, stream, 4);
-	stream += 4;
+    int offset = 0;
+    memcpy(&block_size, stream + offset, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+	memcpy(&blocks, stream + offset, sizeof(uint32_t));
+	offset += sizeof(uint32_t);
+    memcpy(puntero_bitmap, stream + offset, tam_bit_map);
 
-    printf("%d %d\n", block_size, blocks, bitmap);
+    t_bitarray* bitarray = bitarray_create_with_mode(puntero_bitmap, tam_bit_map, LSB_FIRST);
+    printf("%d %d\n", block_size, blocks);
     print_bit_map(bitarray);
+    
+    void* puntero_bitmap2 = malloc(tam_bit_map);
+    memcpy(puntero_bitmap2, stream + 2*sizeof(uint32_t), tam_bit_map);
+    t_bitarray* bitarray2 = bitarray_create_with_mode(puntero_bitmap2, tam_bit_map, LSB_FIRST);
+    print_bit_map(bitarray2);
     return 1;
 }

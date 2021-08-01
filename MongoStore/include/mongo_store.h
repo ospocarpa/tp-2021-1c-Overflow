@@ -16,6 +16,7 @@
 #include <signal.h>
 #include <commons/bitarray.h>
 #include <filesystem.h>
+#include <stdlib.h>
 #include <commons/string.h>
 
     void lectura_file();

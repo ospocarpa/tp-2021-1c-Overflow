@@ -70,3 +70,31 @@ bool es_un_numero(char *numero_aux)
     free(numero);
     return true;
 }
+
+char* get_string_operacion(op_code code){
+    switch(code){
+        case SALIR: return "SALIR";
+        case TAREA: return "TAREA";
+		case SABOTAJE: return "SABOTAJE";
+		case INICIO_FSCK: return "INICIO_FSCK";
+		case FIN_FSCK: return "FIN_FSCK";
+		case INICIAR_PATOTA: return "INICIAR_PATOTA";
+		case LISTAR_TRIPULANTES: return "LISTAR TRIPULANTES";
+		case EXPULSAR_TRIPULANTE: return "EXPULSAR TRIPULANTE";
+		case INFORMAR_TAREA_TRIPULANTE: return "INFORMAR TAREA TRIPULANTE";
+		case INFORMAR_POSICION_TRIPULANTE: return "INFORMAR_POSICION_TRIPULANTE";
+		case INICIAR_PLANIFICACION: return "INICIAR PLANIFICACION";
+		case PAUSAR_PLANIFICACION: return "PAUSAR PLANIFICACION";
+		case OBTENER_BITACORA: return "OBTENER BITACORA";
+   		case INFORMAR_ESTADO_TRIPULANTE: return "INFORMAR ESTADO TRIPULANTE";
+		case CREAR_BITACORA: return "CREAR BITACORA";
+		case CREAR_RECURSO: return "CREAR RECURSO";
+		case GET_BITACORA: return "GET BITACORA";
+		case GET_RECURSO: return "GET RECURSO";
+		case UPDATE_BITACORA: return "UPDATE BITACORA";
+		case AGREGAR_RECURSO: return "AGREGAR RECURSO";
+		case RETIRAR_RECURSO: return "RETIRAR RECURSO";
+		case ELIMINAR_RECURSO: return "ELIMINAR RECURSO";
+        default: return "NO DEFINIDO";
+    }
+}

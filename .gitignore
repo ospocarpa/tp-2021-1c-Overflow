@@ -4,6 +4,7 @@
 # Ignorar los ejecutables
 /Discordiador/discordiador
 /Mi-RAM-HQ/mi_ram
+/MongoStore/MongoStore
 
 # Prerequisites
 *.d

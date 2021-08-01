@@ -16,6 +16,7 @@
 #include "sd_sabotaje.h"
 
     extern t_config_mongo_store* config_global_mongo_store;
+    extern t_log *logger;
     extern t_filesystem filesystem;
 
     void method_sigusr1();
@@ -34,5 +35,6 @@
     void create_tripulante_bitacora(t_create_file create_get_file);
     t_file get_recurso(char* nombre_file);
     t_file get_bitacora_tripulante(t_file file_input);
+    void eliminar_recurso(t_operation_file_recurso file_input);
 
 #endif
