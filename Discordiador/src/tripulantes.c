@@ -116,8 +116,9 @@ void hilo_tripulante(Tripulante *tripulante)
             printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);*/
             //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
             //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
-
-            if (tripulante->status == NEW)
+            while (!planificacion_activa)
+                ;
+            if (tripulante->status == NEW || tripulante->status == BLOCKED)
             {
 
                 // Solo en la 1era iteraccion entraria a est if
@@ -173,12 +174,15 @@ void hilo_tripulante(Tripulante *tripulante)
         if (tripulante->tarea->tarea != OTRA_TAREA)
         {
             //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
+            tripulante->status == BLOCKED;
             sem_post(&grado_multiprocesamiento);
 
             printf("tripulante %d bloqueate\n", tripulante->id);
+            sem_post(&bloqueados);
             sleep(config->RETARDO_CICLO_CPU);
             list_add(lista_BLOCKIO, tripulante);
-            Tripulante *tripulante_bloq = list_remove_by_condition(lista_READY, mismo_id);
+            Tripulante *tripulante_bloq = list_remove_by_condition(lista_EXEC, mismo_id);
+
             printf("id del tripulane bloqueado:%d\n", tripulante_bloq->id);
             //Consultar
             //nos falta logica de como ejecutan los tripulantes bloqueados ??
@@ -190,8 +194,9 @@ void hilo_tripulante(Tripulante *tripulante)
             }
             //Esperamos ser seleccionados por i/o
             pthread_mutex_lock(&tripulante->seleccionado_bloqueado);
+            pthread_mutex_lock(&mutex_bloqueado);
         }
-
+        //misma logica para todas las tareas ?
         while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)
         {
             if (hay_sabotaje)
@@ -201,6 +206,16 @@ void hilo_tripulante(Tripulante *tripulante)
             }
             tripulante->rafagas_consumidas++;
             sleep(config->RETARDO_CICLO_CPU);
+        }
+        if (tripulante->tarea->tarea != OTRA_TAREA)
+        {
+            //aca ya habra terminado la tarea --> debe pasar a ready
+            pthread_mutex_unlock(&mutex_bloqueado);
+
+            pthread_mutex_lock(&MXTRIPULANTE);
+            list_remove_by_condition(lista_BLOCKIO, mismo_id);
+            cantidad_activos--;
+            pthread_mutex_unlock(&MXTRIPULANTE);
         }
         //Falta que el tripulante consuma su rafa de CPU
         //consulta de agregar ese consumo (si es bloqueado por sabataje)

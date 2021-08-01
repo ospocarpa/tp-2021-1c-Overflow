@@ -32,12 +32,14 @@ int cantidad_activos = 0;
 //Semáforos
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 sem_t listos;
+sem_t bloqueados;
 sem_t grado_multiprocesamiento;
 sem_t activados; //Incluye a los tripulantes que se encuentran en exec, ready y bloqueado por I/O
 pthread_mutex_t MXTRIPULANTE;
+pthread_mutex_t mutex_bloqueado;
 
 //Listas de estados
-t_list *lista_tripulantes;          //[Tripulante]
+t_list *lista_tripulantes; //[Tripulante]
 //t_list *lista_NEW;
 t_list *lista_READY;
 t_list *lista_EXEC;

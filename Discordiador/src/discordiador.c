@@ -6,6 +6,10 @@ void iniciar_servidor_main()
     pthread_t threadDispatcher;
     pthread_create(&threadDispatcher, NULL, (void *)init_dispatcher, NULL);
     pthread_detach(threadDispatcher);
+    //Iniciar init_bloqueados()
+    pthread_t threadDispatcher_bloq;
+    pthread_create(&threadDispatcher_bloq, NULL, (void *)init_bloqueados, NULL);
+    pthread_detach(threadDispatcher_bloq);
 
     //Iniciar Server
     int server_fd = iniciar_servidor(config->PUERTO_MODULO);
@@ -50,12 +54,14 @@ void ejecutar_operacion(int cliente_fd)
 void inicializacion_recursos()
 {
     // Inicializo semaforo
-    pthread_mutex_init(&MXTRIPULANTE, NULL);        //Usado en la insercción del tripulante
+    pthread_mutex_init(&MXTRIPULANTE, NULL);    //Usado en la insercción del tripulante
+    pthread_mutex_init(&mutex_bloqueado, NULL); //Usado porque solo tengo un i/o
 
     //mejorar en metodo la iniciliazicion del semaforo
     pthread_mutex_init(&SEM_PAUSAR_PLANIFICACION, 0);
     //printf(" sem : %d\n", SEM_PAUSAR_PLANIFICACION);
-    sem_init(&listos, 0, 0); // contador de listos =0
+    sem_init(&listos, 0, 0);     // contador de listos =0
+    sem_init(&bloqueados, 0, 0); // contador de bloqueados =0
     sem_init(&grado_multiprocesamiento, 0, config->GRADO_MULTITAREA);
     sem_init(&activados, 0, 0);
     cantidad_activos = 0;
@@ -115,7 +121,7 @@ int main(int argc, char **argv)
         }
 
         iniciar_servidor_main();
-        
+
         printf("sali de  inciar servidor\n");
 
         // Libero el log y config al final

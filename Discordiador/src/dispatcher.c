@@ -22,7 +22,6 @@ void init_bloqueados()
         // un semaforo para seleccionado bloqueado ???
         Tripulante *tripulante_seleccionado = elegir_tripulante_bloqueado();
         // un mutex para que solo ejecute un bloqueado
-        sem_wait(&mutex_bloqueado);
         pthread_mutex_unlock(&tripulante_seleccionado->seleccionado_bloqueado);
     }
 }
