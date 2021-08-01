@@ -32,7 +32,7 @@ int main(int argc, char **argv)
     update_bitacora(conexion_servidor, "tripulante1.ims", " mundo");
     sleep(3);
     inicio_FSCK(conexion_servidor);
-    
+    sleep(3);
     //eliminar_recurso(conexion_servidor);
     //get_recurso(conexion_servidor);
     //get_bitacora(conexion_servidor);
