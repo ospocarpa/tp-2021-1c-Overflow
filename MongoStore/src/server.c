@@ -97,8 +97,6 @@ void ejecutar_operacion(int cliente_fd)
     while (1)
     {
         t_package paquete = recibir_mensaje(cliente_fd);
-        printf("Cod. operación: %d\n", paquete.cod_operacion);
-        printf("Tam_buffer: %d\n", paquete.tam_buffer);
         if (
             paquete.cod_operacion == 0 ||
             (paquete.tam_buffer==0 && (paquete.cod_operacion != FIN_FSCK && paquete.cod_operacion != INICIO_FSCK))
