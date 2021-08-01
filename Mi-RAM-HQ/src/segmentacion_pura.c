@@ -385,5 +385,5 @@ void eliminar_segmento_tripulante(t_expulsar_tripulante tripulante){
 
     list_sort(tabla_hueco, (void *) ordenar_por_base_menor);
 
-    free(seg_eliminado);//ver
+   // free(seg_eliminado);//ver
 }
