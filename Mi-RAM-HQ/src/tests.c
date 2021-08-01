@@ -15,8 +15,10 @@ void validar_cargar_informacion_PCB_a_MP();
 void validar_cargar_informacion_tareas_a_MP();
 void validar_get_tarea();
 void validar_get_tarea2();
+void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
 void validar_expulsar_tripulante_segmentada();
+
 
 int run_tests()
 {
@@ -38,6 +40,7 @@ int run_tests()
     CU_add_test(tests, "Valido carga de informacion de TAREAS a MP", validar_cargar_informacion_tareas_a_MP);
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
+    CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
 
@@ -393,6 +396,17 @@ void validar_get_tarea2(){
     CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
     CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
     CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
+}
+
+void validar_get_posicion_STR(){
+    char * lista_posicion ="1|1,2|2,3|3";
+    Posicion pos_in;
+    Posicion pos_out ;
+    pos_in.posx = 1;
+    pos_in.posy = 1;
+    pos_out = get_posicion_STR(lista_posicion,1);
+    CU_ASSERT_EQUAL(pos_in.posx,pos_out.posx);
+    CU_ASSERT_EQUAL(pos_in.posy,pos_out.posy);
 }
 
 void validar_iniciar_patota_segmentada(){
