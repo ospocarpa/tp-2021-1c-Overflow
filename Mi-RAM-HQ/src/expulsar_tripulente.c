@@ -14,7 +14,7 @@ void expulsar_tripulante(t_expulsar_tripulante tripulante){
     
     char * tipo_memoria = get_esquema_memoria();
 
-    if(tipo_memoria == "SEGMENTACION")
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0)
     {
         expulsar_tripulante_segmentacion(tripulante);
     }
