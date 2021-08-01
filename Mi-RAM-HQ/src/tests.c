@@ -13,7 +13,11 @@ void validar_sd_res_iniciar_patota();
 void validar_cargar_informacion_TCB_a_MP();
 void validar_cargar_informacion_PCB_a_MP();
 void validar_cargar_informacion_tareas_a_MP();
+void validar_get_tarea();
+void validar_get_tarea2();
+void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
+
 
 int run_tests()
 {
@@ -33,8 +37,10 @@ int run_tests()
     CU_add_test(tests, "Valido carga de informacion de PCB a MP", validar_cargar_informacion_PCB_a_MP);
     CU_add_test(tests, "Valido carga de informacion de TCB a MP", validar_cargar_informacion_TCB_a_MP);
     CU_add_test(tests, "Valido carga de informacion de TAREAS a MP", validar_cargar_informacion_tareas_a_MP);
+    CU_add_test(tests, "Valido get tarea", validar_get_tarea);
+    CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
+    CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
-
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
     CU_cleanup_registry();
@@ -345,6 +351,60 @@ void validar_cargar_informacion_tareas_a_MP(){
 
 }
 
+void validar_get_tarea(){
+
+    char * lista_tareas = "ARREGLAR_REACTOR;7;2;5\nGeneraroxigeno 12;4;5;6";
+    t_info_tarea tarea;
+    t_info_tarea tarea_res;
+    tarea.tarea = OTRA_TAREA;
+    tarea.parametro = 0;
+    tarea.posicion.posx = 7;
+    tarea.posicion.posy = 2;
+    tarea.tiempo = 5;
+
+    tarea_res = get_tarea(lista_tareas,1);
+
+    
+    CU_ASSERT_EQUAL(tarea.tarea, tarea_res.tarea);
+    CU_ASSERT_EQUAL(tarea.parametro, tarea_res.parametro);
+    CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
+    CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
+    CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
+}
+
+void validar_get_tarea2(){
+
+    char * lista_tareas = "ARREGLAR_REACTOR;7;2;5\nGENERAR_OXIGENO 12;4;5;6";
+    t_info_tarea tarea;
+    t_info_tarea tarea_res;
+    tarea.tarea = GENERAR_OXIGENO;
+    tarea.parametro = 12;
+    tarea.posicion.posx = 4;
+    tarea.posicion.posy = 5;
+    tarea.tiempo = 6;
+
+    tarea_res = get_tarea(lista_tareas,2);
+
+    
+    CU_ASSERT_EQUAL(tarea.tarea, tarea_res.tarea);
+
+    CU_ASSERT_EQUAL(tarea.parametro, tarea_res.parametro);
+    CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
+    CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
+    CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
+}
+
+void validar_get_posicion_STR(){
+    char * lista_posicion ="1|1,2|2,3|3";
+    Posicion pos_in;
+    Posicion pos_out ;
+    pos_in.posx = 1;
+    pos_in.posy = 1;
+    pos_out = get_posicion_STR(lista_posicion,1);
+    CU_ASSERT_EQUAL(pos_in.posx,pos_out.posx);
+    CU_ASSERT_EQUAL(pos_in.posy,pos_out.posy);
+}
+
 void validar_iniciar_patota_segmentada(){
 
     t_iniciar_patota data_input;
@@ -387,3 +447,7 @@ void validar_iniciar_patota_segmentada(){
 
     //liberar_lista_de_tablas_segmentos();
 }
+
+
+
+

@@ -235,6 +235,23 @@ t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
     return segmento;
 }
 
+t_TCB get_TCB_segmentacion_pura(int patota_id, int tripulante_id){
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == patota_id;
+    }
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);
+    
+    bool mismo_segmento_id(t_segmento *item){
+        return item->id == tripulante_id;
+    }
+    t_segmento* segmento = list_find(tabla_segmento->segmentos, &mismo_segmento_id);
+
+    int base = segmento->base; 
+
+    t_TCB tcb = leer_info_TCB(base);
+    return tcb;
+}
+
 /* *********************FENCIONES PARA TESTEAR************************ */
 
 int cantidad_de_tablas_de_segmento_test(){
@@ -281,4 +298,61 @@ void mover_segmento(t_segmento *segmento, int base_pivote){
 
     //Actualizar el segmento de la tabla de página => implica modifcar la base
     segmento->base = base_pivote;
+}
+
+char* get_tareas(int patota_id){
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == patota_id;
+    }
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);    
+    t_segmento* segmento = list_find(tabla_segmento->segmentos, 0);
+
+    char* tareas = leer_info_tareas(segmento->base, segmento->desplazamiento);
+    return tareas;
+}
+
+/* -------- ACCESO A LA MEMORIA ----- */
+char * leer_info_tareas(int base,int tam){
+    char * tareas= malloc(tam+1);
+    
+    memcpy(tareas,memoria_principal+base,tam);
+    tareas[tam] = '\0';
+    return tareas ;
+}
+
+void set_tripulante_por_segmentacion(t_TCB tcb, int patota_id){
+    //Capaz no sea necesario pasarle la patotaid
+    bool mismo_tabla_id(t_tabla_segmentos *item){
+        return item->pid == patota_id;
+    }
+    t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);
+    bool mismo_segmento_id(t_segmento *item){
+        return item->id == tcb.tid;
+    }
+    t_segmento* segmento = list_find(tabla_segmento->segmentos, &mismo_segmento_id);
+    int base = segmento->base; 
+
+    cargar_informacion_TCB_a_MP(tcb, base);
+}
+
+void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){ 
+    // uint32_t tid;
+    // char estado;
+    // int posx;
+    // int posy;
+    // uint32_t prox_tarea;
+    // uint32_t puntero_pcb;
+
+    int offset = base;
+    memcpy(memoria_principal + offset, &tcb.tid,sizeof(uint32_t));
+    offset +=sizeof(uint32_t) ;
+    memcpy(memoria_principal + offset, &tcb.estado,sizeof(char));
+    offset += sizeof(char);
+    memcpy(memoria_principal + offset, &tcb.posx,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(memoria_principal + offset, &tcb.posy,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
+    offset +=sizeof(uint32_t);
+    memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
 }

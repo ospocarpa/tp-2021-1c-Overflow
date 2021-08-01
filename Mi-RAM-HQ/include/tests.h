@@ -13,6 +13,9 @@
 #include "tad_mi_ram_hq.h"
 #include "segmentacion_pura.h"
 #include "iniciar_patota.h"
+#include "util_mi_ram.h"
+#include <commons/collections/list.h>
+#include <commons/string.h>
 
 int run_tests();
 
