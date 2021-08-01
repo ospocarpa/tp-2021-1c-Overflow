@@ -67,4 +67,46 @@
     
        
         return tarea_aux;
-}
+    }
+
+
+// Entrada: "1|1,2|2,3|3" 
+// Posicion get_posicion(char* posicion, int indice){
+// }
+// Salida: se devuelve la posición en formato struct "Posicion"
+
+// Proceso: recibe un arreglo de posiciones en string, debe devolver la posición según el indice
+// typedef struct
+// 	{
+// 		int posx;
+// 		int posy;
+// 	}__attribute__((packed))
+// 	Posicion;
+
+Posicion get_posicion_STR(char *posiciones, int indice){
+    Posicion pos;
+    char** partes = string_split(posiciones,",");
+    char** pos_aux = string_split(partes[indice-1],"|");
+    pos.posx = atoi(pos_aux[0]);
+    pos.posy = atoi(pos_aux[1]);
+
+
+    return pos;
+ }
+
+ char map_estado(status_tripulante status){
+        switch (status)
+        {
+            case NEW:
+                return 'N';
+            case READY:
+                return 'R';
+            case EXEC:
+                return 'E';
+            case BLOCKED:
+                return 'B';
+            case BLOCKED_SABOTAJE:
+                return 'B';
+        }
+        return ' ';
+    }

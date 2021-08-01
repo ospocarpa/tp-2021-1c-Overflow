@@ -27,7 +27,7 @@ typedef struct
     int posy;
     uint32_t prox_tarea;
     uint32_t puntero_pcb;
-}t_TCB;
+} t_TCB;
 
 typedef struct 
 {
@@ -40,7 +40,7 @@ typedef struct
     uint32_t id;
     int base;
     int desplazamiento;
-}t_segmento;
+} t_segmento;
 
 typedef struct 
 {
@@ -55,5 +55,29 @@ typedef struct
     type_data_seg tipo;
 }t_data_segmento;
 
+//--------------------- Paginacion ----------------------
+	
+
+typedef struct {
+    char *pages;
+    int cantCaracteresTarea;
+	int cant_tripulantes;
+	int patotaid;
+}t_lista_paginas;
+
+typedef struct {
+	int page;
+	int frame;
+    bool presencia; 	//Con SWAP
+    bool uso;  		//Con CLOCK
+    char* timestamp; 	//LRU
+}t_page;
+
+
+typedef struct {		// Usemos otro struct
+    void* stream;
+    int tam;
+    int cantTripulantes;
+}t_segmentos_paginacion;
 
 #endif

@@ -98,8 +98,8 @@ void ejecutar_operacion(int cliente_fd)
     {
         t_package paquete = recibir_mensaje(cliente_fd);
         if (
-            paquete.cod_operacion == 0 
-            //|| (paquete.tam_buffer==0 && (paquete.cod_operacion != FIN_FSCK || paquete.cod_operacion != INICIO_FSCK))
+            paquete.cod_operacion == 0 ||
+            (paquete.tam_buffer==0 && (paquete.cod_operacion != FIN_FSCK && paquete.cod_operacion != INICIO_FSCK))
         ) fallos--;
         if(fallos <= 0) break;
         bool existe_codigo = recepcionMensaje(paquete, cliente_fd, logger);
