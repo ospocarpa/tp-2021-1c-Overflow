@@ -25,28 +25,6 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     free(contenido);
     //mostrar_datos_patota(datosPatota);
 }
-//borrar esta funcion ??
-void ejecucion_dispatcher()
-{
-    //son todos los tripulantes listos
-    t_list *tripulantes_all = list_create();
-
-    switch (config->ALGORITMO)
-
-    {
-    case FIFO:
-
-        break;
-    case RR:
-
-        break;
-    default:
-        break;
-    }
-
-    //tripulantes.listos a tripulanes.exec
-}
-//
 
 void pedirTarea(Tripulante *tripulante)
 {
@@ -157,7 +135,7 @@ void hilo_tripulante(Tripulante *tripulante)
                 list_add(lista_EXIT, tripulante);
                 printf("Tripulante %d Bye Bye\n", tripulante->id);
                 //MI ram elimina a este tripulante de su memoria
-                //falta removerlo de la lista tripulante
+                //Removerlo de la lista tripulante???
 
                 //Tripulante *tripulante1 = list_remove_by_condition(lista_tripulantes, mismo_id);
                 Tripulante *tripulante2 = list_remove_by_condition(lista_READY, mismo_id);
@@ -192,11 +170,11 @@ void hilo_tripulante(Tripulante *tripulante)
 
         mover_tripulante_a_tarea(tripulante);
 
-        //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
-        sem_post(&grado_multiprocesamiento);
-
         if (tripulante->tarea->tarea != OTRA_TAREA)
         {
+            //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
+            sem_post(&grado_multiprocesamiento);
+
             printf("tripulante %d bloqueate\n", tripulante->id);
             sleep(config->RETARDO_CICLO_CPU);
             list_add(lista_BLOCKIO, tripulante);
@@ -210,6 +188,8 @@ void hilo_tripulante(Tripulante *tripulante)
                 chequear_activados();
                 pthread_mutex_lock(&tripulante->activo);
             }
+            //Esperamos ser seleccionados por i/o
+            pthread_mutex_lock(&tripulante->seleccionado_bloqueado);
         }
 
         while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)
