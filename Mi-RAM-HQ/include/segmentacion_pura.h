@@ -19,6 +19,7 @@ bool se_puede_escribir(int tam_info);
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla);
 void liberar_lista_de_tablas_segmentos();
 t_TCB get_TCB_segmentacion_pura(int patota_id, int tripulante_id);
+t_list* get_todos_los_segmentos();
 void compactacion();
 void mover_segmento(t_segmento *segmento, int base_pivote);
 char* get_tareas(int patota_id);

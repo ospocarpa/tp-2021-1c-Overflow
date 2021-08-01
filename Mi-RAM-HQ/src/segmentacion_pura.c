@@ -252,26 +252,22 @@ t_TCB get_TCB_segmentacion_pura(int patota_id, int tripulante_id){
     return tcb;
 }
 
-/* *********************FENCIONES PARA TESTEAR************************ */
+t_list* get_todos_los_segmentos(){  //[t_segmento]
+    t_list* lista_segmentos_global = list_create();
 
-int cantidad_de_tablas_de_segmento_test(){
-    return list_size(list_tablas_segmentos);
-}
+    int cant_tablas = list_size(list_tablas_segmentos);
+    for(int c=0; c<cant_tablas; c++){
+        t_tabla_segmentos* tabla_segmento = get_tabla_segmento_segun_indice_test(c);
+        t_list* segmentos_de_tabla = tabla_segmento->segmentos;
+        list_add_all(lista_segmentos_global, segmentos_de_tabla);
+    }
 
-int cantidad_huecos_test(){
-    return list_size(tabla_hueco);
-}
 
-t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
-    return list_get(list_tablas_segmentos, indice);
-}
-
-t_list* get_todos_los_segmentos(){  //t_segmento
-    //list_tablas_segmentos
+    return lista_segmentos_global;
 }
 
 void compactacion(){
-    t_list* segmentos_global = list_create();           //Representa a todos los segmentos del sistema
+    t_list* segmentos_global = get_todos_los_segmentos();           //Representa a todos los segmentos del sistema
     bool comparador(t_segmento *segmento1, t_segmento *segmento2)
     {
         return segmento1->base < segmento2->base;
@@ -368,8 +364,34 @@ void dump_segmentacion_pura(){
     char* contenido = string_new();
     string_append_with_format(&contenido, "Dump: %s\n", timestamp);
     
-    /*
-    Obtener todos los segmentos 
-    */
+    /* Obtener todos los segmentos */
+    int cant_tablas = list_size(list_tablas_segmentos);
+    int proceso_id;
+    for(int c=0; c<cant_tablas; c++){
+        t_tabla_segmentos* tabla_segmento = get_tabla_segmento_segun_indice_test(c);
+        t_list* segmentos_de_tabla = tabla_segmento->segmentos;
+        proceso_id = tabla_segmento->pid;
+
+        for(int d=0; d<list_size(segmentos_de_tabla);d++){
+            t_segmento* segmento = list_get(segmentos_de_tabla, d);
+            string_append_with_format(&contenido, "Proceso: %d Segmento: %d Inicio: %d Tamaño: %d\n", proceso_id, segmento->id, segmento->base, segmento->desplazamiento);
+        }
+    }
+    //TODO: pasar a hexadecimal
+    
     printf("%s\n", contenido);
+}
+
+/* *********************FENCIONES PARA TESTEAR************************ */
+
+int cantidad_de_tablas_de_segmento_test(){
+    return list_size(list_tablas_segmentos);
+}
+
+int cantidad_huecos_test(){
+    return list_size(tabla_hueco);
+}
+
+t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
+    return list_get(list_tablas_segmentos, indice);
 }
