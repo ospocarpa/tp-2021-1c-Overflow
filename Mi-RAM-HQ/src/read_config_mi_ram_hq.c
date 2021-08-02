@@ -8,11 +8,6 @@ void cfg_create(char *path_config)
         config = config_create(path_config);
 }
 
-char* get_esquema_memoria()
-{
-    return config_get_string_value(config, "ESQUEMA_MEMORIA");
-}
-
 int get_tamanio_memoria()
 {
     return config_get_int_value(config, "TAMANIO_MEMORIA");
