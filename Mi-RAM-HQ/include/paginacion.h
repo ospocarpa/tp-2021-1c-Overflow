@@ -6,5 +6,6 @@
 #include <commons/string.h> 
 #include <commons/collections/list.h>
 
+void dump_paginacion();
 
 #endif

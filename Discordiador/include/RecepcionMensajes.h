@@ -14,6 +14,9 @@
 #include "sd_sabotaje.h"
 #include "sd_fcsk.h"
 
+extern t_sabotaje* sabotaje_a_resolver;
+extern bool hay_sabotaje;
+
 void *recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger);
 
 // #endif
