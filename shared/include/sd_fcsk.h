@@ -11,6 +11,7 @@
 #include<sd_posicion.h>
 
     t_package ser_fcsk(t_aviso_fsck data_buffer);
+    t_package ser_fin_fcsk(t_aviso_fsck data_buffer);
     t_aviso_fsck des_fcsk(t_package paquete);
     void mostrar_fsck(t_aviso_fsck data);
 

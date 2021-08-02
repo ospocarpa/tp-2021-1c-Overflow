@@ -12,6 +12,7 @@
 		TAREA = 1,
 		SABOTAJE = 2,
 		INICIO_FSCK = 3,
+		FIN_FSCK = 21,
 		INICIAR_PATOTA = 4,
 		LISTAR_TRIPULANTES = 5,
 		EXPULSAR_TRIPULANTE = 6,
@@ -114,7 +115,8 @@
 	}t_listar_tripulantes;
 
 	typedef struct{
-		int id_tripulante;
+		uint32_t patota_id;
+		uint32_t tripulante_id;
 	} t_expulsar_tripulante;
 
 	typedef struct{
