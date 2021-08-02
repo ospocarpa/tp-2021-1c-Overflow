@@ -18,7 +18,7 @@ void validar_get_tarea2();
 void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
 void validar_expulsar_tripulante_segmentada();
-
+void validar_informacion_de_patota_segmentacion();
 
 int run_tests()
 {
@@ -43,6 +43,7 @@ int run_tests()
     CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
+    CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -425,7 +426,7 @@ void validar_iniciar_patota_segmentada(){
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
 
-    printf("tamanio tareas %d", data_input.long_tareas);
+    printf("\ntamanio tareas: %d\n", data_input.long_tareas);
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
     int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
@@ -495,4 +496,44 @@ void validar_expulsar_tripulante_segmentada(){
     //free(tabla);
 
     //liberar_lista_de_tablas_segmentos();
+}
+
+void validar_informacion_de_patota_segmentacion(){
+    t_iniciar_patota data_input;
+
+    data_input.cant_tripulantes = 1;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2";
+    data_input.long_posicion = strlen("1|2");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    iniciar_memoria_principal(128);
+    iniciar_lista_tabla_segmento();
+    iniciar_tabla_huecos(128);
+
+    bool res = iniciar_patota_segmentacion(data_input);
+    bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    
+    char* tarea = get_tareas(data_input.patota_id);
+    //printf("\nTarea: %s\n", tarea);
+    CU_ASSERT_STRING_EQUAL(data_input.tareas, tarea);
+
+    t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
+    CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
+    //CU_ASSERT_STRING_EQUAL(tcb.tid, 2);
+    //printf("Estado: %c\n", tcb.estado);
+    CU_ASSERT_EQUAL(tcb_encontrado.posx, 1);
+    CU_ASSERT_EQUAL(tcb_encontrado.posy, 2);
+    CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 0);
+    CU_ASSERT_EQUAL(tcb_encontrado.puntero_pcb, 9);
+
+    liberar_tabla_huecos();
+    liberar_memoria_principal();
+    
+
+    void tabla_destroy(t_segmento * seg){
+        free(seg);
+    }
 }

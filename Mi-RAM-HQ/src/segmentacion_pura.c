@@ -227,7 +227,7 @@ t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
     }
     else
     {
-        /* compactacion() */
+        compactacion();
         segmento = elegir_segmento(data);
     }
     
@@ -305,8 +305,7 @@ char* get_tareas(int patota_id){
         return item->pid == patota_id;
     }
     t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);    
-    t_segmento* segmento = list_find(tabla_segmento->segmentos, 0);
-
+    t_segmento* segmento = list_get(tabla_segmento->segmentos, 0);
     char* tareas = leer_info_tareas(segmento->base, segmento->desplazamiento);
     return tareas;
 }
