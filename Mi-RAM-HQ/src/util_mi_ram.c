@@ -110,3 +110,16 @@ Posicion get_posicion_STR(char *posiciones, int indice){
         }
         return ' ';
     }
+
+
+
+bool esta_Llena_Memoria(t_bitarray* bitmap){
+    int indice = 0;
+    int bits = bitarray_get_max_bit(bitmap);
+    
+    for(int c =0; c < bits ; c++){
+        if (! bitarray_test_bit(bitmap,c)) return false;
+    }
+    return true;
+
+}

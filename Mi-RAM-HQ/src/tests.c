@@ -17,6 +17,8 @@ void validar_get_tarea();
 void validar_get_tarea2();
 void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
+void validar_esta_Llena_Memoria();
+void validar_get_primer_bit_disponible();
 
 
 int run_tests()
@@ -40,6 +42,8 @@ int run_tests()
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
     CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
+    CU_add_test(tests, "Valido si la memoria esta llena en el bitmap", validar_esta_Llena_Memoria);
+    CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -404,6 +408,27 @@ void validar_get_posicion_STR(){
     CU_ASSERT_EQUAL(pos_in.posx,pos_out.posx);
     CU_ASSERT_EQUAL(pos_in.posy,pos_out.posy);
 }
+// ------------------------------------  util_mi_ram   ---------------------
+void validar_esta_Llena_Memoria(){
+    void *bitmap = bitarray_create(bitmap,4);
+    bool value = false;
+    bool value_out = esta_Llena_Memoria(bitmap);
+    bitarray_destroy(bitmap);
+
+    CU_ASSERT_EQUAL(value,value_out);
+}
+// ------------------------------------  paginacion   ---------------------
+// t_bitarray 	*bitarray_create(char *bitarray, size_t size);
+void validar_get_primer_bit_disponible(){
+    void *bitmap = bitarray_create(bitmap,4);
+    
+    // t_bitarray* bitmap = {true,false,false,false,true};
+    int value = 0;
+    int value_out = get_primer_bit_disponible(bitmap);
+    CU_ASSERT_EQUAL(value,value_out);
+    bitarray_destroy(bitmap);
+}
+
 
 void validar_iniciar_patota_segmentada(){
 
@@ -447,7 +472,6 @@ void validar_iniciar_patota_segmentada(){
 
     //liberar_lista_de_tablas_segmentos();
 }
-
 
 
 
