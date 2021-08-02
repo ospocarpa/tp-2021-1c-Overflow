@@ -1,7 +1,7 @@
 #include "segmentacion_pura.h"
 
 static t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
-static t_list * tabla_hueco; // 
+t_list * tabla_hueco; // 
 static char * alg_ubicacion = "LL";
 
 /* Declaracion de funciones privadas */
@@ -304,8 +304,7 @@ char* get_tareas(int patota_id){
         return item->pid == patota_id;
     }
     t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);    
-    t_segmento* segmento = list_find(tabla_segmento->segmentos, 0);
-
+    t_segmento* segmento = list_get(tabla_segmento->segmentos, 0);
     char* tareas = leer_info_tareas(segmento->base, segmento->desplazamiento);
     return tareas;
 }
@@ -407,7 +406,7 @@ void eliminar_segmento_tripulante(t_expulsar_tripulante tripulante){
     t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, (void * ) mismo_tabla_id);
 
     bool is_segmento_para_tripulante(t_segmento * seg){
-        printf("id tripulante: %d \n", tripulante.tripulante_id);
+        //printf("id tripulante: %d \n", tripulante.tripulante_id);
         return seg->id == tripulante.tripulante_id;
     }
 
