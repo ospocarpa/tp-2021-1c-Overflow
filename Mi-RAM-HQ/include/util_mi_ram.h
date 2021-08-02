@@ -11,5 +11,6 @@
 t_info_tarea get_tarea(char* lista_tareas,int n_tarea);
 Posicion get_posicion_STR(char *posicion, int indice);
 char map_estado(status_tripulante status);
+int get_timestamp_number(char* timestamp);
 
 #endif

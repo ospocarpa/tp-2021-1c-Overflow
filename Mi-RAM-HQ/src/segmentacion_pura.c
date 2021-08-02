@@ -227,7 +227,7 @@ t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
     }
     else
     {
-        /* compactacion() */
+        compactacion();
         segmento = elegir_segmento(data);
     }
     
@@ -261,7 +261,6 @@ t_list* get_todos_los_segmentos(){  //[t_segmento]
         t_list* segmentos_de_tabla = tabla_segmento->segmentos;
         list_add_all(lista_segmentos_global, segmentos_de_tabla);
     }
-
 
     return lista_segmentos_global;
 }
