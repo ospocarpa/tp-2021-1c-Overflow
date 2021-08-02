@@ -24,5 +24,6 @@ t_PCB leer_info_PCB(int base);
 t_TCB leer_info_TCB(int base);
 
 void mostrar_tcb(t_TCB tcb_encontrado);
+void method_sigusr1();
 
 #endif

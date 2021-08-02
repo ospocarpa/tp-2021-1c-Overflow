@@ -19,6 +19,8 @@ void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
 void validar_expulsar_tripulante_segmentada();
 void validar_informacion_de_patota_segmentacion();
+void validar_actualizacion_tripulante();
+void validar_informar_tarea();
 
 int run_tests()
 {
@@ -44,6 +46,8 @@ int run_tests()
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
     CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
+    CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
+    CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -68,8 +72,6 @@ void validar_sd_iniciar_patota()
     paquete = ser_cod_iniciar_patota(data_input);
 
     data_res = des_cod_iniciar_patota(paquete);
-
-    printf("path tareas: %d \n", data_res.id_primer_tripulante);
 
     CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
     CU_ASSERT_EQUAL(data_input.long_tareas, data_res.long_tareas);
@@ -135,8 +137,6 @@ void validar_sd_listar_tripulante()
 
     t_tripulante *tripulante1 = list_get(data_res.tripulantes, 0);
     t_tripulante *tripulante2 = list_get(data_res.tripulantes, 1);
-
-    printf("Patota id: %d \n", tripulante1->patota_id);
 
     CU_ASSERT_EQUAL(data_input.cant_tripulantes, data_res.cant_tripulantes);
     CU_ASSERT_EQUAL(t1->patota_id, tripulante1->patota_id);
@@ -426,7 +426,6 @@ void validar_iniciar_patota_segmentada(){
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
 
-    printf("\ntamanio tareas: %d\n", data_input.long_tareas);
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
     int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
@@ -477,12 +476,16 @@ void validar_expulsar_tripulante_segmentada(){
 
     bool res = iniciar_patota_segmentacion(data_input);
     expulsar_tripulante(data);
+    /*dump_segmentacion_pura();
+    printf("Huecos: %d\n", list_size(tabla_hueco));
+    for(int c=0; c<list_size(tabla_hueco); c++){
+        t_hueco* hueco = list_get(tabla_hueco, c); 
+        printf("Inicio: %d Tamaño: %d\n", hueco->base, hueco->desplazamiento);
+    }*/
 
     t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);
 
     int cant_seg = list_size(tabla->segmentos);
-    printf("segmentos: %d \n", cant_seg);
-
     CU_ASSERT_EQUAL(cant_seg, 2);
 
     liberar_tabla_huecos();
@@ -522,12 +525,96 @@ void validar_informacion_de_patota_segmentacion(){
 
     t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
     CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
-    //CU_ASSERT_STRING_EQUAL(tcb.tid, 2);
-    //printf("Estado: %c\n", tcb.estado);
+    CU_ASSERT_EQUAL(tcb_encontrado.estado, 'N');
     CU_ASSERT_EQUAL(tcb_encontrado.posx, 1);
     CU_ASSERT_EQUAL(tcb_encontrado.posy, 2);
-    CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 0);
+    CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 1);
     CU_ASSERT_EQUAL(tcb_encontrado.puntero_pcb, 9);
+
+    //dump_segmentacion_pura();
+    liberar_tabla_huecos();
+    liberar_memoria_principal();
+    
+
+    void tabla_destroy(t_segmento * seg){
+        free(seg);
+    }
+}
+
+void validar_actualizacion_tripulante(){
+    t_iniciar_patota data_input;
+
+    data_input.cant_tripulantes = 1;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2";
+    data_input.long_posicion = strlen("1|2");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    iniciar_memoria_principal(128);
+    iniciar_lista_tabla_segmento();
+    iniciar_tabla_huecos(128);
+
+    bool res = iniciar_patota_segmentacion(data_input);
+    bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    
+    char* tarea = get_tareas(data_input.patota_id);
+    t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
+    tcb_encontrado.estado = 'A';
+    tcb_encontrado.posy = 1;
+    tcb_encontrado.posx = 10;
+    set_tripulante_por_segmentacion(tcb_encontrado, data_input.patota_id);
+    t_TCB tcb_actualizado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
+
+    CU_ASSERT_EQUAL(tcb_actualizado.tid, 2);
+    CU_ASSERT_EQUAL(tcb_encontrado.estado, 'A');
+    CU_ASSERT_EQUAL(tcb_encontrado.posx, 10);
+    CU_ASSERT_EQUAL(tcb_encontrado.posy, 1);
+    CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 1);
+    CU_ASSERT_EQUAL(tcb_encontrado.puntero_pcb, 9);
+
+    //dump_segmentacion_pura();
+    liberar_tabla_huecos();
+    liberar_memoria_principal();
+    
+
+    void tabla_destroy(t_segmento * seg){
+        free(seg);
+    }
+}
+
+void validar_informar_tarea(){
+    t_iniciar_patota data_input;
+
+    data_input.cant_tripulantes = 1;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;10|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2";
+    data_input.long_posicion = strlen("1|2");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    iniciar_memoria_principal(128);
+    iniciar_lista_tabla_segmento();
+    iniciar_tabla_huecos(128);
+
+    bool res = iniciar_patota_segmentacion(data_input);
+    
+    char* tareas = get_tareas(data_input.patota_id);
+    t_TCB tcb = get_TCB(data_input.patota_id, 2);
+    t_info_tarea tarea = get_tarea(tareas, tcb.prox_tarea);
+    tcb.prox_tarea++;
+    set_tripulante(tcb, data_input.patota_id);
+
+    t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
+    CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 2);
+
+    CU_ASSERT_EQUAL(tarea.tarea, OTRA_TAREA);
+    CU_ASSERT_EQUAL(tarea.parametro, 0);
+    CU_ASSERT_EQUAL(tarea.posicion.posx, 1);
+    CU_ASSERT_EQUAL(tarea.posicion.posy, 1);
+    CU_ASSERT_EQUAL(tarea.tiempo, 10);
 
     liberar_tabla_huecos();
     liberar_memoria_principal();

@@ -47,7 +47,6 @@ t_PCB leer_info_PCB(int base){
 }
 
 t_TCB leer_info_TCB(int base){
-
     t_TCB  tcb;
     
     int offset =base;
@@ -64,7 +63,6 @@ t_TCB leer_info_TCB(int base){
     memcpy(&tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
 
     return tcb;
-
 }
 
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
@@ -87,4 +85,15 @@ void mostrar_tcb(t_TCB tcb){
     printf("Pos y: %d\n", tcb.posy);
     printf("Próxima tarea: %d\n", tcb.prox_tarea);
     printf("Puntero pcb: %d\n", tcb.puntero_pcb);
+}
+
+void method_sigusr1(){
+    //Mostrar dump de la memoria principal
+    if(strcmp(get_esquema_memoria(), "SEGMENTACION")==0){
+        //Realizar compactacion
+        compactacion();
+        dump_segmentacion_pura();
+    }else{
+        dump_paginacion();
+    }
 }

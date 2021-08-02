@@ -104,7 +104,7 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
         uint32_t tid = data.id_primer_tripulante+i;
         char estado = 'N';
         Posicion pos = get_posicion(data.posiciones,i);
-        uint32_t prox_tarea = 0;
+        uint32_t prox_tarea = 1;
         uint32_t puntero_pcb= 1+8;//numero de segmento + limite = 1+8
 
         memcpy(seg_tcb->data,&tid,sizeof(uint32_t));

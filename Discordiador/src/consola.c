@@ -384,7 +384,7 @@ void expulsar_tripulante(int tripulante_id)
     // una opcion podria ser forzar terminar el hilo de ese tripulante para no modificar disenio
 
     t_expulsar_tripulante data;
-    data.id_tripulante = tripulante_id;
+    data.tripulante_id = tripulante_id;
     t_package paquete = ser_cod_expulsar_tripulante(data);
 
     if (conexion_a_miram > 0)
