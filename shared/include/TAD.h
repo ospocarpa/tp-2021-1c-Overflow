@@ -115,7 +115,8 @@
 	}t_listar_tripulantes;
 
 	typedef struct{
-		int id_tripulante;
+		uint32_t patota_id;
+		uint32_t tripulante_id;
 	} t_expulsar_tripulante;
 
 	typedef struct{

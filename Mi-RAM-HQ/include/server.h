@@ -17,6 +17,7 @@
 #include "memoria.h"
 #include "TAD.h"
 #include "util_mi_ram.h"
+#include "expulsar_tripulante.h"
 
 void server_mi_ram_iniciar(int puerto);
 
