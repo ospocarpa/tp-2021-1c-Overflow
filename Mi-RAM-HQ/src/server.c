@@ -34,8 +34,7 @@ static void *ejecutar_operacion(int tripulante)
 		//se envia un booleano de confirmacion
 		bool respuesta = true;
 
-		respuesta = iniciar_patota_segmentacion(init_patota);
-
+		respuesta = iniciar_patota(init_patota);
 		send(tripulante, &respuesta, sizeof(respuesta), 0);
 
 		break;

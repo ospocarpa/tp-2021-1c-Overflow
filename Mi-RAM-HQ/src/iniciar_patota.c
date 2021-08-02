@@ -131,3 +131,7 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
     return lista_data;
     
 }
+
+bool iniciar_patota_paginacion(t_iniciar_patota init_patota){
+    return false;
+}

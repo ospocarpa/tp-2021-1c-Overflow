@@ -96,18 +96,31 @@ Posicion get_posicion_STR(char *posiciones, int indice){
  }
 
  char map_estado(status_tripulante status){
-        switch (status)
-        {
-            case NEW:
-                return 'N';
-            case READY:
-                return 'R';
-            case EXEC:
-                return 'E';
-            case BLOCKED:
-                return 'B';
-            case BLOCKED_SABOTAJE:
-                return 'B';
-        }
-        return ' ';
+    switch (status)
+    {
+        case NEW:
+            return 'N';
+        case READY:
+            return 'R';
+        case EXEC:
+            return 'E';
+        case BLOCKED:
+            return 'B';
+        case BLOCKED_SABOTAJE:
+            return 'B';
     }
+    return ' ';
+}
+
+int get_timestamp_number(char* timestamp){
+    char** parts = string_split(timestamp, ":");
+
+    char* timestamp_format = string_new();
+    void concatenar_partes(char *item){
+        string_append_with_format(&timestamp_format, "%s", item);
+    }
+    string_iterate_lines(parts, concatenar_partes);
+
+    int timestamp_number = atoi(timestamp_format);
+    return timestamp_number;
+}

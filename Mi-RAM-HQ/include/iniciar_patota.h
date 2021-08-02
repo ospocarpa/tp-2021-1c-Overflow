@@ -13,5 +13,6 @@
 #include "util_mi_ram.h"
 
 bool iniciar_patota_segmentacion(t_iniciar_patota init_patota);
+bool iniciar_patota_paginacion(t_iniciar_patota init_patota);
 
 #endif

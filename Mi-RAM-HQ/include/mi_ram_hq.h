@@ -14,5 +14,6 @@
 #include "tests.h"
 #include "memoria.h"
 #include "render_mapa.h"
+#include <commons/temporal.h>
 
 #endif

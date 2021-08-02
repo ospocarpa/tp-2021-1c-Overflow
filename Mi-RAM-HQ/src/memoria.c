@@ -1,6 +1,7 @@
 #include "memoria.h"
 
 void * memoria_principal = NULL;
+void * memoria_virtual = NULL;
 
 /* Declaracion de funciones privadas */
 
@@ -14,11 +15,20 @@ void iniciar_memoria_principal(int tam_memoria){
     }
 }
 
-void liberar_memoria_principal(){
+void iniciar_memoria_virtual(int tam_memoria){
+    if(memoria_virtual == NULL){
+        memoria_virtual = malloc(tam_memoria);
+    }
+}
 
+void liberar_memoria_principal(){
     free(memoria_principal);
     memoria_principal = NULL;
+}
 
+void liberar_memoria_virtual(){
+    free(memoria_virtual);
+    memoria_virtual = NULL;
 }
 
 void cargar_informacion_PCB_a_MP(t_PCB pcb,int base){
@@ -76,6 +86,20 @@ void set_tripulante(t_TCB tcb, int patotaid){
 t_TCB get_TCB(int patota_id, int tripulante_id){
     t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
     return tcb;
+}
+
+bool iniciar_patota(t_iniciar_patota init_patota){
+    bool isAllow = false;
+    char * tipo_memoria = get_esquema_memoria();
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0)
+    {
+        isAllow = iniciar_patota_segmentacion(init_patota);
+    }
+    else
+    {
+        isAllow = iniciar_patota_paginacion(init_patota);
+    }
+    return isAllow;
 }
 
 void mostrar_tcb(t_TCB tcb){
