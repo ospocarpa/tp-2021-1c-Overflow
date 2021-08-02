@@ -66,7 +66,7 @@ t_TCB leer_info_TCB(int base){
 }
 
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
-    memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
+    memcpy(memoria_principal+base, data_segmento->data, data_segmento->tam_data);
 }
 
 void set_tripulante(t_TCB tcb, int patotaid){
@@ -76,6 +76,15 @@ void set_tripulante(t_TCB tcb, int patotaid){
 t_TCB get_TCB(int patota_id, int tripulante_id){
     t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
     return tcb;
+}
+
+void mostrar_tcb(t_TCB tcb){
+    printf("tid: %d\n", tcb.tid);
+    printf("Estado: %c\n", tcb.estado);
+    printf("Pos x: %d\n", tcb.posx);
+    printf("Pos y: %d\n", tcb.posy);
+    printf("Próxima tarea: %d\n", tcb.prox_tarea);
+    printf("Puntero pcb: %d\n", tcb.puntero_pcb);
 }
 
 void method_sigusr1(){
