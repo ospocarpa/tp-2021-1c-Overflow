@@ -507,8 +507,8 @@ void validar_informacion_de_patota_segmentacion(){
     data_input.cant_tripulantes = 1;
     data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15";
     data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15");
-    data_input.posiciones = "1|2";
-    data_input.long_posicion = strlen("1|2");
+    data_input.posiciones = "";
+    data_input.long_posicion = strlen("");
     data_input.patota_id = 1;
     data_input.id_primer_tripulante = 2;
 
@@ -526,8 +526,8 @@ void validar_informacion_de_patota_segmentacion(){
     t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
     CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
     CU_ASSERT_EQUAL(tcb_encontrado.estado, 'N');
-    CU_ASSERT_EQUAL(tcb_encontrado.posx, 1);
-    CU_ASSERT_EQUAL(tcb_encontrado.posy, 2);
+    CU_ASSERT_EQUAL(tcb_encontrado.posx, 0);
+    CU_ASSERT_EQUAL(tcb_encontrado.posy, 0);
     CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 1);
     CU_ASSERT_EQUAL(tcb_encontrado.puntero_pcb, 9);
 

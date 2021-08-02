@@ -64,10 +64,11 @@ t_data_segmento * casteo_tareas_a_t_data_segmento(char * tareas){
 //funcion mock
 Posicion get_posicion(char* posiciones, int indice){
     Posicion pos;
-
-    pos.posx=1;
-    pos.posy=2;
-
+    pos.posx=0;
+    pos.posy=0;
+    if(strcmp(posiciones, "")!=0){
+        pos = get_posicion_STR(posiciones, indice);
+    }
     return pos;
 }
 
@@ -103,7 +104,7 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
 
         uint32_t tid = data.id_primer_tripulante+i;
         char estado = 'N';
-        Posicion pos = get_posicion(data.posiciones,i);
+        Posicion pos = get_posicion(data.posiciones,i+1);
         uint32_t prox_tarea = 1;
         uint32_t puntero_pcb= 1+8;//numero de segmento + limite = 1+8
 

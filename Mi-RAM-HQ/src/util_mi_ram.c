@@ -84,12 +84,12 @@
 // 	Posicion;
 
 Posicion get_posicion_STR(char *posiciones, int indice){
+    printf("%s %d\n", posiciones, indice);
     Posicion pos;
     char** partes = string_split(posiciones,",");
     char** pos_aux = string_split(partes[indice-1],"|");
     pos.posx = atoi(pos_aux[0]);
     pos.posy = atoi(pos_aux[1]);
-
 
     return pos;
  }
