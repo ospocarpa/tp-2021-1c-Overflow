@@ -90,8 +90,6 @@ void hilo_tripulante(Tripulante *tripulante)
         log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
     }
 
-    
-
     // Cuando quiero saber el valor de un semaforo
     /*  int sval;
     sem_getvalue(&grado_multiprocesamiento, &sval);
@@ -203,11 +201,15 @@ void hilo_tripulante(Tripulante *tripulante)
         }
         if (tripulante->tarea->tarea != OTRA_TAREA)
         {
-            //aca ya habria terminado la tarea 
-            
+            //aca ya habria terminado la tarea
 
             //falta que el tripulane bloqueado envie el mensaje a mongo store
             // y que espere que este termine para desbloquearse
+            //GENERAR_OXIGENO 12;2;3;5
+            //crear_recurso
+            //agregar_recurso(tripulante->socketMongo,)
+            //esperar respuesta mongo_store
+
             pthread_mutex_unlock(&mutex_bloqueado);
         }
         //Falta que el tripulante consuma su rafa de CPU---->listo
