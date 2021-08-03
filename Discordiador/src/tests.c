@@ -145,14 +145,14 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     lista_BLOCKIO = list_create();
     lista_EXEC = list_create();
 
-    cambiar_estado(tripulante1->status, EXIT);
-    cambiar_estado(tripulante2->status, READY);
-    cambiar_estado(tripulante3->status, EXEC);
+    cambiar_estado(tripulante1, EXIT);
+    cambiar_estado(tripulante2, READY);
+    cambiar_estado(tripulante3, EXEC);
 
     CU_ASSERT_EQUAL(tripulante1->status, EXIT);
     CU_ASSERT_EQUAL(tripulante2->status, READY);
     CU_ASSERT_EQUAL(tripulante3->status, EXEC);
 
-    cambiar_estado(tripulante3->status, BLOCKED);
+    cambiar_estado(tripulante3, BLOCKED);
     CU_ASSERT_EQUAL(tripulante3->status, BLOCKED);
 }
