@@ -379,12 +379,13 @@ void expulsar_tripulante(int tripulante_id)
         printf("tripulante %d ya fue expulsado antes\n", tripulante_a_expulsar->id);
         return;
     }
+    tripulante_a_expulsar->expulsado = true;
     tripulante_a_expulsar->status = EXIT;
     printf("tripulante %d se va expulsar\n", tripulante_a_expulsar->id);
     // una opcion podria ser forzar terminar el hilo de ese tripulante para no modificar disenio
 
     t_expulsar_tripulante data;
-    data.id_tripulante = tripulante_id;
+    data.tripulante_id = tripulante_id;
     t_package paquete = ser_cod_expulsar_tripulante(data);
 
     if (conexion_a_miram > 0)
