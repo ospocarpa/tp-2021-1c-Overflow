@@ -18,6 +18,7 @@
 #include <commons/string.h>
 #include "expulsar_tripulante.h"
 #include "read_config_mi_ram_hq.h"
+#include <commons/bitarray.h>
 
 extern t_list* tabla_hueco;
 int run_tests();

@@ -7,6 +7,24 @@ void * memoria_virtual = NULL;
 
 
 /* ************************************************** */
+void inicializacion_estructuras(){
+    char * tipo_memoria = get_esquema_memoria();
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        list_create(list_tablas_segmentos);
+        list_create(tabla_hueco);
+    }
+    else{
+        list_create(list_tablas_paginacion);
+        list_create(tablas_pag_libre);
+
+        void* puntero_bitmap = malloc(1);
+        bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
+
+        void* puntero_bitmap_memoria_virtual = malloc(1);
+        bitmap_memoria_virtual = bitarray_create_with_mode(puntero_bitmap_memoria_virtual, 1, LSB_FIRST);
+    }
+}
+
 void iniciar_memoria_principal(int tam_memoria){
 
     if(memoria_principal == NULL){

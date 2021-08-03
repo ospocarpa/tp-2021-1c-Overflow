@@ -173,7 +173,7 @@ void guardar_info_patota(t_iniciar_patota data, void* informacion){
 
     list_add(list_tablas_paginacion, table_page);
 }
-
+// "hit-mongostore-validaciones"
 void* get_stream_pcb(t_iniciar_patota data){
     void* stream = malloc(8);
     int offset = 0;

@@ -11,6 +11,13 @@
 #include "segmentacion_pura.h"
 #include "paginacion.h"
 
+extern t_list * list_tablas_segmentos;
+extern t_list * tabla_hueco; 
+extern t_list * list_tablas_paginacion;
+extern t_list * tablas_pag_libre; 
+extern t_bitarray* bitmap_memoria_real;
+extern t_bitarray* bitmap_memoria_virtual;
+
 void iniciar_memoria_principal(int tam_memoria);
 void liberar_memoria_principal();
 void iniciar_memoria_virtual(int tam_memoria);
@@ -30,7 +37,7 @@ void* get_stream_tcb(t_TCB tcb);
 
 void mostrar_tcb(t_TCB tcb_encontrado);
 void method_sigusr1();
-
+void inicializacion_estructuras();
 //Acciones del servidor
 bool iniciar_patota(t_iniciar_patota init_patota);
 
