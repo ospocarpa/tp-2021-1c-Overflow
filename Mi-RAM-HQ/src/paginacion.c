@@ -17,7 +17,7 @@ void* dame_todo_el_stream(t_list* pages){   //[t_page]
     void* informacion = malloc(cant_paginas*pagina_tam);
     for(int c=0; c< cant_paginas; c++){
         t_page* page = list_get(pages, c);
-        void* info_marco = get_info(page);
+        void* info_marco = get_info(page);\
 
         memcpy(informacion + offset, info_marco, pagina_tam);
         offset += pagina_tam;
@@ -200,3 +200,14 @@ void escribir_memoria_virtual(void *stream, int base, int desplazamiento){
     memcpy(memoria_virtual + base * desplazamiento, stream, desplazamiento);
     return stream;
 }
+
+
+
+// bool esta_memoria_disponible(int cant_paginas_que_necesita);
+// bitmap de memoria real: cantidad de marcos disponible (valor de bit sea false)
+// bitmap de memoria virtual: cantidad de marcos disponible (valor de bit sea false)
+// (sumatoria de marcos de memoria real + memoria virtual, se obtiene de los bitmaps)
+
+// if(cant_marcos_real + canti_marcos_virtual >= cant_paginas_que_necesita )
+//     return true;
+// return false;
