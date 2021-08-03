@@ -141,4 +141,15 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     CU_ASSERT_EQUAL(tripulante1->posicion->posy, 3);
     CU_ASSERT_EQUAL(tripulante2->posicion->posx, 2);
     CU_ASSERT_EQUAL(tripulante2->posicion->posy, 3);
+
+    cambiar_estado(tripulante1->status, EXIT);
+    cambiar_estado(tripulante2->status, READY);
+    cambiar_estado(tripulante3->status, EXEC);
+
+    CU_ASSERT_EQUAL(tripulante1->status, EXIT);
+    CU_ASSERT_EQUAL(tripulante2->status, READY);
+    CU_ASSERT_EQUAL(tripulante3->status, EXEC);
+
+    cambiar_estado(tripulante3->status, BLOCKED);
+    CU_ASSERT_EQUAL(tripulante3->status, BLOCKED);
 }

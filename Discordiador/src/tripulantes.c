@@ -203,11 +203,12 @@ void hilo_tripulante(Tripulante *tripulante)
         }
         if (tripulante->tarea->tarea != OTRA_TAREA)
         {
-            //aca ya habra terminado la tarea --> debe pasar a ready
-            pthread_mutex_unlock(&mutex_bloqueado);
+            //aca ya habria terminado la tarea 
+            
 
             //falta que el tripulane bloqueado envie el mensaje a mongo store
             // y que espere que este termine para desbloquearse
+            pthread_mutex_unlock(&mutex_bloqueado);
         }
         //Falta que el tripulante consuma su rafa de CPU---->listo
         //consulta de agregar ese consumo (si es bloqueado por sabataje)
