@@ -126,31 +126,9 @@ void hilo_tripulante(Tripulante *tripulante)
             {
                 //Analizar si se eliminó en otra lista // TO DO
                 //  se pondria crear una funcion : cambiar_estado () ??
-                // todo el contenido del if menos el breaj : podri incluirse en la funcion cambiar_estado()
+                // todo el contenido del if menos el break : podri incluirse en la funcion cambiar_estado()
 
-                list_add(lista_EXIT, tripulante);
-                printf("Tripulante %d Bye Bye\n", tripulante->id);
-                //MI ram elimina a este tripulante de su memoria
-                //Removerlo de la lista tripulante???
-
-                //Tripulante *tripulante1 = list_remove_by_condition(lista_tripulantes, mismo_id);
-                //cambiar_estado(tripulante,estado_viejo,estado nuevo);
-
-                if (tripulante->status == EXEC)
-                {
-                    Tripulante *tripulante2 = list_remove_by_condition(lista_EXEC, mismo_id);
-                    //Comprobacion :despues borrar
-                    printf("id del tripulane removido de la cola de EXEC:%d\n", tripulante2->id);
-                }
-                else
-                {
-                    Tripulante *tripulante2 = list_remove_by_condition(lista_BLOCKIO, mismo_id);
-                    //Comprobacion :despues borrar
-                    printf("id del tripulane removido de la cola de I/O:%d\n", tripulante2->id);
-                }
-
-                tripulante->status = EXIT;
-
+                cambiar_estado(tripulante, EXIT); //podria agregarse el envio a mi_ram del estado ??
                 break;
             }
             if (tripulante->status == NEW || tripulante->status == BLOCKED)
@@ -162,14 +140,8 @@ void hilo_tripulante(Tripulante *tripulante)
                     pthread_mutex_lock(&tripulante->activo);
                 }
 
-                // Solo en la 1era iteraccion entraria a est if(por new)
                 //Se agrega a la lista de ready
-                pthread_mutex_lock(&MXTRIPULANTE);
-                list_add(lista_READY, tripulante);
-                pthread_mutex_unlock(&MXTRIPULANTE);
-                //
-
-                tripulante->status = READY;
+                cambiar_estado(tripulante, READY);
             }
         }
 
@@ -178,17 +150,11 @@ void hilo_tripulante(Tripulante *tripulante)
         //Esperamos ser seleccionados
         pthread_mutex_lock(&tripulante->seleccionado);
 
-        pthread_mutex_lock(&MXTRIPULANTE);
-        list_remove_by_condition(lista_READY, mismo_id);
-
         if (!planificacion_activa)
         {
             pthread_mutex_lock(&tripulante->activo);
         }
-        cantidad_activos++;
-        tripulante->status = EXEC;
-        list_add(lista_EXEC, tripulante);
-        pthread_mutex_unlock(&MXTRIPULANTE);
+        cambiar_estado(tripulante, EXEC);
 
         if (hay_sabotaje)
         {
@@ -212,21 +178,15 @@ void hilo_tripulante(Tripulante *tripulante)
                 pthread_mutex_lock(&tripulante->activo);
             }
             //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
-            tripulante->status == BLOCKED; //esta se va
+
             sem_post(&grado_multiprocesamiento);
 
-            printf("tripulante %d bloqueate\n", tripulante->id);
+            //printf("tripulante %d bloqueate\n", tripulante->id);
             sem_post(&bloqueados);
             sleep(config->RETARDO_CICLO_CPU);
-            list_add(lista_BLOCKIO, tripulante);                                          //esta se va
-            Tripulante *tripulante_bloq = list_remove_by_condition(lista_EXEC, mismo_id); //esta se va
+            cambiar_estado(tripulante, BLOCKED);
 
-            printf("id del tripulane bloqueado:%d\n", tripulante_bloq->id);
-            //Consultar
-            //nos falta logica de como ejecutan los tripulantes bloqueados ??
-            //bloqueate
-
-            //Esperamos ser seleccionados por i/o
+            //Esperamos ser seleccionados por i/o //solo uno a la vez
             pthread_mutex_lock(&tripulante->seleccionado_bloqueado);
             pthread_mutex_lock(&mutex_bloqueado);
         }
@@ -249,11 +209,6 @@ void hilo_tripulante(Tripulante *tripulante)
         {
             //aca ya habra terminado la tarea --> debe pasar a ready
             pthread_mutex_unlock(&mutex_bloqueado);
-
-            pthread_mutex_lock(&MXTRIPULANTE);
-            list_remove_by_condition(lista_BLOCKIO, mismo_id); //esto va antes
-            cantidad_activos--;
-            pthread_mutex_unlock(&MXTRIPULANTE);
 
             //falta que el tripulane bloqueado envie el mensaje a mongo store
             // y que espere que este termine para desbloquearse
