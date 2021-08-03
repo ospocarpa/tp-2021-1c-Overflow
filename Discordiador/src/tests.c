@@ -134,7 +134,9 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     CU_ASSERT_EQUAL(list_size(lista_READY), 3);
 
     hay_sabotaje = false;
+    printf("1\n");
     mover_tripulante_a_tarea(tripulante1);
+    printf("2\n");
     mover_tripulante_a_tarea(tripulante2);
 
     CU_ASSERT_EQUAL(tripulante1->posicion->posx, 2);
@@ -142,14 +144,19 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     CU_ASSERT_EQUAL(tripulante2->posicion->posx, 2);
     CU_ASSERT_EQUAL(tripulante2->posicion->posy, 3);
 
+    printf("4\n");
     cambiar_estado(tripulante1->status, EXIT);
+    printf("5\n");
     cambiar_estado(tripulante2->status, READY);
+    printf("6\n");
     cambiar_estado(tripulante3->status, EXEC);
 
     CU_ASSERT_EQUAL(tripulante1->status, EXIT);
     CU_ASSERT_EQUAL(tripulante2->status, READY);
     CU_ASSERT_EQUAL(tripulante3->status, EXEC);
 
+    printf("7\n");
     cambiar_estado(tripulante3->status, BLOCKED);
+    printf("8\n");
     CU_ASSERT_EQUAL(tripulante3->status, BLOCKED);
 }
