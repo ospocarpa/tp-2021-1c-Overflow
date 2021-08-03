@@ -19,6 +19,9 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
 
 extern t_list *lista_BLOCKEMERGENCIA;
 extern t_list *lista_READY;
+extern t_list *lista_EXIT;
+extern t_list *lista_BLOCKIO;
+extern t_list *lista_EXEC;
 extern bool planificacion_activa;
 extern bool hay_sabotaje;
 
