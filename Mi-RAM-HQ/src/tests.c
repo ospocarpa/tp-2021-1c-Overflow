@@ -415,7 +415,9 @@ void validar_get_posicion_STR(){
 }
 // ------------------------------------  util_mi_ram   ---------------------
 void validar_esta_Llena_Memoria(){
-    t_bitarray *bitmap = bitarray_create(bitmap,4);
+    void* puntero_bitmap = malloc(1);
+
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
     bool value = false;
     bool value_out = esta_Llena_Memoria(bitmap);
     bitarray_destroy(bitmap);
@@ -425,11 +427,12 @@ void validar_esta_Llena_Memoria(){
 // ------------------------------------  paginacion   ---------------------
 // t_bitarray 	*bitarray_create(char *bitarray, size_t size);
 void validar_get_primer_bit_disponible(){
-    void* stream = malloc(16);
-    t_bitarray *bitmap = bitarray_create(stream, 4);
-    
+    void* puntero_bitmap = malloc(1);
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
+    bitarray_set_bit(bitmap, 0);
+
     // t_bitarray* bitmap = {true,false,false,false,true};
-    int value = 0;
+    int value = 1;
     int value_out = get_primer_bit_disponible(bitmap);
     CU_ASSERT_EQUAL(value,value_out);
     //bitarray_destroy(bitmap);

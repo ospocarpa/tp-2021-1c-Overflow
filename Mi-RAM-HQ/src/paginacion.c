@@ -86,21 +86,22 @@ void dump_paginacion(){
     char* contenido = string_new();
     string_append_with_format(&contenido, "Dump: %s\n", timestamp);
     
-    /*int cant_tablas = list_size(list_tablas_paginacion);
+    int cant_tablas = list_size(list_tablas_paginacion);
     int proceso_id;
     for(int c=0; c<cant_tablas; c++){
-        //t_tabla_segmentos* tabla_segmento = get_tabla_segmento_segun_indice_test(c);
-        t_list* segmentos_de_tabla = tabla_segmento->segmentos;
-        proceso_id = tabla_segmento->pid;
+        
+        t_table_page* table_page = get_tabla_pagina_segun_indice(c);
+        t_list* pages = table_page->pages;
+        proceso_id = table_page->patota_id;
 
-        for(int d=0; d<list_size(segmentos_de_tabla);d++){
-            t_segmento* segmento = list_get(segmentos_global, d);
-            string_append_with_format(&contenido, "Proceso: %d Segmento: %d Inicio: %d Tamaño: %d\n", proceso_id, segmento->id, segmento->base, segmento->desplazamiento);
+        for(int d=0; d<list_size(pages);d++){
+            t_page* page = list_get(pages, d);
+            string_append_with_format(&contenido, "Marco: %d Estado: %s Proceso: %d Página: %d", page->frame, get_label_presencia(page->presencia), proceso_id, page->page);
         }
     }
+
     //TODO: pasar a hexadecimal
-    
-    printf("%s\n", contenido);*/
+    printf("%s\n", contenido);
 }
 
 t_TCB get_TCB_paginacion(int patota_id, int tripulante_id){
@@ -311,9 +312,9 @@ void escribir_memoria_real(void *stream, int base, int desplazamiento){
 //bool bitarray_test_bit(t_bitarray *self, off_t bit_index) 
 
 int get_primer_bit_disponible(t_bitarray* bitmap){
-    int indice =0;
+    int indice = -1;
     int bits = bitarray_get_max_bit(bitmap);
-  
+    printf("Bits: %d\n", bits);
     for(int c = 0; c < bits ; c++){
         if(!bitarray_test_bit(bitmap,c)){
             indice = c;

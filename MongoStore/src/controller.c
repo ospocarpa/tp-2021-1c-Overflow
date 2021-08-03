@@ -262,24 +262,36 @@ t_file get_bitacora_tripulante(t_file file_input){
 
 void update_bitacora(t_file file_input){
     printf("Archivo: %s\n", file_input.nombre_file);
-    if(existe_nombre_file_bitacora(file_input.nombre_file)){
-        t_file file_to_update = get_bitacora_tripulante(file_input);
-    
-        char* contenido = string_new();
-        string_append_with_format(&contenido, "%s", file_to_update.contenido);
-        string_append_with_format(&contenido, "%s", file_input.contenido);
-        file_to_update.contenido = malloc(strlen(contenido));
-        strcpy(file_to_update.contenido, contenido);
-
-        printf("A actualizar\n");
-        mostrar_file(file_to_update);
-        save_bitacora(file_to_update);
-    }else{
-        log_info(logger, "No existe archivo");
+    if(!existe_nombre_file_bitacora(file_input.nombre_file)){
+        t_create_file create_get_file;
+        create_get_file.caracter = ' ';
+        create_get_file.nombre_file = file_input.nombre_file;
+        create_get_file.long_nombre_file = strlen(create_get_file.nombre_file);
+        create_tripulante_bitacora(create_get_file);
     }
+
+    t_file file_to_update = get_bitacora_tripulante(file_input);
+    
+    char* contenido = string_new();
+    string_append_with_format(&contenido, "%s", file_to_update.contenido);
+    string_append_with_format(&contenido, "%s", file_input.contenido);
+    file_to_update.contenido = malloc(strlen(contenido));
+    strcpy(file_to_update.contenido, contenido);
+
+    printf("A actualizar\n");
+    mostrar_file(file_to_update);
+    save_bitacora(file_to_update);
 }
 
 void agregar_recurso(t_operation_file_recurso file_input){
+    if(!existe_nombre_file_recurso(file_input.nombre_file)){
+        t_create_file create_get_file;
+        create_get_file.caracter = file_input.caracter;
+        create_get_file.nombre_file = file_input.nombre_file;
+        create_get_file.long_nombre_file = strlen(create_get_file.nombre_file);
+        create_recurso(create_get_file);
+    }
+
     t_file file_to_update = get_recurso(file_input.nombre_file);
     
     char* contenido = string_new();
@@ -292,6 +304,13 @@ void agregar_recurso(t_operation_file_recurso file_input){
 }
 
 void retirar_recurso(t_operation_file_recurso file_input){
+    if(!existe_nombre_file_recurso(file_input.nombre_file)){
+        t_create_file create_get_file;
+        create_get_file.caracter = file_input.caracter;
+        create_get_file.nombre_file = file_input.nombre_file;
+        create_get_file.long_nombre_file = strlen(create_get_file.nombre_file);
+        create_recurso(create_get_file);
+    }
     printf("Retirar recurso\n");
     print_bit_map(get_bitmap());
     printf("\n");
@@ -299,25 +318,27 @@ void retirar_recurso(t_operation_file_recurso file_input){
     int cantidad_que_tiene = strlen(file_to_update.contenido);
     int cantidad_a_restar = file_input.cantidad;
     int cantidad_actual = cantidad_que_tiene - cantidad_a_restar;
-
+    if(cantidad_actual<0){
+        cantidad_actual = 0;
+        log_info(logger, "Se intenta eliminar más mensajes de lo que tiene");
+    }
     file_to_update.contenido = string_repeat(file_input.caracter, cantidad_actual);
 
     save_recurso(file_to_update);
 }
 
 void eliminar_recurso(t_operation_file_recurso file_input){
-    /*
-        Implica indicar los bloques como disponibles
-    */
-    printf("Archivo: %s\n", file_input.nombre_file);
-    if(existe_nombre_file_recurso(file_input.nombre_file)){
-        t_file file_to_update = get_recurso(file_input.nombre_file);
-        file_to_update.contenido = "";
-        save_recurso(file_to_update);
-        eliminar_archivos_filesystem(file_input.nombre_file);
-    }else{
-        log_info(logger, "No existe archivo");
+    /* Implica indicar los bloques como disponibles */
+    if(!existe_nombre_file_recurso(file_input.nombre_file)){
+        log_info(logger, "El recurso no existe");
+        return;
     }
+    printf("Archivo: %s\n", file_input.nombre_file);
+    
+    t_file file_to_update = get_recurso(file_input.nombre_file);
+    file_to_update.contenido = "";
+    save_recurso(file_to_update);
+    eliminar_archivos_filesystem(file_input.nombre_file);
 }
 
 void init_protocolo_fsck(){

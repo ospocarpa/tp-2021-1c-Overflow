@@ -157,3 +157,8 @@ bool esta_Llena_Memoria(t_bitarray* bitmap){
     }
     return true;
 }
+
+char* get_label_presencia(bool presencia){
+    if(presencia) return "Libre";
+    return "Ocupado";
+}
