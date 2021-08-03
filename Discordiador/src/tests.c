@@ -143,6 +143,9 @@ void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sa
     CU_ASSERT_EQUAL(tripulante1->posicion->posy, 3);
     CU_ASSERT_EQUAL(tripulante2->posicion->posx, 2);
     CU_ASSERT_EQUAL(tripulante2->posicion->posy, 3);
+    lista_EXIT = list_create();
+    lista_BLOCKIO = list_create();
+    lista_EXEC = list_create();
 
     printf("4\n");
     cambiar_estado(tripulante1->status, EXIT);
