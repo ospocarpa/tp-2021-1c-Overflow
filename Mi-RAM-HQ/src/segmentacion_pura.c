@@ -2,7 +2,8 @@
 
 static t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
 t_list * tabla_hueco; // 
-static char * alg_ubicacion = "LL";
+static char * alg_ubicacion = "FF";
+int size_memoria = 0;
 
 /* Declaracion de funciones privadas */
 t_hueco * hueco_create(int base, int desplazamiento);
@@ -22,6 +23,10 @@ void iniciar_tabla_huecos(int tam_memoria){
 
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla){
     list_add(list_tablas_segmentos, tabla);
+}
+
+void set_size_memoria(int size_m){
+    size_memoria = size_m;
 }
 
 /* ****************** */
@@ -82,6 +87,8 @@ int algoritmo_primer_ajuste(t_data_segmento * data_segmento){
             break;
         } 
     }
+
+    //printf("ff: cant de huecos: %d \n ",cantidad_huecos_test());
 
 return base;
 }
@@ -169,7 +176,7 @@ t_segmento * elegir_segmento(t_data_segmento * data_segmento){
     int base = 0;
     t_segmento * segmento = malloc(sizeof(t_segmento));
 
-    if (alg_ubicacion == "LL")
+    if (strcmp(alg_ubicacion,"LL") == 0 )
     {
        base = algoritmo_primer_ajuste(data_segmento);
     }
@@ -274,8 +281,10 @@ void compactacion(){
     list_sort(segmentos_global, comparador);            // Se ordena los segmentos por la base
 
     int base_pivote = 0; 
+    int ultimo_desplazamiento = 0;
     for(int c=0; c<list_size(segmentos_global); c++){
         t_segmento *s = list_get(segmentos_global, c);
+        ultimo_desplazamiento = s->desplazamiento;
         if(base_pivote == s->base ){
             base_pivote += s->desplazamiento;
             continue;
@@ -283,6 +292,14 @@ void compactacion(){
             mover_segmento(s, base_pivote);
         }
     }
+    //printf("compactacion: cant de huecos: %d \n ",list_size(tabla_hueco));
+
+    list_clean(tabla_hueco);
+    
+    int base_new = base_pivote + ultimo_desplazamiento;
+    int desplazamiento = size_memoria - base_new;
+
+    agregar_hueco(base_new, desplazamiento);
 }
 
 void mover_segmento(t_segmento *segmento, int base_pivote){
@@ -393,6 +410,12 @@ int cantidad_huecos_test(){
 t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
     return list_get(list_tablas_segmentos, indice);
 }
+
+t_hueco * get_hueco_index_test(int indice){
+    return list_get(tabla_hueco, indice);
+}
+
+/* ****************************** */
 
 void destroy_segmento(t_segmento * segmento){
     free(segmento);

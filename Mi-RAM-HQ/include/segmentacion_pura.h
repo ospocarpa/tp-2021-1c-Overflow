@@ -16,6 +16,7 @@ void liberar_tabla_huecos();
 void set_algoritmo_ubicacion(char * algoritmo);
 void iniciar_lista_tabla_segmento();
 void iniciar_tabla_huecos(int tam_memoria);
+void set_size_memoria(int size_m);
 bool se_puede_escribir(int tam_info);
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla);
 void liberar_lista_de_tablas_segmentos();
@@ -36,5 +37,6 @@ char * leer_info_tareas(int base,int tam);
 int cantidad_de_tablas_de_segmento_test();
 int cantidad_huecos_test();
 t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice);
+t_hueco * get_hueco_index_test(int indice);
 
 #endif
