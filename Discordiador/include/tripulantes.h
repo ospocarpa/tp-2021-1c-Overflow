@@ -49,6 +49,7 @@ void leerConfighilo_tripulante(Tripulante *);
 void cargarTripulante(t_iniciar_patota *, char **, int);
 void mover_tripulante_a_tarea(Tripulante *);
 void invocar_fsck();
+void cambiar_estado(Tripulante *, status_tripulante);
 Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje);
 
 #endif
