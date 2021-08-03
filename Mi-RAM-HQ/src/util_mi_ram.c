@@ -140,6 +140,10 @@ t_list* list_slice(t_list* lista, int inicio, int fin){
     return lista_filtrada;
 }
 
-bool existe_memoria_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_total){
+bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_total){
+    return true;
+}
+
+bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
     return true;
 }

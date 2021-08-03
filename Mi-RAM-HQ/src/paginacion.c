@@ -66,7 +66,17 @@ void transferencia_de_memoria_real_a_swap(t_page* page){
 }
 
 int get_first_frame_disponible(t_bitarray* bitmap){
-    return 0;
+    bool memoria_llena = existe_memoria_real_disponible(bitmap);
+    int indice = 0;
+    if(memoria_llena){
+        t_page* page = obtener_pagina_candidato_por_algoritmo_de_reemplazo();
+        transferencia_de_memoria_real_a_swap(page);
+        indice = page->frame;
+    }else{
+        //Devuelve el primer bit disponible
+        indice = 1;
+    }
+    return indice;
 }
 
 void dump_paginacion(){

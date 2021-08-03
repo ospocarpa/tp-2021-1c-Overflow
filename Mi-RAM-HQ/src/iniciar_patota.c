@@ -90,36 +90,18 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
     list_add(lista_data, seg_tarea);
     list_add(lista_data, seg_pcb);
 
+    void* stream_tcbs = get_stream_tcbs(data);
+    int offset = 0;
     for (int i = 0; i < data.cant_tripulantes; i++)
     {
-        int offset = 0;
+        void* stream_tcb = malloc(21);
+        memcpy(stream_tcb, stream_tcbs + offset, 21);
+        offset += 21;
+
         t_data_segmento * seg_tcb = malloc(sizeof(t_data_segmento));
-        seg_tcb->data = malloc(21);
+        seg_tcb->data = stream_tcb;
         seg_tcb->tam_data = 21; //tam del tcb
         seg_tcb->tipo = TCB;
-
-        uint32_t tid = data.id_primer_tripulante+i;
-        char estado = 'N';
-        Posicion pos = get_posicion(data.posiciones,i+1);
-        uint32_t prox_tarea = 1;
-        uint32_t puntero_pcb= 1+8;//numero de segmento + limite = 1+8
-
-        memcpy(seg_tcb->data,&tid,sizeof(uint32_t));
-        offset += sizeof(uint32_t);
-
-        memcpy(seg_tcb->data+offset,&estado,sizeof(char));
-        offset += sizeof(char);
-
-        memcpy(seg_tcb->data+offset,&pos.posx,sizeof(int));
-        offset += sizeof(int);
-
-        memcpy(seg_tcb->data+offset,&pos.posy,sizeof(int));
-        offset += sizeof(int);
-
-        memcpy(seg_tcb->data+offset,&prox_tarea,sizeof(uint32_t));
-        offset += sizeof(uint32_t);
-
-        memcpy(seg_tcb->data+offset,&puntero_pcb,sizeof(uint32_t));
 
         list_add(lista_data, seg_tcb);
     }
@@ -130,16 +112,65 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
 
 bool iniciar_patota_paginacion(t_iniciar_patota data){
     int tamanio_total = 8 + 21 * data.cant_tripulantes + data.long_tareas;
-    bool isAllow = existe_memoria_paginacion(bitmap_memoria_real, bitmap_memoria_virtual, tamanio_total);
+    bool isAllow = existe_memoria_disponible_paginacion(bitmap_memoria_real, bitmap_memoria_virtual, tamanio_total);
     if(!isAllow) return false;
-
-    int offset = 0;
-    /*void* tareas = malloc(init_patota.long_tareas);
-    memcpy(tareas, stream, tabla_paginacion->cant_caracteres_tarea);*/
 
     void* stream_pcb = get_stream_pcb(data);
     void* stream_tcbs = get_stream_tcbs(data);
+    
+    int offset_informacion = 0;
+    void* informacion = malloc(tamanio_total);
+    memcpy(informacion+offset_informacion, data.tareas, data.long_tareas);
+    offset_informacion+=data.long_tareas;
+    memcpy(informacion+offset_informacion, stream_pcb, 8);
+    offset_informacion+=8;    
+    memcpy(informacion+offset_informacion, stream_tcbs, 21*data.cant_tripulantes);
+    
+    guardar_info_patota(data, informacion);
     return true;
+}
+
+void guardar_info_patota(t_iniciar_patota data, void* informacion){
+    int tamanio_total = 8 + 21 * data.cant_tripulantes + data.long_tareas;
+    int pagina_tam = get_tamanio_tamanio_pagina();
+    int paginas_que_necesita = tamanio_total/pagina_tam;
+    if(tamanio_total%pagina_tam!=0) paginas_que_necesita++;
+
+    t_list* pages = list_create();
+    t_list* tripulante_ids = list_create();
+    int page_id = 0;
+    int offset = 0;
+    int tripulante_id = data.id_primer_tripulante;
+    for(int c=0; c<paginas_que_necesita; c++){
+        page_id++;
+        void* informacion_dividida = malloc(pagina_tam);
+        memcpy(informacion_dividida, informacion + offset, pagina_tam);
+        offset+=pagina_tam;
+        int frameid = get_first_frame_disponible(bitmap_memoria_real);
+
+        t_page* page = malloc(sizeof(t_page));
+        page->page = page_id;
+        page->frame = frameid;
+        page->presencia = true;
+        page->uso = true;
+        page->timestamp = temporal_get_string_time();
+
+        int base = frameid*pagina_tam;
+        escribir_memoria_real(informacion_dividida, base, pagina_tam);
+
+        list_add(pages, page);
+        list_add(tripulante_ids, tripulante_id);
+        tripulante_id++;
+    }
+    
+    t_table_page* table_page = malloc(sizeof(t_table_page));
+    table_page->patota_id = data.patota_id;
+    table_page->pages = pages;
+    table_page->tripulante_ids = tripulante_ids;
+    table_page->cant_tripulantes = data.cant_tripulantes;
+    table_page->cant_caracteres_tarea = data.long_tareas;
+
+    list_add(list_tablas_paginacion, table_page);
 }
 
 void* get_stream_pcb(t_iniciar_patota data){

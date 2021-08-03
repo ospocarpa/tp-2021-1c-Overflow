@@ -7,6 +7,7 @@
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
 #include "tad_mi_ram_hq.h"
+#include "util_mi_ram.h"
 #include "memoria.h"
 #include "TAD.h"
 
@@ -37,6 +38,7 @@ void transferencia_de_memoria_real_a_swap(t_page* page);
 
 //Obtiene el primer bit disponible del bitmap
 int get_first_frame_disponible(t_bitarray* bitmap);         //TODO
+bool esta_memoria_real_llena();
 
 //Algoritmo de reemplazo
 t_page* obtener_pagina_candidato_por_algoritmo_de_reemplazo();

@@ -82,7 +82,8 @@ typedef struct{
 typedef struct{
     void* stream;
     int tamanio;
-    int cantTripulantes;
+    int cant_tripulantes;
+    int cant_caracteres_tarea;
 } t_page_auxiliar;
 
 #endif

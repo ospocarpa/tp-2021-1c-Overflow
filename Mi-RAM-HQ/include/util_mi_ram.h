@@ -13,6 +13,7 @@ Posicion get_posicion_STR(char *posicion, int indice);
 char map_estado(status_tripulante status);
 int get_timestamp_number(char* timestamp);
 t_list* list_slice(t_list* lista, int inicio, int fin);
-bool existe_memoria_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_total);
+bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_total);
+bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real);
 
 #endif
