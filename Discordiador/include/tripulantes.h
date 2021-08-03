@@ -43,6 +43,8 @@ extern t_list *lista_EXIT;
 extern int cantidad_activos;
 extern t_config_discordiador *config;
 
+extern t_sabotaje* sabotaje_a_resolver;
+
 void crearHilosTripulantes(Patota *);
 void leerConfighilo_tripulante(Tripulante *);
 

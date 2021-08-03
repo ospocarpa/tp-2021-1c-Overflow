@@ -29,6 +29,9 @@ bool planificacion_activa = false;
 int numeroTripulante = 0;
 int numeroPatota = 0;
 int cantidad_activos = 0;
+
+t_sabotaje* sabotaje_a_resolver;
+
 //Semáforos
 pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 sem_t listos;

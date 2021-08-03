@@ -1,5 +1,5 @@
-#ifndef INICIAR_PATOTA_H
-#define INICIAR_PATOTA_H
+#ifndef EXPULSAR_TRIPULANTE_H
+#define EXPULSAR_TRIPULANTE_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -10,9 +10,8 @@
 #include "memoria.h"
 #include "TAD.h"
 #include "segmentacion_pura.h"
-#include "util_mi_ram.h"
+#include "read_config_mi_ram_hq.h"
 
-bool iniciar_patota_segmentacion(t_iniciar_patota init_patota);
-bool iniciar_patota_paginacion(t_iniciar_patota init_patota);
+void expulsar_tripulante(t_expulsar_tripulante tripulante);
 
 #endif

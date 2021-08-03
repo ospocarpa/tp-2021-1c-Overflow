@@ -1,6 +1,7 @@
 #include "memoria.h"
 
 void * memoria_principal = NULL;
+void * memoria_virtual = NULL;
 
 /* Declaracion de funciones privadas */
 
@@ -14,11 +15,20 @@ void iniciar_memoria_principal(int tam_memoria){
     }
 }
 
-void liberar_memoria_principal(){
+void iniciar_memoria_virtual(int tam_memoria){
+    if(memoria_virtual == NULL){
+        memoria_virtual = malloc(tam_memoria);
+    }
+}
 
+void liberar_memoria_principal(){
     free(memoria_principal);
     memoria_principal = NULL;
+}
 
+void liberar_memoria_virtual(){
+    free(memoria_virtual);
+    memoria_virtual = NULL;
 }
 
 void cargar_informacion_PCB_a_MP(t_PCB pcb,int base){
@@ -47,7 +57,6 @@ t_PCB leer_info_PCB(int base){
 }
 
 t_TCB leer_info_TCB(int base){
-
     t_TCB  tcb;
     
     int offset =base;
@@ -64,11 +73,10 @@ t_TCB leer_info_TCB(int base){
     memcpy(&tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
 
     return tcb;
-
 }
 
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
-    memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
+    memcpy(memoria_principal+base, data_segmento->data, data_segmento->tam_data);
 }
 
 void set_tripulante(t_TCB tcb, int patotaid){
@@ -78,4 +86,38 @@ void set_tripulante(t_TCB tcb, int patotaid){
 t_TCB get_TCB(int patota_id, int tripulante_id){
     t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
     return tcb;
+}
+
+bool iniciar_patota(t_iniciar_patota init_patota){
+    bool isAllow = false;
+    char * tipo_memoria = get_esquema_memoria();
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0)
+    {
+        isAllow = iniciar_patota_segmentacion(init_patota);
+    }
+    else
+    {
+        isAllow = iniciar_patota_paginacion(init_patota);
+    }
+    return isAllow;
+}
+
+void mostrar_tcb(t_TCB tcb){
+    printf("tid: %d\n", tcb.tid);
+    printf("Estado: %c\n", tcb.estado);
+    printf("Pos x: %d\n", tcb.posx);
+    printf("Pos y: %d\n", tcb.posy);
+    printf("Próxima tarea: %d\n", tcb.prox_tarea);
+    printf("Puntero pcb: %d\n", tcb.puntero_pcb);
+}
+
+void method_sigusr1(){
+    //Mostrar dump de la memoria principal
+    if(strcmp(get_esquema_memoria(), "SEGMENTACION")==0){
+        //Realizar compactacion
+        compactacion();
+        dump_segmentacion_pura();
+    }else{
+        dump_paginacion();
+    }
 }

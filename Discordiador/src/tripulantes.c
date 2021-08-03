@@ -446,17 +446,14 @@ void chequear_activados()
     pthread_mutex_unlock(&MXTRIPULANTE);
     if (cantidad_activos == 0)
     {
-        //harcodeo un sabotaje por default
-        //despues borrar
-        t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
+        /*t_sabotaje *sabotaje = malloc(sizeof(t_sabotaje));
         sabotaje->mensaje = "test";
         sabotaje->mensaje_length = strlen(sabotaje->mensaje);
         sabotaje->posicion = malloc(sizeof(Posicion));
         sabotaje->posicion->posx = 1;
         sabotaje->posicion->posy = 2;
-        sabotaje->posicion->posy = 2;
-        //
-        inicio_sabotaje(sabotaje);
+        sabotaje->posicion->posy = 2;*/
+        inicio_sabotaje(sabotaje_a_resolver);
     }
 }
 
@@ -543,8 +540,6 @@ Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje)
 void inicio_sabotaje(t_sabotaje *sabotaje)
 {
     printf("imprimo dos veces ?\n");
-    hay_sabotaje = true; //TO DO, se va a hacer en recepcion mensajes
-
     bool comparador(void *tripulante1, void *tripulante2)
     {
         Tripulante *tripulante1_analizar = (Tripulante *)tripulante1;

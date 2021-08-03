@@ -84,29 +84,43 @@
 // 	Posicion;
 
 Posicion get_posicion_STR(char *posiciones, int indice){
+    //printf("%s %d\n", posiciones, indice);
     Posicion pos;
-    char** partes = string_split(posiciones,",");
+    char** partes = string_split(posiciones," ");
+    
     char** pos_aux = string_split(partes[indice-1],"|");
     pos.posx = atoi(pos_aux[0]);
     pos.posy = atoi(pos_aux[1]);
-
 
     return pos;
  }
 
  char map_estado(status_tripulante status){
-        switch (status)
-        {
-            case NEW:
-                return 'N';
-            case READY:
-                return 'R';
-            case EXEC:
-                return 'E';
-            case BLOCKED:
-                return 'B';
-            case BLOCKED_SABOTAJE:
-                return 'B';
-        }
-        return ' ';
+    switch (status)
+    {
+        case NEW:
+            return 'N';
+        case READY:
+            return 'R';
+        case EXEC:
+            return 'E';
+        case BLOCKED:
+            return 'B';
+        case BLOCKED_SABOTAJE:
+            return 'B';
     }
+    return ' ';
+}
+
+int get_timestamp_number(char* timestamp){
+    char** parts = string_split(timestamp, ":");
+
+    char* timestamp_format = string_new();
+    void concatenar_partes(char *item){
+        string_append_with_format(&timestamp_format, "%s", item);
+    }
+    string_iterate_lines(parts, concatenar_partes);
+
+    int timestamp_number = atoi(timestamp_format);
+    return timestamp_number;
+}

@@ -3,8 +3,8 @@
 bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
 {
     bool exist_code = true;
-    log_info(logger, "recibo algo %d", paquete.cod_operacion);
-    
+    log_info(logger, "recibo algo %s (%d)", get_string_operacion(paquete.cod_operacion), paquete.cod_operacion);
+
     //Deserializacion
     t_package paquete_a_enviar;
     
@@ -27,16 +27,18 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             mostrar_create_file(create_get_file);
             create_tripulante_bitacora(create_get_file);
             break;
-        case GET_RECURSO:  //Pendiente en devolver
+        case GET_RECURSO: 
             printf("Recurso get\n");
             file = des_get_file(paquete);
             mostrar_file(file);
 
             file_a_enviar = get_recurso(file.nombre_file);
             mostrar_file(file_a_enviar);
+
+            paquete_a_enviar = ser_get_file_recurso(file_a_enviar);
+            sendMessage(paquete_a_enviar, cliente_fd);
             break;
         case GET_BITACORA:
-            printf("Bitácora get\n");
             file = des_get_file(paquete);
             mostrar_file(file);
 
@@ -46,7 +48,7 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             paquete_a_enviar = ser_get_file_bitacora(file_a_enviar);
             sendMessage(paquete_a_enviar, cliente_fd);
             break;
-        case UPDATE_BITACORA: //Ver si debe devolver algo
+        case UPDATE_BITACORA: 
             printf("Bitácora actualizar\n");
             file = des_update_bitacora(paquete);
             mostrar_update_bitacora(file);
@@ -54,26 +56,32 @@ bool recepcionMensaje(t_package paquete, int cliente_fd, t_log *logger)
             update_bitacora(file);
             break;
         case AGREGAR_RECURSO: 
-            printf("Agregar recurso\n");
+            //printf("Agregar recurso\n");
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
 
             agregar_recurso(operation_file_recurso);
             break;
         case RETIRAR_RECURSO: 
-            printf("Retirar recurso\n");
+            //printf("Retirar recurso\n");
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
             
             retirar_recurso(operation_file_recurso);
             break;
-        case ELIMINAR_RECURSO: //PENDIENTE
-            printf("Eliminar recurso\n");
+        case ELIMINAR_RECURSO:
             operation_file_recurso = des_operation_file_recurso(paquete);
             mostrar_operation_file_recurso(operation_file_recurso);
+            
+            eliminar_recurso(operation_file_recurso);
             break;
         case INICIO_FSCK: //Inicio de fsck 
             init_protocolo_fsck();
+            
+            //Indica finalización del protocolo fsck
+            t_aviso_fsck aviso;
+            paquete_a_enviar = ser_fin_fcsk(aviso);
+            sendMessage(paquete_a_enviar, cliente_fd);
             break;
         default: 
             exist_code = false;
@@ -89,7 +97,10 @@ void ejecutar_operacion(int cliente_fd)
     while (1)
     {
         t_package paquete = recibir_mensaje(cliente_fd);
-        if (paquete.cod_operacion == 0) fallos--;
+        if (
+            paquete.cod_operacion == 0 ||
+            (paquete.tam_buffer==0 && (paquete.cod_operacion != FIN_FSCK && paquete.cod_operacion != INICIO_FSCK))
+        ) fallos--;
         if(fallos <= 0) break;
         bool existe_codigo = recepcionMensaje(paquete, cliente_fd, logger);
         if (!existe_codigo) fallos--;

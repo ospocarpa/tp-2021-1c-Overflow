@@ -7,13 +7,13 @@ void implementar_sincronizacion(){
         memcpy(filesystem.stream_copy, filesystem.stream, file_size);      //Lo paso a la copia que se usará
         msync(filesystem.stream_copy, file_size, MS_SYNC);
         printf("Sincronizacion: %d\n", config_global_mongo_store->TIEMPO_SINCRONIZACION);
-
     }while(1);
 }
 
 void init_filesystem(){
     filesystem.blocks_cant = config_global_mongo_store->BLOCKS;
     filesystem.blocks_size = config_global_mongo_store->BLOCK_SIZE;
+    filesystem.super_bloque_tam = filesystem.blocks_cant * filesystem.blocks_size;
     filesystem.bitmap = NULL;//?
     filesystem.blocks = malloc(filesystem.blocks_cant * filesystem.blocks_size);
     
@@ -25,12 +25,28 @@ void init_filesystem(){
     //printf("Size: %d\n", filesystem.blocks_size);
 }
 
+bool existe_nombre_file_bitacora(char* filename){
+    char* path_ims = get_path_file_bitacora(filename);
+    return existePath(path_ims);
+}
+
+bool existe_nombre_file_recurso(char* filename){
+    char* path_ims = get_path_file_recurso(filename);
+    return existePath(path_ims);
+}
+
 bool existePath(char* path){
     //printf("%s\n", path);
     FILE* file = fopen(path, "r");
 	if(file==NULL)
 		return false;
     return true;
+}
+
+void eliminar_archivos_filesystem(char* filename){
+    char* path_ims = get_path_file_recurso(filename);
+    printf("Archivo: %s\n", path_ims);
+    remove(path_ims);
 }
 
 char* get_contenido_recurso(char* filename){
@@ -84,7 +100,7 @@ t_list* get_bloques_from_metadata(t_config* metadata_ims){
 char* get_bloque(int bloque){
     //printf("Arranque get_bloque: %d\n", filesystem.blocks_size);
     char* contenido = malloc(filesystem.blocks_size);
-    memcpy(contenido, filesystem.blocks + ((bloque-1) * filesystem.blocks_size), filesystem.blocks_size);
+    memcpy(contenido, filesystem.blocks + ((bloque) * filesystem.blocks_size), filesystem.blocks_size);
 
     //printf("Contenido: %s\n", contenido);
     return contenido;
@@ -170,11 +186,11 @@ char* list_convert_to_string(t_list* lista){
         for(int c=0; c<list_size(lista)-1; c++){
             printf("%d\n", list_get(lista, c));
             number = list_get(lista, c);
-            string_append_with_format(&numbers_string, "%s,", string_itoa(number+1));    
+            string_append_with_format(&numbers_string, "%s,", string_itoa(number));    
         }
         //printf("%d\n", list_get(lista, list_size(lista)-1));
         
-        number = list_get(lista, list_size(lista)-1)+1;
+        number = list_get(lista, list_size(lista)-1);
         string_append_with_format(&numbers_string, "%s", string_itoa(number));    
         string_append_with_format(&lista_string, "[%s]", numbers_string);
     }else{
@@ -224,7 +240,6 @@ int get_redondear(int dividendo, int divisor){
 }
 
 int get_primer_bloque_disponible(){
-    printf("Inicio bitmap\n");
     int indice = 0;
 
     t_bitarray* bitmap = get_bitmap();
@@ -237,9 +252,28 @@ int get_primer_bloque_disponible(){
 			break;
 		}
 	}
-    bitarray_set_bit(bitmap, indice);
-    log_info(logger, "Asignación de un nuevo bloque %d", indice);
-	return indice;
+    asignar_bloque(indice);
+    
+    print_bit_map(bitmap);
+    return indice;
+}
+
+void asignar_bloque(int bloque){
+    t_bitarray* bitmap = get_bitmap();
+    bitarray_set_bit(bitmap, bloque);
+
+    int offset = 2 * sizeof(uint32_t);
+    memcpy(filesystem.stream + offset, bitmap->bitarray, filesystem.blocks_cant/8);
+    log_info(logger, "Asignación de un nuevo bloque %d", bloque);
+}
+
+void liberar_bloque(int bloque){
+    t_bitarray* bitmap = get_bitmap();
+    log_info(logger, "Desasignación del bloque %d", bloque);
+    bitarray_clean_bit(bitmap, bloque);
+
+    int offset = 2 * sizeof(uint32_t);
+    memcpy(filesystem.stream + offset, bitmap->bitarray, filesystem.blocks_cant/8);
 }
 
 t_bitarray* get_bitmap(){
@@ -249,12 +283,6 @@ t_bitarray* get_bitmap(){
     memcpy(puntero_bitmap, filesystem.stream + (sizeof(uint32_t) * 2), size);      //reemplazar a filesystem.stream_copy
     t_bitarray* bitmap = bitarray_create_with_mode(puntero_bitmap, size, LSB_FIRST);
     return bitmap;
-}
-
-void liberar_bloque(int bloque){
-    t_bitarray* bitmap = get_bitmap();
-    log_info(logger, "Desasignación del bloque %d", bloque-1);
-    bitarray_clean_bit(bitmap, bloque-1);
 }
 
 char* get_path_file_recurso(char* file_name){
@@ -296,6 +324,14 @@ char* get_path_bitacoras(){
     return path_bitacoras;
 }
 
+char* get_path_super_bloque(){
+    char* path_super_bloque = string_new();
+    char* punto_montaje = get_path_punto_montaje();
+    string_append_with_format(&path_super_bloque, "%s", punto_montaje);
+    string_append_with_format(&path_super_bloque, "%s", "/SuperBloque.ims");
+    return path_super_bloque;
+}
+
 void print_bit_map(t_bitarray* bitarray){
     //bitarray_set_bit(bitarray, 3);
     //bitarray_set_bit(bitarray, 10);
@@ -316,7 +352,7 @@ void print_bit_map(t_bitarray* bitarray){
 void clean_bit_map(t_bitarray* bitarray){
     uint32_t bits = bitarray_get_max_bit(bitarray);
     for(int c=0; c<bits; c++){
-		bitarray_clean_bit(bitarray, c);
+		liberar_bloque(c);
 	}
 }
 
@@ -333,6 +369,98 @@ int create_file(char* path){
         status = 1;
 	}
     return status;
+}
+
+void resolver_sabotaje_super_bloque(){
+    int tamanio_bloque = filesystem.super_bloque_tam;
+    
+    //Cantidad de bloques
+    int cant_bloques = tamanio_bloque/filesystem.blocks_size;
+    filesystem.blocks_cant = cant_bloques; 
+    
+    //Analizar bitmap
+    t_bitarray* bitmap = get_bitmap();
+    clean_bit_map(bitmap);
+
+    /* Obtener los nombres en una lista: recursos y bitacoras */
+    t_list* name_bitacoras = get_archivos_de_directorio(get_path_bitacoras());
+    t_list* name_recursos = get_archivos_de_directorio(get_path_files());
+    t_list* path_files_ims = list_create();
+    
+    for(int c=0; c<list_size(name_bitacoras); c++)
+        list_add(path_files_ims, get_path_file_bitacora(list_get(name_bitacoras, c)));
+    for(int c=0; c<list_size(name_recursos); c++)
+        list_add(path_files_ims, get_path_file_recurso(list_get(name_recursos, c)));
+
+    t_config* info;
+    t_list* bloques;
+    for(int c=0; c<list_size(path_files_ims); c++){
+        char* path_file_ims = list_get(path_files_ims, c);
+        printf("FIle: %s\n", path_file_ims);
+        info = config_create(path_file_ims);    
+        bloques = get_bloques_from_metadata(info);
+        int cant_bloques = list_size(bloques);
+        int current_block;
+        printf("Bloques de %s: ", path_file_ims);
+        for(int d=0; d<cant_bloques; d++){
+            current_block = list_get(bloques, d);
+            printf("%d ", current_block);
+            asignar_bloque(current_block);
+        }
+        printf("\n");
+    }
+}
+
+void resolver_sabotaje_files(){
+    /* Obtener los nombres en una lista: recursos y bitacoras */
+    t_list* name_recursos = get_archivos_de_directorio(get_path_files());
+    t_list* path_files_ims = list_create();
+    for(int c=0; c<list_size(name_recursos); c++)
+        list_add(path_files_ims, get_path_file_recurso(list_get(name_recursos, c)));
+
+    t_config* info;
+    t_list* bloques;
+
+    int size = 0, block_count;
+    char* contenido;
+    char* contenido_md5;
+    char* file_md5;
+    char* caracter;
+    char caracter_simple;
+    for(int c=0; c<list_size(path_files_ims); c++){
+        char* path_file_ims = list_get(path_files_ims, c);
+        info = config_create(path_file_ims);    
+        bloques = get_bloques_from_metadata(info);
+
+        // Revisar el size de los archivos del recurso 
+        contenido = getContenido(path_file_ims);
+        size = strlen(contenido);
+        config_set_value(info, "SIZE", string_itoa(size));
+
+        // Revisar consistencia entre block_count y blocks
+        block_count = list_size(bloques);
+        config_set_value(info, "BLOCK_COUNT", string_itoa(block_count));
+
+        // Reparar archivos por MD5 
+        contenido_md5 = getMD5(contenido);
+        file_md5 = config_get_string_value(info, "MD5_ARCHIVO");
+        caracter = config_get_string_value(info, "CARACTER_LLENADO");
+
+        if(!string_equals_ignore_case(contenido_md5, file_md5)){
+            t_file file_to_update;
+            
+            printf("Test 2\n");
+            caracter_simple = caracter[0];
+            file_to_update.contenido = string_repeat(caracter_simple , size);
+            file_to_update.long_contenido = strlen(file_to_update.contenido);
+            file_to_update.nombre_file = list_get(name_recursos, c);
+            file_to_update.long_nombre_file = strlen(file_to_update.nombre_file);
+            
+            printf("Test 3\n");
+            save_recurso(file_to_update);
+            printf("Test 4\n");
+        }
+    }
 }
 
 char* getMD5(char* text){
