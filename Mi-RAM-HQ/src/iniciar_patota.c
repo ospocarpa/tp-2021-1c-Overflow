@@ -61,7 +61,6 @@ t_data_segmento * casteo_tareas_a_t_data_segmento(char * tareas){
     return data;
 }
 
-//funcion mock
 Posicion get_posicion(char* posiciones, int indice){
     Posicion pos;
     pos.posx=0;
@@ -81,16 +80,13 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
     seg_tarea->tipo = TAREAS;
 
     t_data_segmento * seg_pcb = malloc(sizeof(t_data_segmento));
-    seg_pcb->data = malloc(8); //8 tamaño de pcb
+    void* stream_pcb =  get_stream_pcb(data);
+    seg_pcb->data = stream_pcb; //8 tamaño de pcb
     seg_pcb->tam_data = 8;
     seg_pcb->tipo = PCB;
 
     memcpy(seg_tarea->data, data.tareas, strlen(data.tareas));//dato de la tarea
     
-    memcpy(seg_pcb->data, &data.patota_id, sizeof(uint32_t));
-    uint32_t dir_log =  strlen(data.tareas); //0+tamaño de la tarea
-    memcpy(seg_pcb->data+sizeof(uint32_t), &dir_log, sizeof(uint32_t));
-
     list_add(lista_data, seg_tarea);
     list_add(lista_data, seg_pcb);
 
@@ -132,6 +128,52 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
     
 }
 
-bool iniciar_patota_paginacion(t_iniciar_patota init_patota){
-    return false;
+bool iniciar_patota_paginacion(t_iniciar_patota data){
+    int tamanio_total = 8 + 21 * data.cant_tripulantes + data.long_tareas;
+    bool isAllow = existe_memoria_paginacion(bitmap_memoria_real, bitmap_memoria_virtual, tamanio_total);
+    if(!isAllow) return false;
+
+    int offset = 0;
+    /*void* tareas = malloc(init_patota.long_tareas);
+    memcpy(tareas, stream, tabla_paginacion->cant_caracteres_tarea);*/
+
+    void* stream_pcb = get_stream_pcb(data);
+    void* stream_tcbs = get_stream_tcbs(data);
+    return true;
+}
+
+void* get_stream_pcb(t_iniciar_patota data){
+    void* stream = malloc(8);
+    int offset = 0;
+    memcpy(stream+offset, &data.patota_id, sizeof(uint32_t));
+    offset += sizeof(uint32_t);
+    uint32_t dir_log =  strlen(data.tareas); //0+tamaño de la tarea
+    memcpy(stream + offset, &dir_log, sizeof(uint32_t));
+    return stream;
+}
+
+void* get_stream_tcbs(t_iniciar_patota data){
+    void* stream = malloc(21*data.cant_tripulantes);
+    int offset = 0;
+    int tripulante_id_inicial = data.id_primer_tripulante;
+    for (int i = 0; i < data.cant_tripulantes; i++)
+    {
+        Posicion pos = get_posicion(data.posiciones,i+1);
+
+        t_TCB tcb;
+        tcb.tid = tripulante_id_inicial;
+        tcb.estado = 'N';
+        tcb.posx = pos.posx;
+        tcb.posy = pos.posy;
+        tcb.prox_tarea = 1;
+        tcb.puntero_pcb = 1+8;
+        
+        void* stream_tcb = get_stream_tcb(tcb);
+        memcpy(stream + offset, stream_tcb, 21);
+        offset += 21;
+
+        tripulante_id_inicial++;
+    }
+
+    return stream;
 }

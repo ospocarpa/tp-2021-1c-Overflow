@@ -6,36 +6,17 @@
 #include <commons/string.h> 
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
+#include "tad_mi_ram_hq.h"
+#include "memoria.h"
+#include "TAD.h"
 
     extern void * memoria_principal;
     extern void * memoria_virtual;
 
-    t_list * list_tablas_paginacion;        //[t_table_page]
-    t_list * tablas_pag_libre;         //?
-    t_bitarray* bitmap_memoria_real;
-    t_bitarray* bitmap_memoria_virtual;
-
-    //Estructura
     typedef struct{
-        t_list* pages;                      //[t_page]
-        int cant_caracteres_tarea;
-        int cant_tripulantes;
-        int patota_id;                      //Es el conjunto de bloques}
-    } t_table_page;
-
-    typedef struct{
-        int page;
-        int frame;
-        bool presencia;
-        bool uso;
-        char* timestamp;
-    } t_page;
-
-    typedef struct{
-        void* stream;
-        int tamanio;
-        int cantTripulantes;
-    } t_page_auxiliar;
+        t_list* pages_filtradas;                      //[t_page]
+        int offset;                      
+    } t_paginacion_temporal;                          //Usado para el get y set de TCB en paginación
 
 void dump_paginacion();
 void iniciar_tabla_paginacion();
@@ -63,6 +44,14 @@ t_page* obtener_pagina_por_LRU();
 t_page* obtener_pagina_por_Clock();
 t_list* obtener_todas_las_paginas();
 t_table_page* get_tabla_pagina_segun_indice(int indice);
+
+//Getters
+t_TCB get_TCB_paginacion(int patota_id, int tripulante_id);
+char* get_tareas_paginacion(int patota_id);
+t_paginacion_temporal get_paginacion_temporal(int patota_id, int tripulante_id);
+
+//Setters
+void set_TCB_paginacion(t_TCB tcb, int patota_id);
 
 //Acceso al bitmap
 void clean_indice_bitmap(t_bitarray* bitmap, int indice);
