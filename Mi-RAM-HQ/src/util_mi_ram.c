@@ -125,6 +125,7 @@ int get_timestamp_number(char* timestamp){
     return timestamp_number;
 }
 
+
 t_list* list_slice(t_list* lista, int inicio, int fin){
     bool puede_agregar = false;
     bool puede_terminar = false;
@@ -145,5 +146,14 @@ bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bit
 }
 
 bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
+}
+
+bool esta_Llena_Memoria(t_bitarray* bitmap){
+    int indice = 0;
+    int bits = bitarray_get_max_bit(bitmap);
+    
+    for(int c =0; c < bits ; c++){
+        if (! bitarray_test_bit(bitmap,c)) return false;
+    }
     return true;
 }

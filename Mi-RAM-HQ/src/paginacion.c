@@ -304,6 +304,26 @@ void escribir_memoria_real(void *stream, int base, int desplazamiento){
     return stream;
 }
 
+// bool get_primer_bit_disponible(bitarray bitarray)
+//t_bitarray *bitarray_create(char *bitarray, size_t size)
+//bitarray_set_bit(t_bitarray *self, off_t bit_index)
+// void bitarray_destroy(t_bitarray *self) 
+//bool bitarray_test_bit(t_bitarray *self, off_t bit_index) 
+
+int get_primer_bit_disponible(t_bitarray* bitmap){
+    int indice =0;
+    int bits = bitarray_get_max_bit(bitmap);
+  
+    for(int c = 0; c < bits ; c++){
+        if(!bitarray_test_bit(bitmap,c)){
+            indice = c;
+            break;
+        }
+    }
+    bitarray_set_bit(bitmap,indice);
+    return indice;
+}
+
 void escribir_memoria_virtual(void *stream, int base, int desplazamiento){
     memcpy(memoria_virtual + base * desplazamiento, stream, desplazamiento);
     return stream;
