@@ -422,12 +422,17 @@ void validar_esta_Llena_Memoria(){
 
     CU_ASSERT_EQUAL(value,value_out);
 }
+
+
+void validar_cantidad_disponible(){
+
+}
 // ------------------------------------  paginacion   ---------------------
 // t_bitarray 	*bitarray_create(char *bitarray, size_t size);
 void validar_get_primer_bit_disponible(){
-    void* stream = malloc(16);
-    t_bitarray *bitmap = bitarray_create(stream, 4);
-    
+    // void* stream = malloc(16);
+    // t_bitarray *bitmap = bitarray_create(stream, 4);
+    t_bitarray *bitmap = bitarray_create(bitmap,4);
     // t_bitarray* bitmap = {true,false,false,false,true};
     int value = 0;
     int value_out = get_primer_bit_disponible(bitmap);

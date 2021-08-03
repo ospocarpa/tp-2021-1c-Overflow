@@ -141,11 +141,31 @@ t_list* list_slice(t_list* lista, int inicio, int fin){
     return lista_filtrada;
 }
 
-bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_total){
-    return true;
+bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_obj){
+    int cant_marcos_real = cantidad_disponible(bitmap_memoria_real);
+    int canti_marcos_virtual  = cantidad_disponible(bitmap_memoria_virtual);
+    if(cant_marcos_real + canti_marcos_virtual >= tamanio_obj ) return true;
+    return false;
+    
 }
 
+
+
 bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
+    return esta_Llena_Memoria(bitmap_memoria_real);
+}
+
+int cantidad_disponible(t_bitarray* bitmap){
+    int cant = 0;
+    int bits = bitarray_get_max_bit(bitmap);
+  
+    for(int c = 0; c < bits ; c++){
+        if(!bitarray_test_bit(bitmap,c)){
+            cant++;
+        }
+    }
+
+    return cant;
 }
 
 bool esta_Llena_Memoria(t_bitarray* bitmap){
