@@ -20,7 +20,7 @@ int main(int argc, char **argv)
         
         //Para paginación
         iniciar_memoria_virtual(get_tamanio_swap());
-
+        inicializacion_estructuras();
         server_mi_ram_iniciar(puerto);
 
         signal(SIGUSR1, method_sigusr1);
