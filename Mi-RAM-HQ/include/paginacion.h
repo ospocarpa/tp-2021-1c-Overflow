@@ -3,11 +3,15 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <commons/bitarray.h>
 #include <commons/string.h> 
 #include <commons/bitarray.h>
 #include <commons/collections/list.h>
 
-    extern void * memoria_principal;
+void iniciar_tabla_paginacion();
+int get_primer_bit_disponible(t_bitarray* bitarray);
+
+extern void * memoria_principal;
     extern void * memoria_virtual;
 
     t_list * list_tablas_paginacion;        //[t_table_page]

@@ -17,6 +17,8 @@ void validar_get_tarea();
 void validar_get_tarea2();
 void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
+void validar_esta_Llena_Memoria();
+void validar_get_primer_bit_disponible();
 void validar_expulsar_tripulante_segmentada();
 void validar_informacion_de_patota_segmentacion();
 void validar_actualizacion_tripulante();
@@ -43,6 +45,8 @@ int run_tests()
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
     CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
+    CU_add_test(tests, "Valido si la memoria esta llena en el bitmap", validar_esta_Llena_Memoria);
+    CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
     CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
@@ -409,6 +413,28 @@ void validar_get_posicion_STR(){
     CU_ASSERT_EQUAL(pos_in.posx,pos_out.posx);
     CU_ASSERT_EQUAL(pos_in.posy,pos_out.posy);
 }
+// ------------------------------------  util_mi_ram   ---------------------
+void validar_esta_Llena_Memoria(){
+    t_bitarray *bitmap = bitarray_create(bitmap,4);
+    bool value = false;
+    bool value_out = esta_Llena_Memoria(bitmap);
+    bitarray_destroy(bitmap);
+
+    CU_ASSERT_EQUAL(value,value_out);
+}
+// ------------------------------------  paginacion   ---------------------
+// t_bitarray 	*bitarray_create(char *bitarray, size_t size);
+void validar_get_primer_bit_disponible(){
+    void* stream = malloc(16);
+    t_bitarray *bitmap = bitarray_create(stream, 4);
+    
+    // t_bitarray* bitmap = {true,false,false,false,true};
+    int value = 0;
+    int value_out = get_primer_bit_disponible(bitmap);
+    CU_ASSERT_EQUAL(value,value_out);
+    //bitarray_destroy(bitmap);
+}
+
 
 void validar_iniciar_patota_segmentada(){
 
@@ -618,8 +644,6 @@ void validar_informar_tarea(){
 
     liberar_tabla_huecos();
     liberar_memoria_principal();
-    
-
     void tabla_destroy(t_segmento * seg){
         free(seg);
     }
