@@ -90,11 +90,7 @@ void hilo_tripulante(Tripulante *tripulante)
         log_info(logger, "Tripulante %d Conexion con Mi-RAM-HQ exitosa", tripulante->id);
     }
 
-    _Bool mismo_id(void *param)
-    {
-        int *un_id = (int *)param;
-        return tripulante->id == *un_id;
-    }
+    
 
     // Cuando quiero saber el valor de un semaforo
     /*  int sval;
