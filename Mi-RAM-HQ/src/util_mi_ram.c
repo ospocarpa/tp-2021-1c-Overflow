@@ -125,6 +125,29 @@ int get_timestamp_number(char* timestamp){
     return timestamp_number;
 }
 
+
+t_list* list_slice(t_list* lista, int inicio, int fin){
+    bool puede_agregar = false;
+    bool puede_terminar = false;
+    t_list* lista_filtrada = list_create();
+    void* item;
+    for(int c=0; c<list_size(lista); c++){
+        if(c==inicio) puede_agregar = true;
+        item = list_get(lista, c);
+        if(puede_agregar) list_add(lista_filtrada, item);
+        if(c==fin) puede_terminar = true;
+        if(puede_terminar) break;
+    }
+    return lista_filtrada;
+}
+
+bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_total){
+    return true;
+}
+
+bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
+}
+
 bool esta_Llena_Memoria(t_bitarray* bitmap){
     int indice = 0;
     int bits = bitarray_get_max_bit(bitmap);

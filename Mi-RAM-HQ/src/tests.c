@@ -550,6 +550,7 @@ void validar_informacion_de_patota_segmentacion(){
     CU_ASSERT_STRING_EQUAL(data_input.tareas, tarea);
 
     t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
+    //mostrar_tcb(tcb_encontrado);
     CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
     CU_ASSERT_EQUAL(tcb_encontrado.estado, 'N');
     CU_ASSERT_EQUAL(tcb_encontrado.posx, 0);

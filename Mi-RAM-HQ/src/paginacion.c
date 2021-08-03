@@ -66,7 +66,17 @@ void transferencia_de_memoria_real_a_swap(t_page* page){
 }
 
 int get_first_frame_disponible(t_bitarray* bitmap){
-    return 0;
+    bool memoria_llena = existe_memoria_real_disponible(bitmap);
+    int indice = 0;
+    if(memoria_llena){
+        t_page* page = obtener_pagina_candidato_por_algoritmo_de_reemplazo();
+        transferencia_de_memoria_real_a_swap(page);
+        indice = page->frame;
+    }else{
+        //Devuelve el primer bit disponible
+        indice = 1;
+    }
+    return indice;
 }
 
 void dump_paginacion(){
@@ -91,6 +101,104 @@ void dump_paginacion(){
     //TODO: pasar a hexadecimal
     
     printf("%s\n", contenido);*/
+}
+
+t_TCB get_TCB_paginacion(int patota_id, int tripulante_id){
+    t_paginacion_temporal informacion_administrativa = get_paginacion_temporal(patota_id, tripulante_id); 
+
+    void* stream = dame_todo_el_stream(informacion_administrativa.pages_filtradas);
+    void* stream_tcb = malloc(21);
+    memcpy(stream_tcb, stream + informacion_administrativa.offset, 21);
+
+    t_TCB tcb = leer_info_TCB_generico(stream_tcb);
+    return tcb;
+}
+
+char* get_tareas_paginacion(int patota_id){
+    int pagina_tam = get_tamanio_tamanio_pagina();
+    bool mismo_tabla_id(t_table_page *item){
+        return item->patota_id == patota_id;
+    }
+    t_table_page* tabla_paginacion = list_find(list_tablas_paginacion, &mismo_tabla_id);
+    int cant_paginas_tarea = tabla_paginacion->cant_caracteres_tarea/pagina_tam;
+    if(tabla_paginacion->cant_caracteres_tarea%pagina_tam==0) cant_paginas_tarea++;
+    t_list* paginas_filtradas = list_slice(tabla_paginacion->pages, 0, cant_paginas_tarea);
+
+    void* stream = dame_todo_el_stream(paginas_filtradas);
+    char* tareas = malloc(tabla_paginacion->cant_caracteres_tarea);
+    memcpy(tareas, stream, tabla_paginacion->cant_caracteres_tarea);
+
+    return tareas;
+}
+
+void set_TCB_paginacion(t_TCB tcb, int patota_id){
+    int pagina_tam = get_tamanio_tamanio_pagina();
+    int tripulante_id = tcb.tid;
+    t_paginacion_temporal informacion_administrativa = get_paginacion_temporal(patota_id, tripulante_id);
+    int offset = informacion_administrativa.offset;
+    t_list* paginas_filtradas = informacion_administrativa.pages_filtradas;
+
+    void* stream = get_stream_tcb(tcb);
+    t_page* page;
+    int offset_por_marco;
+    if(list_size(paginas_filtradas)>1){
+        page = list_get(paginas_filtradas, 0);
+        offset_por_marco = page->frame * pagina_tam;
+        int tamanio_restante = pagina_tam-offset;
+        void* stream_parte = malloc(tamanio_restante);
+        memcpy(stream_parte, stream + offset, tamanio_restante);
+        memcpy(memoria_principal + offset_por_marco + offset, stream, tamanio_restante);
+
+        offset += tamanio_restante;
+        page = list_get(paginas_filtradas, 1);
+        offset_por_marco = page->frame * pagina_tam;
+        int tamanio_restante_otro = 21 - tamanio_restante;
+        stream_parte = malloc(tamanio_restante_otro);
+
+        memcpy(stream_parte, stream + offset, tamanio_restante_otro);
+        memcpy(memoria_principal + offset_por_marco, stream, tamanio_restante_otro);
+    }else{
+        page = list_get(paginas_filtradas, 0);
+        offset_por_marco = page->frame * pagina_tam;
+        memcpy(memoria_principal + offset_por_marco + offset, stream, 21);
+    }
+}
+
+t_paginacion_temporal get_paginacion_temporal(int patota_id, int tripulante_id){
+    bool mismo_tabla_id(t_table_page *item){
+        return item->patota_id == patota_id;
+    }
+    t_table_page* tabla_paginacion = list_find(list_tablas_paginacion, &mismo_tabla_id);
+    
+    int pagina_tam = get_tamanio_tamanio_pagina();
+    int indice_tripulante;
+    int tripulante_pivote_id;
+    for(int c=0; c<list_size(tabla_paginacion->tripulante_ids); c++){
+        tripulante_pivote_id = list_get(tabla_paginacion->tripulante_ids, c);
+        if(tripulante_pivote_id == tripulante_id){
+            indice_tripulante = c;
+            break;
+        }
+    } 
+
+    int tamanio_anterior = tabla_paginacion->cant_caracteres_tarea + 8 + 21 * indice_tripulante;
+    int cant_paginas = tamanio_anterior/pagina_tam;
+    if(tamanio_anterior%pagina_tam == 0) cant_paginas++;
+
+    int offset = tamanio_anterior%pagina_tam;
+    int inicio_pagina_indice = cant_paginas-1;
+    if(tamanio_anterior%pagina_tam == 0) inicio_pagina_indice++;
+
+    int auxiliar_offset = offset + 21;
+    int fin_pagina_indice = inicio_pagina_indice;
+    if(auxiliar_offset > pagina_tam) fin_pagina_indice++;
+
+    t_list* paginas_filtradas = list_slice(tabla_paginacion->pages, inicio_pagina_indice, fin_pagina_indice);
+
+    t_paginacion_temporal informacion_administrativa;
+    informacion_administrativa.pages_filtradas = paginas_filtradas;
+    informacion_administrativa.offset = offset;
+    return informacion_administrativa;
 }
 
 //ALGORITMO DE REEMPLAZO
