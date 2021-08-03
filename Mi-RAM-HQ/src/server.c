@@ -30,14 +30,11 @@ static void *ejecutar_operacion(int tripulante)
 		/* interpreto el contenido del mensaje */
 		init_patota = des_cod_iniciar_patota(paquete);
 		//printf("Posiciones: %s\n", init_patota.posiciones);
-		//mi funcion iniciar patota
-		
 
 		//se envia un booleano de confirmacion
 		bool respuesta = true;
 
-		respuesta = iniciar_patota_segmentacion(init_patota);
-
+		respuesta = iniciar_patota(init_patota);
 		send(tripulante, &respuesta, sizeof(respuesta), 0);
 
 		break;
@@ -47,7 +44,9 @@ static void *ejecutar_operacion(int tripulante)
 		/* interpreto el contenido del mensaje */
 		ex_tripulante = des_cod_expulsar_tripulante(paquete);
 		//mi funcion expulsar tripulante
-		printf("Tripulante: %d\n", ex_tripulante.id_tripulante);
+		//printf("Tripulante: %d\n", ex_tripulante.id_tripulante);
+		expulsar_tripulante(ex_tripulante);
+		
 		break;
 
 	case INFORMAR_TAREA_TRIPULANTE:

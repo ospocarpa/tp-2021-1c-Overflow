@@ -12,7 +12,8 @@
 
 void iniciar_memoria_principal(int tam_memoria);
 void liberar_memoria_principal();
-
+void iniciar_memoria_virtual(int tam_memoria);
+void liberar_memoria_virtual();
 
 void cargar_informacion_PCB_a_MP(t_PCB pcb,int base);
 void cargar_informacion_tareas_a_MP(char *tareas,int base);
@@ -22,5 +23,11 @@ t_TCB get_TCB(int patota_id, int tripulante_id);
 
 t_PCB leer_info_PCB(int base);
 t_TCB leer_info_TCB(int base);
+
+void mostrar_tcb(t_TCB tcb_encontrado);
+void method_sigusr1();
+
+//Acciones del servidor
+bool iniciar_patota(t_iniciar_patota init_patota);
 
 #endif

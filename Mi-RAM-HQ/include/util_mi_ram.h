@@ -14,5 +14,6 @@ t_info_tarea get_tarea(char* lista_tareas,int n_tarea);
 Posicion get_posicion_STR(char *posicion, int indice);
 char map_estado(status_tripulante status);
 bool esta_Llena_Memoria(t_bitarray* bitmap);
+int get_timestamp_number(char* timestamp);
 
 #endif
