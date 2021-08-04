@@ -170,7 +170,6 @@ t_paginacion_temporal get_paginacion_temporal(int patota_id, int tripulante_id){
         return item->patota_id == patota_id;
     }
     t_table_page* tabla_paginacion = list_find(list_tablas_paginacion, &mismo_tabla_id);
-    
     int pagina_tam = get_tamanio_tamanio_pagina();
     int indice_tripulante;
     int tripulante_pivote_id;
@@ -328,4 +327,7 @@ int get_primer_bit_disponible(t_bitarray* bitmap){
 void escribir_memoria_virtual(void *stream, int base, int desplazamiento){
     memcpy(memoria_virtual + base * desplazamiento, stream, desplazamiento);
     return stream;
+}
+
+void expulsar_tripulante_paginacion(int id_tripulante){
 }

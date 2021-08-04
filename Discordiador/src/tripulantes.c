@@ -56,7 +56,7 @@ void pedirTarea(Tripulante *tripulante)
 }
 
 void hilo_tripulante(Tripulante *tripulante)
-{
+{ 
     pthread_mutex_lock(&MXTRIPULANTE);
     list_add(lista_tripulantes, tripulante);
     pthread_mutex_unlock(&MXTRIPULANTE);
@@ -100,6 +100,13 @@ void hilo_tripulante(Tripulante *tripulante)
     //pthread_mutex_lock(&tripulante->activo);
     while (1)
     {
+        if(tripulante->expulsado){
+            printf("tripulante %d expulsado \n",tripulante->id);
+            liberar_conexion(tripulante->socket_cliente_mi_ram);
+            liberar_conexion(tripulante->socket_cliente_mongo_store);
+            pthread_exit(NULL);
+        }
+        
         if (finalizo_tarea)
         {
             tripulante->rafagas_consumidas = 0;
@@ -366,6 +373,12 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
 
     while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
     {
+        if(tripulante->expulsado){
+            liberar_conexion(tripulante->socket_cliente_mi_ram);
+            liberar_conexion(tripulante->socket_cliente_mongo_store);
+            printf("tripulante %d expulsado",tripulante->id);
+            pthread_exit(NULL);
+        }
         if (!planificacion_activa || hay_sabotaje)
         {
 
@@ -395,6 +408,12 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
 
     while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
+        if(tripulante->expulsado){
+            liberar_conexion(tripulante->socket_cliente_mi_ram);
+            liberar_conexion(tripulante->socket_cliente_mongo_store);
+            printf("tripulante %d expulsado",tripulante->id);
+            pthread_exit(NULL);
+        }
         if (!planificacion_activa || hay_sabotaje)
         {
 

@@ -51,6 +51,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         // defino los sockets en -1
         tripulante->socket_cliente_mongo_store = -1;
         tripulante->socket_cliente_mi_ram = -1;
+        tripulante->expulsado = false;
     }
 
     int posx = 0;

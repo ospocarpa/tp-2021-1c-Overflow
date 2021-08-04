@@ -43,6 +43,7 @@ typedef struct
     int socket_cliente_mongo_store;
     int socket_cliente_mi_ram;
 
+    bool expulsado;
 } Tripulante;
 
 // typedef enum
