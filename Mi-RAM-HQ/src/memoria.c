@@ -31,8 +31,8 @@ void inicializacion_estructuras(){
         bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, cantidad_frames/8, LSB_FIRST);
         bitmap_memoria_virtual = bitarray_create_with_mode(stream, cantidad_frames_virtual/8, LSB_FIRST);
 
-        //limpiar_bit_map(bitmap_memoria_real);
-        //limpiar_bit_map(bitmap_memoria_virtual);
+        limpiar_bit_map(bitmap_memoria_real);
+        limpiar_bit_map(bitmap_memoria_virtual);
     }
 }
 
