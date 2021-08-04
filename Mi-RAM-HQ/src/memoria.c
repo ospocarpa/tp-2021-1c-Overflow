@@ -1,11 +1,30 @@
 #include "memoria.h"
 
 void * memoria_principal = NULL;
+void * memoria_virtual = NULL;
 
 /* Declaracion de funciones privadas */
 
 
 /* ************************************************** */
+void inicializacion_estructuras(){
+    char * tipo_memoria = get_esquema_memoria();
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        list_create(list_tablas_segmentos);
+        list_create(tabla_hueco);
+    }
+    else{
+        list_create(list_tablas_paginacion);
+        list_create(tablas_pag_libre);
+
+        void* puntero_bitmap = malloc(1);
+        bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
+
+        void* puntero_bitmap_memoria_virtual = malloc(1);
+        bitmap_memoria_virtual = bitarray_create_with_mode(puntero_bitmap_memoria_virtual, 1, LSB_FIRST);
+    }
+}
+
 void iniciar_memoria_principal(int tam_memoria){
 
     if(memoria_principal == NULL){
@@ -14,11 +33,20 @@ void iniciar_memoria_principal(int tam_memoria){
     }
 }
 
-void liberar_memoria_principal(){
+void iniciar_memoria_virtual(int tam_memoria){
+    if(memoria_virtual == NULL){
+        memoria_virtual = malloc(tam_memoria);
+    }
+}
 
+void liberar_memoria_principal(){
     free(memoria_principal);
     memoria_principal = NULL;
+}
 
+void liberar_memoria_virtual(){
+    free(memoria_virtual);
+    memoria_virtual = NULL;
 }
 
 void cargar_informacion_PCB_a_MP(t_PCB pcb,int base){
@@ -47,35 +75,117 @@ t_PCB leer_info_PCB(int base){
 }
 
 t_TCB leer_info_TCB(int base){
+    void* stream = malloc(21);
+    memcpy(stream, memoria_principal + base, 21);
+    t_TCB tcb = leer_info_TCB_generico(stream);
+    return tcb;
+}
+
+t_TCB leer_info_TCB_generico(void* stream){
     t_TCB  tcb;
     
-    int offset =base;
-    memcpy(&tcb.tid, memoria_principal + offset, sizeof(uint32_t));
+    int offset = 0;
+    memcpy(&tcb.tid, stream + offset, sizeof(uint32_t));
     offset +=sizeof(uint32_t) ;
-    memcpy(&tcb.estado, memoria_principal + offset, sizeof(char));
+    memcpy(&tcb.estado, stream + offset, sizeof(char));
     offset += sizeof(char);
-    memcpy(&tcb.posx, memoria_principal + offset, sizeof(int));
+    memcpy(&tcb.posx, stream + offset, sizeof(int));
     offset +=sizeof(int);
-    memcpy(&tcb.posy, memoria_principal + offset, sizeof(int));
+    memcpy(&tcb.posy, stream + offset, sizeof(int));
     offset +=sizeof(int);
-    memcpy(&tcb.prox_tarea, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.prox_tarea, stream + offset, sizeof(uint32_t));
     offset +=sizeof(uint32_t);
-    memcpy(&tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.puntero_pcb, stream + offset, sizeof(uint32_t));
 
     return tcb;
+}
+
+void* get_stream_tcb(t_TCB tcb){
+    // uint32_t tid;
+    // char estado;
+    // int posx;
+    // int posy;
+    // uint32_t prox_tarea;
+    // uint32_t puntero_pcb;
+    void* stream = malloc(21);
+    
+    int offset = 0;
+    memcpy(stream + offset, &tcb.tid,sizeof(uint32_t));
+    offset +=sizeof(uint32_t) ;
+    memcpy(stream + offset, &tcb.estado,sizeof(char));
+    offset += sizeof(char);
+    memcpy(stream + offset, &tcb.posx,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(stream + offset, &tcb.posy,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(stream + offset, &tcb.prox_tarea,sizeof(uint32_t));
+    offset +=sizeof(uint32_t);
+    memcpy(stream + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
+
+    return stream;
 }
 
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
-    memcpy(memoria_principal, data_segmento->data, data_segmento->tam_data);
+    memcpy(memoria_principal+base, data_segmento->data, data_segmento->tam_data);
+}
+
+char* get_tareas(int patota_id){
+    char * tipo_memoria = get_esquema_memoria();
+
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        return get_tareas_segmentacion(patota_id);
+    }
+    else{
+        return get_tareas_paginacion(patota_id);
+    }
 }
 
 void set_tripulante(t_TCB tcb, int patotaid){
-    set_tripulante_por_segmentacion(tcb, patotaid);
+    char * tipo_memoria = get_esquema_memoria();
+
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        set_tripulante_por_segmentacion(tcb, patotaid);
+    }
+    else{
+        set_TCB_paginacion(tcb, patotaid);
+    }
 }
 
 t_TCB get_TCB(int patota_id, int tripulante_id){
-    t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
+    t_TCB tcb;
+    char * tipo_memoria = get_esquema_memoria();
+
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
+    }
+    else
+    {
+        tcb = get_TCB_paginacion(patota_id, tripulante_id);
+    }
     return tcb;
+}
+
+bool iniciar_patota(t_iniciar_patota init_patota){
+    bool isAllow = false;
+    char * tipo_memoria = get_esquema_memoria();
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0)
+    {
+        isAllow = iniciar_patota_segmentacion(init_patota);
+    }
+    else
+    {
+        isAllow = iniciar_patota_paginacion(init_patota);
+    }
+    return isAllow;
+}
+
+void mostrar_tcb(t_TCB tcb){
+    printf("tid: %d\n", tcb.tid);
+    printf("Estado: %c\n", tcb.estado);
+    printf("Pos x: %d\n", tcb.posx);
+    printf("Pos y: %d\n", tcb.posy);
+    printf("Próxima tarea: %d\n", tcb.prox_tarea);
+    printf("Puntero pcb: %d\n", tcb.puntero_pcb);
 }
 
 void method_sigusr1(){

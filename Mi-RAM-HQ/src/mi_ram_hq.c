@@ -4,8 +4,8 @@ int main(int argc, char **argv)
 {
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
-        //run_tests();
-        init_renderizacion_mapa();
+        run_tests();
+        //init_renderizacion_mapa();
     }
     else
     {
@@ -17,6 +17,10 @@ int main(int argc, char **argv)
       
         int tam_memoria = get_tamanio_memoria();
         iniciar_memoria_principal(tam_memoria);
+        
+        //Para paginación
+        iniciar_memoria_virtual(get_tamanio_swap());
+        inicializacion_estructuras();
         server_mi_ram_iniciar(puerto);
 
         signal(SIGUSR1, method_sigusr1);

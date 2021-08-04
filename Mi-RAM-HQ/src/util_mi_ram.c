@@ -84,29 +84,125 @@
 // 	Posicion;
 
 Posicion get_posicion_STR(char *posiciones, int indice){
+    //printf("%s %d\n", posiciones, indice);
     Posicion pos;
-    char** partes = string_split(posiciones,",");
+    char** partes = string_split(posiciones," ");
+    
     char** pos_aux = string_split(partes[indice-1],"|");
     pos.posx = atoi(pos_aux[0]);
     pos.posy = atoi(pos_aux[1]);
-
 
     return pos;
  }
 
  char map_estado(status_tripulante status){
-        switch (status)
-        {
-            case NEW:
-                return 'N';
-            case READY:
-                return 'R';
-            case EXEC:
-                return 'E';
-            case BLOCKED:
-                return 'B';
-            case BLOCKED_SABOTAJE:
-                return 'B';
-        }
-        return ' ';
+    switch (status)
+    {
+        case NEW:
+            return 'N';
+        case READY:
+            return 'R';
+        case EXEC:
+            return 'E';
+        case BLOCKED:
+            return 'B';
+        case BLOCKED_SABOTAJE:
+            return 'B';
     }
+    return ' ';
+}
+
+int get_timestamp_number(char* timestamp){
+    char** parts = string_split(timestamp, ":");
+
+    char* timestamp_format = string_new();
+    void concatenar_partes(char *item){
+        string_append_with_format(&timestamp_format, "%s", item);
+    }
+    string_iterate_lines(parts, concatenar_partes);
+
+    int timestamp_number = atoi(timestamp_format);
+    return timestamp_number;
+}
+
+
+t_list* list_slice(t_list* lista, int inicio, int fin){
+    bool puede_agregar = false;
+    bool puede_terminar = false;
+    t_list* lista_filtrada = list_create();
+    void* item;
+    for(int c=0; c<list_size(lista); c++){
+        if(c==inicio) puede_agregar = true;
+        item = list_get(lista, c);
+        if(puede_agregar) list_add(lista_filtrada, item);
+        if(c==fin) puede_terminar = true;
+        if(puede_terminar) break;
+    }
+    return lista_filtrada;
+}
+
+bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_obj){
+    int cant_marcos_real = cantidad_disponible(bitmap_memoria_real);
+    int canti_marcos_virtual  = cantidad_disponible(bitmap_memoria_virtual);
+    if(cant_marcos_real + canti_marcos_virtual >= tamanio_obj ) return true;
+    return false;
+    
+}
+
+
+
+bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
+    return ! esta_Llena_Memoria(bitmap_memoria_real);
+}
+
+int cantidad_disponible(t_bitarray* bitmap){
+    int cant = 0;
+    int bits = bitarray_get_max_bit(bitmap);
+  
+    for(int c = 0; c < bits ; c++){
+        if(!bitarray_test_bit(bitmap,c)){
+            cant++;
+        }
+    }
+
+    return cant;
+}
+
+bool esta_Llena_Memoria(t_bitarray* bitmap){
+    int indice = 0;
+    int bits = bitarray_get_max_bit(bitmap);
+    
+    for(int c =0; c < bits ; c++){
+        if (! bitarray_test_bit(bitmap,c)) return false;
+    }
+    return true;
+}
+
+char* get_label_presencia(bool presencia){
+    if(presencia) return "Libre";
+    return "Ocupado";
+}
+
+void print_bit_map(t_bitarray* bitarray){
+    //bitarray_set_bit(bitarray, 3);
+    //bitarray_set_bit(bitarray, 10);
+
+    uint32_t bits = bitarray_get_max_bit(bitarray);
+    printf("Bits: %d\n", bits);
+    /*for(int c=0; c<bits; c++){
+		bitarray_clean_bit(bitarray, c);
+	}*/
+
+    for(int c=0; c<bits; c++){
+        bool bit = bitarray_test_bit(bitarray, c);
+        printf("%d ", bit);
+    }
+    printf("\n");
+}
+void limpiar_bit_map(t_bitarray* bitmap){
+    uint32_t bits = bitarray_get_max_bit(bitmap);
+    for(int c=0; c<bits; c++){
+        bitarray_clean_bit(bitmap, c);
+
+    }
+}

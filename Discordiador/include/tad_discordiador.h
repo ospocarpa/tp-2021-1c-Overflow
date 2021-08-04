@@ -37,6 +37,8 @@ typedef struct
                                   //habilitado por dispatcher
     pthread_mutex_t sabotaje;
 
+    pthread_mutex_t seleccionado_bloqueado; //idem seleccionado
+
     //defino los sockets que se conectaran a ambos modulos
     int socket_cliente_mongo_store;
     int socket_cliente_mi_ram;

@@ -1,7 +1,7 @@
 #include "segmentacion_pura.h"
 
-static t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
-static t_list * tabla_hueco; // 
+t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
+t_list * tabla_hueco; // 
 static char * alg_ubicacion = "LL";
 
 /* Declaracion de funciones privadas */
@@ -227,7 +227,7 @@ t_segmento * escribir_segmentacion_pura(t_data_segmento * data){
     }
     else
     {
-        /* compactacion() */
+        compactacion();
         segmento = elegir_segmento(data);
     }
     
@@ -261,7 +261,6 @@ t_list* get_todos_los_segmentos(){  //[t_segmento]
         t_list* segmentos_de_tabla = tabla_segmento->segmentos;
         list_add_all(lista_segmentos_global, segmentos_de_tabla);
     }
-
 
     return lista_segmentos_global;
 }
@@ -300,13 +299,12 @@ void mover_segmento(t_segmento *segmento, int base_pivote){
     segmento->base = base_pivote;
 }
 
-char* get_tareas(int patota_id){
+char* get_tareas_segmentacion(int patota_id){
     bool mismo_tabla_id(t_tabla_segmentos *item){
         return item->pid == patota_id;
     }
     t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);    
-    t_segmento* segmento = list_find(tabla_segmento->segmentos, 0);
-
+    t_segmento* segmento = list_get(tabla_segmento->segmentos, 0);
     char* tareas = leer_info_tareas(segmento->base, segmento->desplazamiento);
     return tareas;
 }
@@ -336,25 +334,10 @@ void set_tripulante_por_segmentacion(t_TCB tcb, int patota_id){
 }
 
 void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){ 
-    // uint32_t tid;
-    // char estado;
-    // int posx;
-    // int posy;
-    // uint32_t prox_tarea;
-    // uint32_t puntero_pcb;
+    void* stream = get_stream_tcb(tcb);
 
     int offset = base;
-    memcpy(memoria_principal + offset, &tcb.tid,sizeof(uint32_t));
-    offset +=sizeof(uint32_t) ;
-    memcpy(memoria_principal + offset, &tcb.estado,sizeof(char));
-    offset += sizeof(char);
-    memcpy(memoria_principal + offset, &tcb.posx,sizeof(int));
-    offset +=sizeof(int);
-    memcpy(memoria_principal + offset, &tcb.posy,sizeof(int));
-    offset +=sizeof(int);
-    memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
-    offset +=sizeof(uint32_t);
-    memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
+    memcpy(memoria_principal + offset, stream, 21);
 }
 
 void dump_segmentacion_pura(){
@@ -408,7 +391,7 @@ void eliminar_segmento_tripulante(t_expulsar_tripulante tripulante){
     t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, (void * ) mismo_tabla_id);
 
     bool is_segmento_para_tripulante(t_segmento * seg){
-        printf("id tripulante: %d \n", tripulante.tripulante_id);
+        //printf("id tripulante: %d \n", tripulante.tripulante_id);
         return seg->id == tripulante.tripulante_id;
     }
 
