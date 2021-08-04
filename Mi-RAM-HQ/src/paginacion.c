@@ -31,3 +31,7 @@ void dump_paginacion(){
     
     printf("%s\n", contenido);*/
 }
+
+void expulsar_tripulante_paginacion(int id_tripulante){
+    /**/
+}
