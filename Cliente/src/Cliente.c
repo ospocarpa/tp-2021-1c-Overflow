@@ -9,9 +9,8 @@ int main(int argc, char **argv)
     t_log *logger = iniciar_logger(config->ARCHIVO_LOG, "CLIENTE");
     printf("%s %d\n", config->IP_MODULO, config->PUERTO_MODULO);
     int conexion_servidor = crear_conexion("127.0.0.1", 5002);
-    /*inicio_FSCK(conexion_servidor);
-    return 1;*/
-    crear_recurso(conexion_servidor, "oxigeno.ims");
+    
+    //crear_recurso(conexion_servidor, "oxigeno.ims");
     sleep(2);
     agregar_recurso(conexion_servidor, "oxigeno.ims");
     sleep(5);
@@ -21,11 +20,11 @@ int main(int argc, char **argv)
     sleep(5);
     inicio_FSCK(conexion_servidor);
     sleep(20);
-    crear_recurso(conexion_servidor, "basura.ims");
+    //crear_recurso(conexion_servidor, "basura.ims");
     sleep(2);
     agregar_recurso(conexion_servidor, "basura.ims");
     sleep(2);
-    crear_sabotaje(conexion_servidor, "tripulante1.ims"); //crear tripulanaate y su bitacora
+    //crear_sabotaje(conexion_servidor, "tripulante1.ims"); //crear tripulanaate y su bitacora
     sleep(3);
     update_bitacora(conexion_servidor, "tripulante1.ims", "hola"); //contatena
     sleep(3);

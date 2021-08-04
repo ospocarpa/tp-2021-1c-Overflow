@@ -1,6 +1,6 @@
 #include "segmentacion_pura.h"
 
-static t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
+t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
 t_list * tabla_hueco; // 
 static char * alg_ubicacion = "LL";
 
