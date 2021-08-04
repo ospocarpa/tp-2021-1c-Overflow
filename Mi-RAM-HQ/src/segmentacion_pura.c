@@ -169,7 +169,7 @@ t_segmento * elegir_segmento(t_data_segmento * data_segmento){
     int base = 0;
     t_segmento * segmento = malloc(sizeof(t_segmento));
 
-    if (alg_ubicacion == "LL")
+    if (alg_ubicacion == "FF")
     {
        base = algoritmo_primer_ajuste(data_segmento);
     }
@@ -340,7 +340,7 @@ void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
     memcpy(memoria_principal + offset, stream, 21);
 }
 
-void dump_segmentacion_pura(){
+char* dump_segmentacion_pura(){
     char *format = "%d/%m/%y %H:%M:%S";
     char *timestamp = temporal_get_string_time(format);
     
@@ -363,6 +363,7 @@ void dump_segmentacion_pura(){
     //TODO: pasar a hexadecimal
     
     printf("%s\n", contenido);
+    return contenido;
 }
 
 /* *********************FENCIONES PARA TESTEAR************************ */

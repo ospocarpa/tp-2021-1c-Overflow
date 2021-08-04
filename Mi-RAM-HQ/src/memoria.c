@@ -10,6 +10,7 @@ void * memoria_virtual = NULL;
 void inicializacion_estructuras(){
     char * tipo_memoria = get_esquema_memoria();
     if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        set_algoritmo_ubicacion(get_criterio_de_seleccion());
         list_create(list_tablas_segmentos);
         list_create(tabla_hueco);
     }
@@ -17,11 +18,21 @@ void inicializacion_estructuras(){
         list_create(list_tablas_paginacion);
         list_create(tablas_pag_libre);
 
-        void* puntero_bitmap = malloc(1);
-        bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
+        int cantidad_frames_virtual = get_tamanio_swap();
+        int cantidad_frames = get_tamanio_tamanio_pagina();
 
-        void* puntero_bitmap_memoria_virtual = malloc(1);
-        bitmap_memoria_virtual = bitarray_create_with_mode(puntero_bitmap_memoria_virtual, 1, LSB_FIRST);
+        char* path = get_path_swap();
+        int file_size = cantidad_frames_virtual/8;
+        int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+        ftruncate(fd, file_size);
+        void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+
+        void* puntero_bitmap = malloc(cantidad_frames/8);
+        bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, cantidad_frames/8, LSB_FIRST);
+        bitmap_memoria_virtual = bitarray_create_with_mode(stream, cantidad_frames_virtual/8, LSB_FIRST);
+
+        //limpiar_bit_map(bitmap_memoria_real);
+        //limpiar_bit_map(bitmap_memoria_virtual);
     }
 }
 
@@ -189,12 +200,23 @@ void mostrar_tcb(t_TCB tcb){
 }
 
 void method_sigusr1(){
+    char* contenido = "";
     //Mostrar dump de la memoria principal
     if(strcmp(get_esquema_memoria(), "SEGMENTACION")==0){
         //Realizar compactacion
         compactacion();
-        dump_segmentacion_pura();
+        contenido = dump_segmentacion_pura();
     }else{
-        dump_paginacion();
+        contenido = dump_paginacion();
     }
+
+    char *timestamp = temporal_get_string_time("");
+    char* path = string_new();
+    string_append_with_format(&path, "/home/utnso/tp-2021-1c-Overflow/Mi-RAM-HQ/Dump %s.dmp", timestamp);
+
+    int file_size = strlen(contenido);
+    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    ftruncate(fd, file_size);
+    void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    strcpy(stream, contenido);
 }

@@ -12,7 +12,7 @@ int main(int argc, char **argv)
         cfg_create("cfg/mi_ram_hq.config");
         logger_create("cfg/mi_ram_hq.log", "MI_RAM_HQ");
         logger_info("Iniciando módulo Mi-RAM-HQ");
-
+        
         int puerto = get_puerto();
       
         int tam_memoria = get_tamanio_memoria();
