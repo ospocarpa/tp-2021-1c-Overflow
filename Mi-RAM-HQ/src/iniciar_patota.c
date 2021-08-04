@@ -153,7 +153,7 @@ void guardar_info_patota(t_iniciar_patota data, void* informacion){
         page->frame = frameid;
         page->presencia = true;
         page->uso = true;
-        page->timestamp = temporal_get_string_time();
+        page->timestamp = temporal_get_string_time("");
         // fijarse las comillas dobles 
 
         int base = frameid*pagina_tam;
