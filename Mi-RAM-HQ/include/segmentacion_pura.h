@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <commons/collections/list.h>
 #include "tad_mi_ram_hq.h"
 #include "memoria.h"

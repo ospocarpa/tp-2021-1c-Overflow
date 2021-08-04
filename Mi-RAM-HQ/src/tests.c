@@ -427,6 +427,7 @@ void validar_iniciar_patota_segmentada(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
@@ -475,6 +476,7 @@ void validar_expulsar_tripulante_segmentada(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     expulsar_tripulante(data);
@@ -517,6 +519,7 @@ void validar_informacion_de_patota_segmentacion(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
@@ -557,6 +560,7 @@ void validar_actualizacion_tripulante(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
@@ -600,6 +604,7 @@ void validar_informar_tarea(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     
