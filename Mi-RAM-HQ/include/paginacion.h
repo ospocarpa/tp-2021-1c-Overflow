@@ -23,7 +23,7 @@ extern void * memoria_principal;
         int offset;                      
     } t_paginacion_temporal;                          //Usado para el get y set de TCB en paginación
 
-void dump_paginacion();
+char* dump_paginacion();
 void iniciar_tabla_paginacion();
 
 //Crea un bitmap nuevo a partir de la cantidad de bits

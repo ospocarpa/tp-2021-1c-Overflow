@@ -79,7 +79,7 @@ int get_first_frame_disponible(t_bitarray* bitmap){
     return indice;
 }
 
-void dump_paginacion(){
+char* dump_paginacion(){
     char *format = "%d/%m/%y %H:%M:%S";
     char *timestamp = temporal_get_string_time(format);
     
@@ -102,6 +102,7 @@ void dump_paginacion(){
 
     //TODO: pasar a hexadecimal
     printf("%s\n", contenido);
+    return contenido;
 }
 
 t_TCB get_TCB_paginacion(int patota_id, int tripulante_id){

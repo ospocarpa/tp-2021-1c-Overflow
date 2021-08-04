@@ -11,6 +11,11 @@
 #include "segmentacion_pura.h"
 #include "paginacion.h"
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+
 extern t_list * list_tablas_segmentos;
 extern t_list * tabla_hueco; 
 extern t_list * list_tablas_paginacion;
