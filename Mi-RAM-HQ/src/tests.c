@@ -23,6 +23,7 @@ void validar_expulsar_tripulante_segmentada();
 void validar_informacion_de_patota_segmentacion();
 void validar_actualizacion_tripulante();
 void validar_informar_tarea();
+void validar_compactacion();
 void validar_cantidad_disponible();
 void validar_existe_memoria_real_disponible();
 void validar_existe_memoria_disponible_paginacion();
@@ -55,6 +56,7 @@ int run_tests()
     CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
     CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
     CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
+    CU_add_test(tests, "Valido compactacion", validar_compactacion);
     CU_add_test(tests, "Valido cantidad de espascio libres", validar_cantidad_disponible);
     CU_add_test(tests, "Valido si hay memoria real disponible", validar_existe_memoria_real_disponible);
     CU_add_test(tests, "Valido si hay espacio en real + virtual", validar_existe_memoria_disponible_paginacion);
@@ -499,6 +501,7 @@ void validar_iniciar_patota_segmentada(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
@@ -547,6 +550,7 @@ void validar_expulsar_tripulante_segmentada(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     expulsar_tripulante(data);
@@ -589,6 +593,7 @@ void validar_informacion_de_patota_segmentacion(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
@@ -630,6 +635,7 @@ void validar_actualizacion_tripulante(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
@@ -673,6 +679,7 @@ void validar_informar_tarea(){
     iniciar_memoria_principal(128);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(128);
+    set_size_memoria(128);
 
     bool res = iniciar_patota_segmentacion(data_input);
     
@@ -696,4 +703,76 @@ void validar_informar_tarea(){
     void tabla_destroy(t_segmento * seg){
         free(seg);
     }
+}
+
+void validar_compactacion(){
+
+    t_iniciar_patota data_input, data_input2;
+
+    data_input.cant_tripulantes = 2;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2 0|0";
+    data_input.long_posicion = strlen("1|2 0|0");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    data_input2.cant_tripulantes = 1;
+    data_input2.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15";
+    data_input2.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15");
+    data_input2.posiciones = "9|2";
+    data_input2.long_posicion = strlen("9|2");
+    data_input2.patota_id = 2;
+    data_input2.id_primer_tripulante = 4;
+
+    t_expulsar_tripulante data;
+
+    data.patota_id = 1;
+    data.tripulante_id = 2;
+
+    //printf("long tarea: %d \n ",data_input2.long_tareas);
+
+    cfg_create("cfg/mi_ram_hq.config");
+    iniciar_memoria_principal(256);
+    iniciar_lista_tabla_segmento();
+    iniciar_tabla_huecos(256);
+    set_size_memoria(256);
+    char * alg = "BF";
+    set_algoritmo_ubicacion(alg);
+
+    bool res1 = iniciar_patota_segmentacion(data_input);
+    //dump_segmentacion_pura();
+    //dump_huecos();
+    expulsar_tripulante(data);
+    /*printf("\n");
+    dump_segmentacion_pura();
+    dump_huecos();
+    printf("\n");
+
+    printf("\nIniciar patota\n");*/
+    bool res2 = iniciar_patota_segmentacion(data_input2);
+    /*dump_segmentacion_pura();
+    dump_huecos();*/
+    bool hay_memoria_libre = se_puede_escribir(8);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
+    int cant_huecos = cantidad_huecos_test();
+    t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);
+
+    dump_segmentacion_pura();
+
+    CU_ASSERT_TRUE(res1);
+    CU_ASSERT_TRUE(hay_memoria_libre);
+    CU_ASSERT_EQUAL(cant_tablas_segmemtos, 2);
+    CU_ASSERT_EQUAL(cant_huecos, 1);
+    CU_ASSERT_EQUAL(list_size(tabla->segmentos), 3);
+
+    liberar_tabla_huecos();
+    liberar_memoria_principal();
+    
+
+    /* void tabla_destroy(t_segmento * seg){
+        free(seg);
+    }
+    */
+
 }

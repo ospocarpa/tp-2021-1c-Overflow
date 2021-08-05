@@ -2,7 +2,8 @@
 
 t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
 t_list * tabla_hueco; // 
-static char * alg_ubicacion = "LL";
+static char * alg_ubicacion = "FF";
+int size_memoria = 0;
 
 /* Declaracion de funciones privadas */
 t_hueco * hueco_create(int base, int desplazamiento);
@@ -22,6 +23,10 @@ void iniciar_tabla_huecos(int tam_memoria){
 
 void agregar_tabla_de_segmento(t_tabla_segmentos * tabla){
     list_add(list_tablas_segmentos, tabla);
+}
+
+void set_size_memoria(int size_m){
+    size_memoria = size_m;
 }
 
 /* ****************** */
@@ -48,11 +53,14 @@ void hueco_detroy(t_hueco * hueco){
 }
 //puede aguregar o quitar hueco segun el tamaño que se va almacenar es decir el desplazamiento
 void agregar_hueco_segun_desplazamiento(int indice_hueco, int desplazamiento){
+    //printf("\nTamaño: %d\n", desplazamiento);
     t_hueco * hueco_a_ocupar = list_get(tabla_hueco, indice_hueco);
 
+    //printf("Hueco a ocupar base: %d\n", hueco_a_ocupar->base);
     int base_nueva = hueco_a_ocupar->base + desplazamiento;
     int desplazamiento_nuevo =  hueco_a_ocupar->desplazamiento - desplazamiento;
 
+    //printf("Base nueva: %d Desplazamiento nuevo: %d\n\n", base_nueva, desplazamiento_nuevo);
     if (desplazamiento_nuevo > 0)
     {
         //remplazo en una posicion un nuevo valor del elemento hueco
@@ -64,11 +72,9 @@ void agregar_hueco_segun_desplazamiento(int indice_hueco, int desplazamiento){
     {
         list_remove_and_destroy_element(tabla_hueco, indice_hueco, (void *) hueco_detroy);
     }
-
 }
 
 int algoritmo_primer_ajuste(t_data_segmento * data_segmento){
-    
     int base;
 
     for (size_t i = 0; i < list_size(tabla_hueco); i++)
@@ -83,10 +89,13 @@ int algoritmo_primer_ajuste(t_data_segmento * data_segmento){
         } 
     }
 
-return base;
+    //printf("ff: cant de huecos: %d \n ",cantidad_huecos_test());
+
+    return base;
 }
 
-int algoritmo_mejor_ajuste(int desplazamiento){
+int algoritmo_mejor_ajuste(t_data_segmento * data){
+    //printf("Inicio mejor ajuste, tamaño: %d\n", data->tam_data);
     int base;
 
     //Ver el primer hueco disponible
@@ -97,21 +106,20 @@ int algoritmo_mejor_ajuste(int desplazamiento){
     for(int c=0; c<list_size(tabla_hueco);c++){
         hueco_temp = list_get(tabla_hueco, c);
 
-        if(hueco_temp->desplazamiento >= desplazamiento){
+        if(hueco_temp->desplazamiento >= data->tam_data){
             hueco_seleccionado = list_get(tabla_hueco, c);
             indice = c;
             break;
         }
     }
-
-    int pivote_titular = hueco_seleccionado->desplazamiento - desplazamiento; //2
+    int pivote_titular = hueco_seleccionado->desplazamiento - data->tam_data; //2
     
     int pivote_auxiliar;
     int indice_a_borrar = indice;
     
     for(int c=indice+1; c<list_size(tabla_hueco);c++){
-        //t_hueco* hueco_temp = list_get(tabla_hueco, c);
-        pivote_auxiliar = hueco_temp->desplazamiento - desplazamiento; //1
+        t_hueco* hueco_temp = list_get(tabla_hueco, c);
+        pivote_auxiliar = hueco_temp->desplazamiento - data->tam_data; //1
         if(pivote_auxiliar>=0){
             if(pivote_auxiliar<pivote_titular){
                 hueco_seleccionado = hueco_temp;
@@ -121,15 +129,19 @@ int algoritmo_mejor_ajuste(int desplazamiento){
         }
     }
 
+    //hueco_seleccionado = list_get(tabla_hueco, );
     base = hueco_seleccionado->base;
-    if(hueco_seleccionado->desplazamiento == desplazamiento){
+    if(hueco_seleccionado->desplazamiento == data->tam_data){
         indice = indice_a_borrar;
         //eliminarlo de la lista;
-        list_remove_and_destroy_element(tabla_hueco, indice, (void *) hueco_detroy);
-        hueco_detroy(hueco_temp);
+        list_remove(tabla_hueco, indice);
+        //hueco_detroy(hueco_temp);
     }else{
         
-        hueco_seleccionado->base = hueco_seleccionado->base + desplazamiento; 
+        hueco_seleccionado->base = hueco_seleccionado->base + data->tam_data;
+        hueco_seleccionado->desplazamiento = size_memoria - hueco_seleccionado->base;
+        //printf("2 hueco_seleccionado base: %d \n", hueco_seleccionado->base);
+        //printf("2 hueco_seleccionado desplazamiento: %d \n", hueco_seleccionado->desplazamiento);
     }
 
     return base;
@@ -168,10 +180,10 @@ void escribir_memoria_principal(t_data_segmento * data_semento,int base){
 t_segmento * elegir_segmento(t_data_segmento * data_segmento){
     int base = 0;
     t_segmento * segmento = malloc(sizeof(t_segmento));
-
-    if (alg_ubicacion == "FF")
+    //printf("\nAlgoritmo de reemplazo: %s\n", alg_ubicacion);
+    if (strcmp(alg_ubicacion,"FF") == 0 )
     {
-       base = algoritmo_primer_ajuste(data_segmento);
+        base = algoritmo_primer_ajuste(data_segmento);
     }
     else
     {
@@ -266,23 +278,50 @@ t_list* get_todos_los_segmentos(){  //[t_segmento]
 }
 
 void compactacion(){
+    //printf("estoy compactando \n");
     t_list* segmentos_global = get_todos_los_segmentos();           //Representa a todos los segmentos del sistema
     bool comparador(t_segmento *segmento1, t_segmento *segmento2)
     {
         return segmento1->base < segmento2->base;
     }
     list_sort(segmentos_global, comparador);            // Se ordena los segmentos por la base
+    
+    //printf("Compactación\n");
+    for(int c=0; c<list_size(segmentos_global); c++){
+        t_segmento* segmento_aux = list_get(segmentos_global, c);
+        //printf("Base: %d Desplazamiento: %d\n", segmento_aux->base, segmento_aux->desplazamiento);
+    }
 
     int base_pivote = 0; 
+    int ultimo_desplazamiento = 0;
+    t_segmento *s;
     for(int c=0; c<list_size(segmentos_global); c++){
-        t_segmento *s = list_get(segmentos_global, c);
+        s = list_get(segmentos_global, c);
+        ultimo_desplazamiento = s->desplazamiento;
         if(base_pivote == s->base ){
             base_pivote += s->desplazamiento;
             continue;
         }else{
             mover_segmento(s, base_pivote);
+            base_pivote += s->desplazamiento;
         }
     }
+    //printf("Posterior Compactación\n");
+    for(int c=0; c<list_size(segmentos_global); c++){
+        t_segmento* segmento_aux = list_get(segmentos_global, c);
+        //printf("Base: %d Desplazamiento: %d\n", segmento_aux->base, segmento_aux->desplazamiento);
+    }
+    //printf("compactacion: cant de huecos: %d \n ",list_size(tabla_hueco));
+
+    list_clean(tabla_hueco);
+
+    //printf("compactacion: cant de huecos luego del clean: %d \n ",list_size(tabla_hueco));
+    
+    int base_new = base_pivote;
+    int desplazamiento = size_memoria - base_new;
+
+    agregar_hueco(base_new, desplazamiento);
+    //dump_huecos();
 }
 
 void mover_segmento(t_segmento *segmento, int base_pivote){
@@ -340,6 +379,16 @@ void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){
     memcpy(memoria_principal + offset, stream, 21);
 }
 
+void dump_huecos(){
+    int cant_huecos = cantidad_huecos_test();
+    printf("Dump huecos\n");
+    for (size_t i = 0; i < cant_huecos; i++)
+    {
+        t_hueco * h = get_hueco_index_test(i);
+        printf("Base: %d Desplazamiento: %d\n",h->base, h->desplazamiento);
+    }
+}
+
 char* dump_segmentacion_pura(){
     char *format = "%d/%m/%y %H:%M:%S";
     char *timestamp = temporal_get_string_time(format);
@@ -380,6 +429,12 @@ t_tabla_segmentos * get_tabla_segmento_segun_indice_test(int indice){
     return list_get(list_tablas_segmentos, indice);
 }
 
+t_hueco * get_hueco_index_test(int indice){
+    return list_get(tabla_hueco, indice);
+}
+
+/* ****************************** */
+
 void destroy_segmento(t_segmento * segmento){
     free(segmento);
 }
@@ -398,6 +453,7 @@ void eliminar_segmento_tripulante(t_expulsar_tripulante tripulante){
 
     t_segmento * seg_eliminado = list_find(tabla_segmento->segmentos, is_segmento_para_tripulante);
     agregar_hueco(seg_eliminado->base, seg_eliminado->desplazamiento);
+    
 
     list_remove_and_destroy_by_condition(tabla_segmento->segmentos, is_segmento_para_tripulante,destroy_segmento);
 
