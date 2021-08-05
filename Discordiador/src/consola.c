@@ -333,6 +333,7 @@ void iniciar_patota(char **tokens)
     cargarTripulante(&datosPatota, tokens, cantidad_argumentos);
     mostrar_datos_patota(&datosPatota);
 
+    mostrar_iniciar_patota(datosPatota);
     t_package paquete = ser_cod_iniciar_patota(datosPatota);
 
     int socket_cliente = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);

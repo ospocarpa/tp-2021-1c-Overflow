@@ -17,12 +17,36 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     string_trim_right(&posiciones);
     datosPatota->long_posicion = strlen(posiciones);
     datosPatota->posiciones = posiciones;
+
+    int cantidad_tripulantes = datosPatota->cant_tripulantes;
+    int cantidad_posiciones = 0;
+    char** partes = string_split(datosPatota->posiciones, " ");
+    void a_la_lista_partes(char *item){
+		cantidad_posiciones++;
+    };
+    string_iterate_lines(partes, a_la_lista_partes);
+    
+    int cant_para_repetir = cantidad_tripulantes - cantidad_posiciones;
+    
+    
+    char* nuevas_posiciones = string_new();
+    string_append_with_format(&nuevas_posiciones, "%s", datosPatota->posiciones);
+    for(int c=0; c<cant_para_repetir; c++){
+        string_append_with_format(&nuevas_posiciones, "%s", "0|0 ");
+    }  
+    string_trim_right(&nuevas_posiciones);
+    datosPatota->posiciones = string_new();
+    string_append_with_format(&datosPatota->posiciones, "%s", nuevas_posiciones);
+    datosPatota->long_posicion = strlen(datosPatota->posiciones);
+
+    numeroPatota++;
     int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
-    datosPatota->long_tareas = bytesContenido,
-    datosPatota->tareas = contenido;
+    datosPatota->tareas = "GENERAR_BASURA 30;2;2;2";
+    datosPatota->long_tareas = strlen(datosPatota->tareas);
+    //datosPatota->tareas = contenido;
     datosPatota->patota_id = numeroPatota;
     datosPatota->id_primer_tripulante = numeroTripulante;
-    free(contenido);
+    //free(contenido);
     //mostrar_datos_patota(datosPatota);
 }
 

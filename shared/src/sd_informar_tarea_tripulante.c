@@ -81,3 +81,8 @@ t_short_info_tripulante des_cod_informar_tarea_tripulante(t_package paquete)
 
     return info;
 }
+
+void mostrar_short_info_tripulante(t_short_info_tripulante tripulante){
+    printf("\nPatota id: %d\n", tripulante.patota_id);
+    printf("Tripulante id: %d\n", tripulante.tripulante_id);
+}

@@ -17,5 +17,6 @@ bool des_res_iniciar_patota(t_package paquete);
 t_iniciar_patota des_cod_iniciar_patota(t_package paquete);
 t_package ser_res_iniciar_patota(bool data);
 t_list * convertir_a_list_psiciones(char * posiciones_string);
+void mostrar_iniciar_patota(t_iniciar_patota init_patota);
 
 #endif

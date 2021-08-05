@@ -91,7 +91,7 @@ Posicion get_posicion_STR(char *posiciones, int indice){
     char** pos_aux = string_split(partes[indice-1],"|");
     pos.posx = atoi(pos_aux[0]);
     pos.posy = atoi(pos_aux[1]);
-
+    //printf("Coord: %d %d\n", pos.posx, pos.posy);
     return pos;
  }
 

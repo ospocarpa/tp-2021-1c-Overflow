@@ -28,8 +28,18 @@ static void *ejecutar_operacion(int tripulante)
 	case INICIAR_PATOTA:
 		logger_info("INICIAR PATOTA");
 		/* interpreto el contenido del mensaje */
+
+		/*
+		int cant_tripulantes;
+		char * tareas;
+		int long_tareas;
+		int long_posicion;
+		char * posiciones;
+		uint32_t patota_id;
+		uint32_t id_primer_tripulante;
+		*/
 		init_patota = des_cod_iniciar_patota(paquete);
-		//printf("Posiciones: %s\n", init_patota.posiciones);
+		mostrar_iniciar_patota(init_patota);
 
 		//se envia un booleano de confirmacion
 		bool respuesta = true;
@@ -53,6 +63,7 @@ static void *ejecutar_operacion(int tripulante)
 		logger_info("INFORMAR TAREA");
 		/* interpreto el contenido del mensaje */
 		tripulante_info = des_cod_informar_tarea_tripulante(paquete);
+		mostrar_short_info_tripulante(tripulante_info);
 		
 		char* tareas = get_tareas(tripulante_info.patota_id);
 		tcb = get_TCB(tripulante_info.patota_id, tripulante_info.tripulante_id);
@@ -106,7 +117,7 @@ void actualizar_tripulante(t_TCB tcb, int posx, int posy){
 
 void server_mi_ram_iniciar(int puerto)
 {
-	init_renderizacion_mapa();
+	//init_renderizacion_mapa();
 	int socket_server;
 	int socket_client_tripulante;
 	pthread_t hilo_client_tripulante;

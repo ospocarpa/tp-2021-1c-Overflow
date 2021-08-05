@@ -125,22 +125,22 @@ void init_renderizacion_mapa(){
 void crear_tripulante(int tripulante_id, int posx, int posy){
     int cols, rows;
     
-    char tripulante_signo = tripulante_id + '0';
+    /*char tripulante_signo = tripulante_id + '0';
     int err = personaje_crear(nivel, tripulante_signo, posx, posy);
     ASSERT_CREATE(nivel, tripulante_signo, err);
-    nivel_gui_dibujar(nivel);
+    nivel_gui_dibujar(nivel);*/
 }
 
 void desplazar_tripulante(int tripulante_id, int posx, int posy){
-    int cols, rows;
+    /*int cols, rows;
     
     char tripulante_signo = tripulante_id + '0';
     int err = item_desplazar(nivel, tripulante_signo, posx, posy);
-    nivel_gui_dibujar(nivel);
+    nivel_gui_dibujar(nivel);*/
 }
 
 void eliminar_tripulante(int tripulante_id){
-    char tripulante_signo = tripulante_id + '0';
+    /*char tripulante_signo = tripulante_id + '0';
     item_borrar(nivel, tripulante_signo);
-    nivel_gui_dibujar(nivel);
+    nivel_gui_dibujar(nivel);*/
 }

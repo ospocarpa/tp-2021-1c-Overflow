@@ -166,7 +166,6 @@ bool se_puede_escribir(int tam_info){
     void sumar_espacios_libres(t_hueco * hueco){
         tam_memoria_libre += hueco->desplazamiento;
     }
-
     list_iterate(tabla_hueco, sumar_espacios_libres);
 
     return (tam_memoria_libre >= tam_info);

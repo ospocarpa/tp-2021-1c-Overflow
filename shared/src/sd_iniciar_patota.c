@@ -104,3 +104,12 @@ t_list * convertir_a_list_posiciones(char * posiciones_string){
     
     return posiciones;
 }
+
+void mostrar_iniciar_patota(t_iniciar_patota init_patota){
+    printf("\nCant tripulantes: %d\n", init_patota.cant_tripulantes);
+    printf("Tareas: %s\n", init_patota.tareas);
+    printf("Long tareas: %d\n", init_patota.long_tareas);
+    printf("Posiciones: %s\n", init_patota.posiciones);
+    printf("Patota_id: %d\n", init_patota.patota_id);
+    printf("Primer tripulante: %d\n", init_patota.id_primer_tripulante);
+}

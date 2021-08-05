@@ -26,7 +26,7 @@ t_config_discordiador *config;
 //por ahora booleano para el sabotaje
 bool hay_sabotaje = false;
 bool planificacion_activa = false;
-int numeroTripulante = 0;
+int numeroTripulante = 2;
 int numeroPatota = 0;
 int cantidad_activos = 0;
 

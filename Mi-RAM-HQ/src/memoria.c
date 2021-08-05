@@ -9,10 +9,12 @@ void * memoria_virtual = NULL;
 /* ************************************************** */
 void inicializacion_estructuras(){
     char * tipo_memoria = get_esquema_memoria();
+    //printf("%s\n", tipo_memoria);
     if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        //printf("Paso\n");
         set_algoritmo_ubicacion(get_criterio_de_seleccion());
-        list_create(list_tablas_segmentos);
-        list_create(tabla_hueco);
+        list_tablas_segmentos = list_create();
+        tabla_hueco = list_create();
     }
     else{
         list_create(list_tablas_paginacion);
