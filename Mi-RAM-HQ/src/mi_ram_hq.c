@@ -4,16 +4,15 @@ int main(int argc, char **argv)
 {
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
-        //run_tests();
-        init_renderizacion_mapa();
-        crear_tripulante(1, 0, 0);
+        run_tests(); 
+        /*crear_tripulante(1, 0, 0);
         crear_tripulante(2, 4, 2);
         sleep(1);
         desplazar_tripulante(1, 0, 1);
         sleep(1);
         desplazar_tripulante(1, 0, 1);
         sleep(1);
-        eliminar_tripulante(2);
+        eliminar_tripulante(2);*/
     }
     else
     {
