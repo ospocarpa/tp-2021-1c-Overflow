@@ -30,7 +30,7 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     
     
     char* nuevas_posiciones = string_new();
-    string_append_with_format(&nuevas_posiciones, "%s", datosPatota->posiciones);
+    string_append_with_format(&nuevas_posiciones, "%s ", datosPatota->posiciones);
     for(int c=0; c<cant_para_repetir; c++){
         string_append_with_format(&nuevas_posiciones, "%s", "0|0 ");
     }  
