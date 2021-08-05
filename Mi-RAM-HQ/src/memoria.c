@@ -202,7 +202,6 @@ void mostrar_tcb(t_TCB tcb){
 }
 
 void method_sigusr1(){
-    printf("Prueba\n");
     char* contenido = "";
     //Mostrar dump de la memoria principal
     if(strcmp(get_esquema_memoria(), "SEGMENTACION")==0){
@@ -215,7 +214,7 @@ void method_sigusr1(){
 
     char *timestamp = temporal_get_string_time("");
     char* path = string_new();
-    string_append_with_format(&path, "/home/utnso/tp-2021-1c-Overflow/Mi-RAM-HQ/Dump %s.dmp", timestamp);
+    string_append_with_format(&path, "/home/utnso/tp-2021-1c-Overflow/Mi-RAM-HQ/Dumps/Dump %s.dmp", timestamp);
 
     int file_size = strlen(contenido);
     int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
