@@ -9,7 +9,7 @@ void init_dispatcher()
         sem_wait(&listos);
         Tripulante *tripulante_seleccionado = busqueda_algoritmo();
         sem_wait(&grado_multiprocesamiento);
-        pthread_mutex_unlock(&tripulante_seleccionado->seleccionado);
+        sem_wait(&tripulante_seleccionado->seleccionado);
     }
 }
 void init_bloqueados()
@@ -22,7 +22,7 @@ void init_bloqueados()
         // un semaforo para seleccionado bloqueado ???
         Tripulante *tripulante_seleccionado = elegir_tripulante_bloqueado();
         // un mutex para que solo ejecute un bloqueado
-        pthread_mutex_unlock(&tripulante_seleccionado->seleccionado_bloqueado);
+        sem_post(&tripulante_seleccionado->seleccionado_bloqueado);
     }
 }
 

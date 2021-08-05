@@ -30,14 +30,14 @@ typedef struct
     t_info_tarea *tarea;
     int patota_id;
     int rafagas_consumidas;
-    pthread_mutex_t activo; //mutex o binario ?? implementar binario
-                            //desabilitado por defecto
+    sem_t activo; //mutex o binario ?? implementar binario
+                  //desabilitado por defecto
 
-    pthread_mutex_t seleccionado; //desahibiliado por defecto
-                                  //habilitado por dispatcher
-    pthread_mutex_t sabotaje;
+    sem_t seleccionado; //desahibiliado por defecto
+                        //habilitado por dispatcher
+    sem_t sabotaje;
 
-    pthread_mutex_t seleccionado_bloqueado; //idem seleccionado
+    sem_t seleccionado_bloqueado; //idem seleccionado
 
     //defino los sockets que se conectaran a ambos modulos
     int socket_cliente_mongo_store;
