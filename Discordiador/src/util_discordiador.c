@@ -9,7 +9,7 @@ bool esBloqueante(Tarea *tarea)
 
 Patota *map_to_patota(t_iniciar_patota datosPatota)
 {
-    numeroTripulante--;
+    // numeroTripulante--;
     Patota *patota_new = malloc(sizeof(Patota));
     patota_new->id = numeroPatota;
     patota_new->tareas = list_create();      //Lista [Tarea]
@@ -31,7 +31,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
 
     for (int c = 0; c < datosPatota.cant_tripulantes; c++)
     {
-        numeroTripulante++;
+
         Tripulante *tripulante = malloc(sizeof(Tripulante));
         tripulante->id = numeroTripulante;
         tripulante->status = NEW;
@@ -52,6 +52,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         tripulante->socket_cliente_mongo_store = -1;
         tripulante->socket_cliente_mi_ram = -1;
         tripulante->expulsado = false;
+        numeroTripulante++;
     }
 
     int posx = 0;
@@ -180,11 +181,12 @@ int guardar_contenido_archivo(const char *ruta, char **contenido)
     return bytes;
 }
 
-char* get_tareas_from_path(char* path){
+char *get_tareas_from_path(char *path)
+{
     int file_size = 1000;
-    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR);
     ftruncate(fd, file_size);
-    char* tareas = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    char *tareas = mmap(NULL, file_size, PROT_WRITE | PROT_READ, MAP_SHARED, fd, 0);
     //printf("%s %d\n", space, strlen(space));
     return tareas;
 }
