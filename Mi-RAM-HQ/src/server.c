@@ -46,7 +46,7 @@ static void *ejecutar_operacion(int tripulante)
 		//mi funcion expulsar tripulante
 		//printf("Tripulante: %d\n", ex_tripulante.id_tripulante);
 		expulsar_tripulante(ex_tripulante);
-		
+		eliminar_tripulante(ex_tripulante.tripulante_id);
 		break;
 
 	case INFORMAR_TAREA_TRIPULANTE:
@@ -77,6 +77,9 @@ static void *ejecutar_operacion(int tripulante)
 	case INFORMAR_POSICION_TRIPULANTE:
 		informe_tripulante = des_res_informar_posicion_tripulante(paquete);
 		tcb = get_TCB(informe_tripulante.patota_id, informe_tripulante.tripulante_id);
+
+		actualizar_tripulante(tcb, informe_tripulante.posicion.posx, informe_tripulante.posicion.posy);
+
 		tcb.posx = informe_tripulante.posicion.posx;
     	tcb.posy = informe_tripulante.posicion.posy;
 		set_tripulante(tcb, informe_tripulante.patota_id);
@@ -95,8 +98,15 @@ static void *ejecutar_operacion(int tripulante)
 	}
 }
 
+void actualizar_tripulante(t_TCB tcb, int posx, int posy){
+	int valor_x = posx - tcb.posx;
+	int valor_y = posy - tcb.posy;
+	desplazar_tripulante(tcb.tid, valor_x, valor_y);
+}
+
 void server_mi_ram_iniciar(int puerto)
 {
+	init_renderizacion_mapa();
 	int socket_server;
 	int socket_client_tripulante;
 	pthread_t hilo_client_tripulante;

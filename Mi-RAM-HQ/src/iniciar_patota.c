@@ -207,6 +207,7 @@ void* get_stream_tcbs(t_iniciar_patota data){
         memcpy(stream + offset, stream_tcb, 21);
         offset += 21;
 
+        crear_tripulante(tripulante_id_inicial, tcb.posx, tcb.posy);
         tripulante_id_inicial++;
     }
 

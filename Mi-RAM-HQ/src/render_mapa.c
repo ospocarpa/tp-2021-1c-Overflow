@@ -17,8 +17,6 @@ int rnd() {
 }
 
 void init_renderizacion_mapa(){
-    NIVEL* nivel;
-
     int cols, rows;
     int err;
 
@@ -26,12 +24,12 @@ void init_renderizacion_mapa(){
 
     nivel_gui_get_area_nivel(&cols, &rows);
 
-    nivel = nivel_crear("Test Chamber 04");
+    nivel = nivel_crear("MiRAM");
 
-    err = personaje_crear(nivel, '@', cols - 1, rows - 1);
-    ASSERT_CREATE(nivel, '@', err);
+    /*err = personaje_crear(nivel, '@', cols - 1, rows - 1);
+    ASSERT_CREATE(nivel, '@', err);*/
 
-    err = personaje_crear(nivel, '#', 0, 0);
+    /*err = personaje_crear(nivel, '#', 0, 0);
     ASSERT_CREATE(nivel, '#', err);
 
     err = enemigo_crear(nivel, '1', 10, 14);
@@ -49,10 +47,10 @@ void init_renderizacion_mapa(){
     err = caja_crear(nivel, 'F', 19, 9, 2);
     ASSERT_CREATE(nivel, 'F', err);*/
 
-    while ( 1 ) {
-        nivel_gui_dibujar(nivel);
+    //while ( 1 ) {
+        
 
-        int key = getch();
+        /*int key = getch();
 
         switch( key ) {
 
@@ -120,6 +118,29 @@ void init_renderizacion_mapa(){
 
         if(items_chocan(nivel, '#', '@')) {
             item_borrar(nivel, '#');
-        }
-    }
+        }*/
+    //}
+}
+
+void crear_tripulante(int tripulante_id, int posx, int posy){
+    int cols, rows;
+    
+    char tripulante_signo = tripulante_id + '0';
+    int err = personaje_crear(nivel, tripulante_signo, posx, posy);
+    ASSERT_CREATE(nivel, tripulante_signo, err);
+    nivel_gui_dibujar(nivel);
+}
+
+void desplazar_tripulante(int tripulante_id, int posx, int posy){
+    int cols, rows;
+    
+    char tripulante_signo = tripulante_id + '0';
+    int err = item_desplazar(nivel, tripulante_signo, posx, posy);
+    nivel_gui_dibujar(nivel);
+}
+
+void eliminar_tripulante(int tripulante_id){
+    char tripulante_signo = tripulante_id + '0';
+    item_borrar(nivel, tripulante_signo);
+    nivel_gui_dibujar(nivel);
 }

@@ -18,6 +18,7 @@
 #include "TAD.h"
 #include "util_mi_ram.h"
 #include "expulsar_tripulante.h"
+#include "render_mapa.h"
 
 void server_mi_ram_iniciar(int puerto);
 

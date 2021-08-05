@@ -14,6 +14,7 @@
 #include <curses.h>
 #include <commons/collections/list.h>
 
+    NIVEL* nivel;
     int rnd();
     void init_renderizacion_mapa();
 
