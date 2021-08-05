@@ -1,0 +1,12 @@
+Iniciar los módulos en el orden definido por el grupo utilizando el mismo FS de la prueba de File System después de haber ejecutado las pruebas.
+En el módulo discordiador crear las siguientes patotas e inicia la planificación
+
+> INICIAR_PATOTA 1 FSCK_PatotaA.txt 0|0
+> INICIAR_PATOTA 1 FSCK_PatotaB.txt 8|0
+> INICIAR_PATOTA 1 FSCK_PatotaC.txt 8|8 
+> INICIAR_PATOTA 1 FSCK_PatotaD.txt 0|8 
+> INICIAR_PLANIFICACION
+
+Realizar un sabotaje (definido por el ayudante)
+Enviar la señal de sabotaje y esperar la resolución del sabotaje
+El ayudante podrá repetir esta prueba cuantas veces considere necesarias sin necesidad de reiniciar el módulo.
