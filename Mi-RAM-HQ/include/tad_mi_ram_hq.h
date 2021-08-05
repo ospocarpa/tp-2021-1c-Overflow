@@ -5,6 +5,7 @@
 #include <stdbool.h>
 #include <stdlib.h>
 #include <netdb.h>
+#include <commons/bitarray.h>
 
 typedef enum
 {
@@ -56,28 +57,33 @@ typedef struct
 }t_data_segmento;
 
 //--------------------- Paginacion ----------------------
-	
+t_list * list_tablas_paginacion;        //[t_table_page]
+t_list * tablas_pag_libre;         //?
+t_bitarray* bitmap_memoria_real;
+t_bitarray* bitmap_memoria_virtual;
 
-typedef struct {
-    char *pages;
-    int cantCaracteresTarea;
-	int cant_tripulantes;
-	int patotaid;
-}t_lista_paginas;
+//Estructura
+typedef struct{
+    t_list* pages;                      //[t_page]
+    t_list* tripulante_ids;              //[int], es la lista de ids de los tripulantes
+    int cant_caracteres_tarea;
+    int cant_tripulantes;
+    int patota_id;                      //Es el conjunto de bloques
+} t_table_page;
 
-typedef struct {
-	int page;
-	int frame;
-    bool presencia; 	//Con SWAP
-    bool uso;  		//Con CLOCK
-    char* timestamp; 	//LRU
-}t_page;
+typedef struct{
+    int page;
+    int frame;
+    bool presencia;
+    bool uso;
+    char* timestamp;
+} t_page;
 
-
-typedef struct {		// Usemos otro struct
+typedef struct{
     void* stream;
-    int tam;
-    int cantTripulantes;
-}t_segmentos_paginacion;
+    int tamanio;
+    int cant_tripulantes;
+    int cant_caracteres_tarea;
+} t_page_auxiliar;
 
 #endif

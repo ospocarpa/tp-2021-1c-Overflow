@@ -20,7 +20,7 @@ void expulsar_tripulante(t_expulsar_tripulante tripulante){
     }
     else
     {
-        /* code */
+        expulsar_tripulante_paginacion(tripulante);
     }
     
 }

@@ -25,7 +25,7 @@ t_TCB get_TCB_segmentacion_pura(int patota_id, int tripulante_id);
 t_list* get_todos_los_segmentos();
 void compactacion();
 void mover_segmento(t_segmento *segmento, int base_pivote);
-char* get_tareas(int patota_id);
+char* get_tareas_segmentacion(int patota_id);
 void set_tripulante_por_segmentacion(t_TCB tcb, int patota_id);
 void cargar_informacion_TCB_a_MP(t_TCB tcb,int base);
 void dump_segmentacion_pura();

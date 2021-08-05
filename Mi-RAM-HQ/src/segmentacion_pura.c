@@ -1,6 +1,6 @@
 #include "segmentacion_pura.h"
 
-static t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
+t_list * list_tablas_segmentos; // lista de tablas de segmento t_tabla_segmentos
 t_list * tabla_hueco; // 
 static char * alg_ubicacion = "FF";
 int size_memoria = 0;
@@ -338,7 +338,7 @@ void mover_segmento(t_segmento *segmento, int base_pivote){
     segmento->base = base_pivote;
 }
 
-char* get_tareas(int patota_id){
+char* get_tareas_segmentacion(int patota_id){
     bool mismo_tabla_id(t_tabla_segmentos *item){
         return item->pid == patota_id;
     }
@@ -373,25 +373,10 @@ void set_tripulante_por_segmentacion(t_TCB tcb, int patota_id){
 }
 
 void cargar_informacion_TCB_a_MP(t_TCB tcb,int base){ 
-    // uint32_t tid;
-    // char estado;
-    // int posx;
-    // int posy;
-    // uint32_t prox_tarea;
-    // uint32_t puntero_pcb;
+    void* stream = get_stream_tcb(tcb);
 
     int offset = base;
-    memcpy(memoria_principal + offset, &tcb.tid,sizeof(uint32_t));
-    offset +=sizeof(uint32_t) ;
-    memcpy(memoria_principal + offset, &tcb.estado,sizeof(char));
-    offset += sizeof(char);
-    memcpy(memoria_principal + offset, &tcb.posx,sizeof(int));
-    offset +=sizeof(int);
-    memcpy(memoria_principal + offset, &tcb.posy,sizeof(int));
-    offset +=sizeof(int);
-    memcpy(memoria_principal + offset, &tcb.prox_tarea,sizeof(uint32_t));
-    offset +=sizeof(uint32_t);
-    memcpy(memoria_principal + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
+    memcpy(memoria_principal + offset, stream, 21);
 }
 
 void dump_huecos(){
@@ -404,7 +389,7 @@ void dump_huecos(){
     }
 }
 
-void dump_segmentacion_pura(){
+char* dump_segmentacion_pura(){
     char *format = "%d/%m/%y %H:%M:%S";
     char *timestamp = temporal_get_string_time(format);
     
@@ -427,6 +412,7 @@ void dump_segmentacion_pura(){
     //TODO: pasar a hexadecimal
     
     printf("%s\n", contenido);
+    return contenido;
 }
 
 /* *********************FENCIONES PARA TESTEAR************************ */

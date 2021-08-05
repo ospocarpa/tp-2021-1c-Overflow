@@ -17,11 +17,16 @@ void validar_get_tarea();
 void validar_get_tarea2();
 void validar_get_posicion_STR();
 void validar_iniciar_patota_segmentada();
+void validar_esta_Llena_Memoria();
+void validar_get_primer_bit_disponible();
 void validar_expulsar_tripulante_segmentada();
 void validar_informacion_de_patota_segmentacion();
 void validar_actualizacion_tripulante();
 void validar_informar_tarea();
 void validar_compactacion();
+void validar_cantidad_disponible();
+void validar_existe_memoria_real_disponible();
+void validar_existe_memoria_disponible_paginacion();
 
 int run_tests()
 {
@@ -44,12 +49,17 @@ int run_tests()
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
     CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
+    CU_add_test(tests, "Valido si la memoria esta llena en el bitmap", validar_esta_Llena_Memoria);
+    CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
     CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
     CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
     CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
     CU_add_test(tests, "Valido compactacion", validar_compactacion);
+    CU_add_test(tests, "Valido cantidad de espascio libres", validar_cantidad_disponible);
+    CU_add_test(tests, "Valido si hay memoria real disponible", validar_existe_memoria_real_disponible);
+    CU_add_test(tests, "Valido si hay espacio en real + virtual", validar_existe_memoria_disponible_paginacion);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -411,6 +421,70 @@ void validar_get_posicion_STR(){
     CU_ASSERT_EQUAL(pos_in.posx,pos_out.posx);
     CU_ASSERT_EQUAL(pos_in.posy,pos_out.posy);
 }
+// ------------------------------------  util_mi_ram   ---------------------
+void validar_esta_Llena_Memoria(){
+    void* puntero_bitmap = malloc(1);
+
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
+    bool value = false;
+    bool value_out = esta_Llena_Memoria(bitmap);
+    bitarray_destroy(bitmap);
+
+    CU_ASSERT_EQUAL(value,value_out);
+}
+
+
+void validar_cantidad_disponible(){
+    void* puntero_bitmap = malloc(4);
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 4, LSB_FIRST);
+    limpiar_bit_map(bitmap);
+    bitarray_set_bit(bitmap, 2);
+    bitarray_set_bit(bitmap, 3);
+
+    int cant = 30;
+    //print_bit_map(bitmap);
+    int cant_res =cantidad_disponible(bitmap);
+    CU_ASSERT_EQUAL(cant,cant_res);
+    bitarray_destroy(bitmap);
+}
+
+void validar_existe_memoria_real_disponible(){
+    void* puntero_bitmap = malloc(4);
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 4, LSB_FIRST);
+    limpiar_bit_map(bitmap);
+    bitarray_set_bit(bitmap, 2);
+    bitarray_set_bit(bitmap, 3);
+    bool in = true;
+    bool res=existe_memoria_real_disponible(bitmap);
+    CU_ASSERT_EQUAL(in,res);
+
+
+}
+
+void validar_existe_memoria_disponible_paginacion(){
+     void* puntero_bitmap = malloc(4);
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 4, LSB_FIRST);
+     void* puntero_bitmap2 = malloc(4);
+    t_bitarray *bitmap_virtual = bitarray_create_with_mode(puntero_bitmap2, 4, LSB_FIRST);
+    bool in = true;
+    bool res= existe_memoria_disponible_paginacion(bitmap,bitmap_virtual,2);
+    CU_ASSERT_EQUAL(in,res);
+}
+
+// ------------------------------------  paginacion   ---------------------
+// t_bitarray 	*bitarray_create(char *bitarray, size_t size);
+void validar_get_primer_bit_disponible(){
+    void* puntero_bitmap = malloc(1);
+    t_bitarray *bitmap = bitarray_create_with_mode(puntero_bitmap, 1, LSB_FIRST);
+    bitarray_set_bit(bitmap, 0);
+
+    // t_bitarray* bitmap = {true,false,false,false,true};
+    int value = 1;
+    int value_out = get_primer_bit_disponible(bitmap);
+    CU_ASSERT_EQUAL(value,value_out);
+    //bitarray_destroy(bitmap);
+}
+
 
 void validar_iniciar_patota_segmentada(){
 
@@ -529,6 +603,7 @@ void validar_informacion_de_patota_segmentacion(){
     CU_ASSERT_STRING_EQUAL(data_input.tareas, tarea);
 
     t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
+    //mostrar_tcb(tcb_encontrado);
     CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
     CU_ASSERT_EQUAL(tcb_encontrado.estado, 'N');
     CU_ASSERT_EQUAL(tcb_encontrado.posx, 0);
@@ -625,8 +700,6 @@ void validar_informar_tarea(){
 
     liberar_tabla_huecos();
     liberar_memoria_principal();
-    
-
     void tabla_destroy(t_segmento * seg){
         free(seg);
     }

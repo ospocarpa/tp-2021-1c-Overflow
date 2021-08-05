@@ -16,8 +16,10 @@
 #include <consola.h>
 #include <semaphore.h>
 
-extern t_list* lista_READY;
+extern t_list *lista_READY;
 void init_dispatcher();
-Tripulante* busqueda_algoritmo();
+void init_bloqueados();
+Tripulante *busqueda_algoritmo();
+Tripulante *elegir_tripulante_bloqueado();
 
 #endif

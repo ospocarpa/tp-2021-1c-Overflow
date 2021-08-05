@@ -7,6 +7,35 @@ void * memoria_virtual = NULL;
 
 
 /* ************************************************** */
+void inicializacion_estructuras(){
+    char * tipo_memoria = get_esquema_memoria();
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        set_algoritmo_ubicacion(get_criterio_de_seleccion());
+        list_create(list_tablas_segmentos);
+        list_create(tabla_hueco);
+    }
+    else{
+        list_create(list_tablas_paginacion);
+        list_create(tablas_pag_libre);
+
+        int cantidad_frames_virtual = get_tamanio_swap();
+        int cantidad_frames = get_tamanio_tamanio_pagina();
+
+        char* path = get_path_swap();
+        int file_size = cantidad_frames_virtual/8;
+        int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+        ftruncate(fd, file_size);
+        void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+
+        void* puntero_bitmap = malloc(cantidad_frames/8);
+        bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, cantidad_frames/8, LSB_FIRST);
+        bitmap_memoria_virtual = bitarray_create_with_mode(stream, cantidad_frames_virtual/8, LSB_FIRST);
+
+        limpiar_bit_map(bitmap_memoria_real);
+        limpiar_bit_map(bitmap_memoria_virtual);
+    }
+}
+
 void iniciar_memoria_principal(int tam_memoria){
 
     if(memoria_principal == NULL){
@@ -57,34 +86,93 @@ t_PCB leer_info_PCB(int base){
 }
 
 t_TCB leer_info_TCB(int base){
+    void* stream = malloc(21);
+    memcpy(stream, memoria_principal + base, 21);
+    t_TCB tcb = leer_info_TCB_generico(stream);
+    return tcb;
+}
+
+t_TCB leer_info_TCB_generico(void* stream){
     t_TCB  tcb;
     
-    int offset =base;
-    memcpy(&tcb.tid, memoria_principal + offset, sizeof(uint32_t));
+    int offset = 0;
+    memcpy(&tcb.tid, stream + offset, sizeof(uint32_t));
     offset +=sizeof(uint32_t) ;
-    memcpy(&tcb.estado, memoria_principal + offset, sizeof(char));
+    memcpy(&tcb.estado, stream + offset, sizeof(char));
     offset += sizeof(char);
-    memcpy(&tcb.posx, memoria_principal + offset, sizeof(int));
+    memcpy(&tcb.posx, stream + offset, sizeof(int));
     offset +=sizeof(int);
-    memcpy(&tcb.posy, memoria_principal + offset, sizeof(int));
+    memcpy(&tcb.posy, stream + offset, sizeof(int));
     offset +=sizeof(int);
-    memcpy(&tcb.prox_tarea, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.prox_tarea, stream + offset, sizeof(uint32_t));
     offset +=sizeof(uint32_t);
-    memcpy(&tcb.puntero_pcb, memoria_principal + offset, sizeof(uint32_t));
+    memcpy(&tcb.puntero_pcb, stream + offset, sizeof(uint32_t));
 
     return tcb;
+}
+
+void* get_stream_tcb(t_TCB tcb){
+    // uint32_t tid;
+    // char estado;
+    // int posx;
+    // int posy;
+    // uint32_t prox_tarea;
+    // uint32_t puntero_pcb;
+    void* stream = malloc(21);
+    
+    int offset = 0;
+    memcpy(stream + offset, &tcb.tid,sizeof(uint32_t));
+    offset +=sizeof(uint32_t) ;
+    memcpy(stream + offset, &tcb.estado,sizeof(char));
+    offset += sizeof(char);
+    memcpy(stream + offset, &tcb.posx,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(stream + offset, &tcb.posy,sizeof(int));
+    offset +=sizeof(int);
+    memcpy(stream + offset, &tcb.prox_tarea,sizeof(uint32_t));
+    offset +=sizeof(uint32_t);
+    memcpy(stream + offset, &tcb.puntero_pcb,sizeof(uint32_t));   
+
+    return stream;
 }
 
 void cargar_data_segmento(t_data_segmento * data_segmento, int base ){
     memcpy(memoria_principal+base, data_segmento->data, data_segmento->tam_data);
 }
 
+char* get_tareas(int patota_id){
+    char * tipo_memoria = get_esquema_memoria();
+
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        return get_tareas_segmentacion(patota_id);
+    }
+    else{
+        return get_tareas_paginacion(patota_id);
+    }
+}
+
 void set_tripulante(t_TCB tcb, int patotaid){
-    set_tripulante_por_segmentacion(tcb, patotaid);
+    char * tipo_memoria = get_esquema_memoria();
+
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        set_tripulante_por_segmentacion(tcb, patotaid);
+    }
+    else{
+        set_TCB_paginacion(tcb, patotaid);
+    }
 }
 
 t_TCB get_TCB(int patota_id, int tripulante_id){
-    t_TCB tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
+    t_TCB tcb;
+    char * tipo_memoria = get_esquema_memoria();
+
+    if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
+        tcb = get_TCB_segmentacion_pura(patota_id, tripulante_id);
+    }
+    else
+    {
+        tcb = get_TCB_paginacion(patota_id, tripulante_id);
+    }
     return tcb;
 }
 
@@ -112,12 +200,23 @@ void mostrar_tcb(t_TCB tcb){
 }
 
 void method_sigusr1(){
+    char* contenido = "";
     //Mostrar dump de la memoria principal
     if(strcmp(get_esquema_memoria(), "SEGMENTACION")==0){
         //Realizar compactacion
         compactacion();
-        dump_segmentacion_pura();
+        contenido = dump_segmentacion_pura();
     }else{
-        dump_paginacion();
+        contenido = dump_paginacion();
     }
+
+    char *timestamp = temporal_get_string_time("");
+    char* path = string_new();
+    string_append_with_format(&path, "/home/utnso/tp-2021-1c-Overflow/Mi-RAM-HQ/Dump %s.dmp", timestamp);
+
+    int file_size = strlen(contenido);
+    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    ftruncate(fd, file_size);
+    void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    strcpy(stream, contenido);
 }

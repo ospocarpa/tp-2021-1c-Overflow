@@ -24,11 +24,13 @@
 
 extern bool hay_sabotaje;
 extern pthread_mutex_t MXTRIPULANTE;
+extern pthread_mutex_t mutex_bloqueado;
 
 extern int numeroTripulante;
 extern int numeroPatota;
 extern pthread_mutex_t SEM_PAUSAR_PLANIFICACION;
 extern sem_t listos;
+extern sem_t bloqueados;
 extern sem_t grado_multiprocesamiento;
 //extern t_list *lista_NEW;
 extern t_list *lista_tripulantes; //Dentro van a estar los tripulantes en estado READY/EXEC/BLOCKED
@@ -49,6 +51,7 @@ void leerConfighilo_tripulante(Tripulante *);
 void cargarTripulante(t_iniciar_patota *, char **, int);
 void mover_tripulante_a_tarea(Tripulante *);
 void invocar_fsck();
+void cambiar_estado(Tripulante *, status_tripulante);
 Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje);
 
 #endif

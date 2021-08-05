@@ -252,6 +252,12 @@ void detener_planificacion()
     {
         planificacion_activa = false;
         log_info(logger, "[Planificacion detenida]");
+        t_list *tripulantes = get_tripulantes_all();
+        for (int c = 0; c < list_size(tripulantes); c++)
+        {
+            Tripulante *tripulante = list_get(tripulantes, c);
+            pthread_mutex_lock(&tripulante->activo);
+        }
     }
     else
     {
@@ -365,6 +371,17 @@ void iniciar_patota(char **tokens)
 
 void expulsar_tripulante(int tripulante_id)
 {
+    int patota_id = 0;
+    t_list *tripulantes = get_tripulantes_all();
+    for (int c = 0; c < list_size(tripulantes); c++)
+    {
+        Tripulante *tripulante = list_get(tripulantes, c);
+        if(tripulante->id == tripulante_id) {
+            patota_id = tripulante->patota_id;
+            break;
+        }
+    }
+
     int conexion_a_miram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
 
     Tripulante *tripulante_a_expulsar = NULL;
@@ -379,11 +396,13 @@ void expulsar_tripulante(int tripulante_id)
         printf("tripulante %d ya fue expulsado antes\n", tripulante_a_expulsar->id);
         return;
     }
+    tripulante_a_expulsar->expulsado = true;
     tripulante_a_expulsar->status = EXIT;
     printf("tripulante %d se va expulsar\n", tripulante_a_expulsar->id);
     // una opcion podria ser forzar terminar el hilo de ese tripulante para no modificar disenio
 
     t_expulsar_tripulante data;
+    data.patota_id = patota_id;
     data.tripulante_id = tripulante_id;
     t_package paquete = ser_cod_expulsar_tripulante(data);
 

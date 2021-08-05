@@ -14,11 +14,15 @@ int main(int argc, char **argv)
         cfg_create("cfg/mi_ram_hq.config");
         logger_create("cfg/mi_ram_hq.log", "MI_RAM_HQ");
         logger_info("Iniciando módulo Mi-RAM-HQ");
-
+        
         int puerto = get_puerto();
       
         int tam_memoria = get_tamanio_memoria();
         iniciar_memoria_principal(tam_memoria);
+        
+        //Para paginación
+        iniciar_memoria_virtual(get_tamanio_swap());
+        inicializacion_estructuras();
         server_mi_ram_iniciar(puerto);
 
         signal(SIGUSR1, method_sigusr1);
