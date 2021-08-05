@@ -43,15 +43,16 @@
     t_info_tarea get_tarea(char* lista_tareas,int n_tarea){
         t_info_tarea tarea_aux;
         char* tarea = dame_tarea(lista_tareas, n_tarea);
-        //printf("%s",tarea);
+        printf("Método interno: %s\n",tarea);
         
         
         char** partes = string_split(tarea,";");
                     //borrar este spit y cambiar los campos.
         char** partes_aux = string_split(partes[0]," ");
 
+        printf("Enum\n");
         tarea_aux.tarea = devolver_Enum(partes_aux[0]);
-
+        printf("Pasoo\n");
         // pasar a funcion si es la tarea que conozco , preguntos y return enum 
         // clave enum
 
@@ -64,8 +65,7 @@
         tarea_aux.posicion.posy = atoi(partes[2]);
         tarea_aux.tiempo = atoi(partes[3]);
     
-    
-       
+        printf("Fin \n");   
         return tarea_aux;
     }
 

@@ -46,7 +46,8 @@ static void *ejecutar_operacion(int tripulante)
 
 		respuesta = iniciar_patota(init_patota);
 		send(tripulante, &respuesta, sizeof(respuesta), 0);
-
+		
+		dump_segmentacion_pura();
 		break;
 
 	case EXPULSAR_TRIPULANTE:
@@ -60,16 +61,22 @@ static void *ejecutar_operacion(int tripulante)
 		break;
 
 	case INFORMAR_TAREA_TRIPULANTE:
+		dump_segmentacion_pura();
 		logger_info("INFORMAR TAREA");
 		/* interpreto el contenido del mensaje */
 		tripulante_info = des_cod_informar_tarea_tripulante(paquete);
 		mostrar_short_info_tripulante(tripulante_info);
 		
 		char* tareas = get_tareas(tripulante_info.patota_id);
+		printf("Tareas: %s\n", tareas);
 		tcb = get_TCB(tripulante_info.patota_id, tripulante_info.tripulante_id);
+		mostrar_tcb(tcb);
 		tarea = get_tarea(tareas, tcb.prox_tarea);
+		printf("Tarea: %d\n", tarea.tiempo);
 		tcb.prox_tarea++;
+		printf("Antes de set\n");
 		set_tripulante(tcb, tripulante_info.patota_id);
+		printf("Después de set\n");
 
 		//un ejemplo de tarea(despues borrar)
 		/*tarea.tarea = OTRA_TAREA;

@@ -359,7 +359,7 @@ void iniciar_patota(char **tokens)
     if (!respuesta)
     {
         log_error(logger, "No se puede crear la patota/tripulanes");
-        //return;
+        return;
     }
 
     log_info(logger, " Empezando a crear los  tripulanes...");

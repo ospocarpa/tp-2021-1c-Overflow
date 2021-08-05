@@ -9,7 +9,7 @@ bool esBloqueante(Tarea *tarea)
 
 Patota *map_to_patota(t_iniciar_patota datosPatota)
 {
-    numeroPatota++;
+    numeroTripulante--;
     Patota *patota_new = malloc(sizeof(Patota));
     patota_new->id = numeroPatota;
     patota_new->tareas = list_create();      //Lista [Tarea]
@@ -74,6 +74,7 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
     //list_clean(posiciones_lista);
     //list_destroy(posiciones_lista);
     //liberar_puntero_doble(posiciones_string);
+    numeroPatota++;
     return patota_new;
 }
 

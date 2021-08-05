@@ -14,7 +14,7 @@ void inicializacion_estructuras(){
         //printf("Paso\n");
         set_algoritmo_ubicacion(get_criterio_de_seleccion());
         list_tablas_segmentos = list_create();
-        tabla_hueco = list_create();
+        iniciar_tabla_huecos(get_tamanio_memoria());
     }
     else{
         list_create(list_tablas_paginacion);

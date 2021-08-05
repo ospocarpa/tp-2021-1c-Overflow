@@ -167,7 +167,7 @@ bool se_puede_escribir(int tam_info){
         tam_memoria_libre += hueco->desplazamiento;
     }
     list_iterate(tabla_hueco, sumar_espacios_libres);
-
+    printf("Libre: %d Tamanio: %d\n", tam_memoria_libre, tam_info);
     return (tam_memoria_libre >= tam_info);
 }
 
@@ -341,7 +341,10 @@ char* get_tareas_segmentacion(int patota_id){
     bool mismo_tabla_id(t_tabla_segmentos *item){
         return item->pid == patota_id;
     }
+    printf("Cantidad\n");
+    printf("Cantidad: %d\n", list_size(list_tablas_segmentos));
     t_tabla_segmentos* tabla_segmento = list_find(list_tablas_segmentos, &mismo_tabla_id);    
+    printf("Segmento: %d\n", tabla_segmento->pid);
     t_segmento* segmento = list_get(tabla_segmento->segmentos, 0);
     char* tareas = leer_info_tareas(segmento->base, segmento->desplazamiento);
     return tareas;
