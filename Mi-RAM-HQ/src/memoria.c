@@ -202,6 +202,7 @@ void mostrar_tcb(t_TCB tcb){
 }
 
 void method_sigusr1(){
+    printf("Prueba\n");
     char* contenido = "";
     //Mostrar dump de la memoria principal
     if(strcmp(get_esquema_memoria(), "SEGMENTACION")==0){

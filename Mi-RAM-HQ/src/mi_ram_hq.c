@@ -16,6 +16,7 @@ int main(int argc, char **argv)
     }
     else
     {
+        signal(SIGUSR1, method_sigusr1);
         cfg_create("cfg/mi_ram_hq.config");
         logger_create("cfg/mi_ram_hq.log", "MI_RAM_HQ");
         logger_info("Iniciando módulo Mi-RAM-HQ");
@@ -29,8 +30,6 @@ int main(int argc, char **argv)
         iniciar_memoria_virtual(get_tamanio_swap());
         inicializacion_estructuras();
         server_mi_ram_iniciar(puerto);
-
-        signal(SIGUSR1, method_sigusr1);
 
         // Libero el log y config al final
         cfg_free();

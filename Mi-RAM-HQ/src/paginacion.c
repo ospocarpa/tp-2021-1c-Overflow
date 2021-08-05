@@ -314,7 +314,7 @@ void escribir_memoria_real(void *stream, int base, int desplazamiento){
 int get_primer_bit_disponible(t_bitarray* bitmap){
     int indice = -1;
     int bits = bitarray_get_max_bit(bitmap);
-    printf("Bits: %d\n", bits);
+    //printf("Bits: %d\n", bits);
     for(int c = 0; c < bits ; c++){
         if(!bitarray_test_bit(bitmap,c)){
             indice = c;

@@ -22,6 +22,11 @@
 #include "config_utils.h"
 #include "sd_fcsk.h"
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+
 extern bool hay_sabotaje;
 extern pthread_mutex_t MXTRIPULANTE;
 extern pthread_mutex_t mutex_bloqueado;

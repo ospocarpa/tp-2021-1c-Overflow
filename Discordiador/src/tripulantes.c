@@ -39,10 +39,8 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
     string_append_with_format(&datosPatota->posiciones, "%s", nuevas_posiciones);
     datosPatota->long_posicion = strlen(datosPatota->posiciones);
 
-    int bytesContenido = guardar_contenido_archivo(tokens[2], &contenido);
-    datosPatota->tareas = "GENERAR_BASURA 30;2;2;2";
+    datosPatota->tareas = get_tareas_from_path(tokens[2]);     //"GENERAR_BASURA 30;2;2;2";
     datosPatota->long_tareas = strlen(datosPatota->tareas);
-    //datosPatota->tareas = contenido;
     datosPatota->patota_id = numeroPatota;
     datosPatota->id_primer_tripulante = numeroTripulante;
     //free(contenido);

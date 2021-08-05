@@ -18,6 +18,11 @@
 #include "tests.h"
 #include "dispatcher.h"
 
+#include <fcntl.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <sys/mman.h>
+
 #define PATH_CONFIG "./cfg/discordiador.config"
 
 t_log *logger;

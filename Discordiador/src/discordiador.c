@@ -86,7 +86,6 @@ void inicializacion_recursos()
 
 int main(int argc, char **argv)
 {
-    //init_dispatcher();
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     { //Carga de los archivos de configuracion
         t_config *g_config = leer_config_file(PATH_CONFIG);

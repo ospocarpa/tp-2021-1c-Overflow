@@ -179,3 +179,12 @@ int guardar_contenido_archivo(const char *ruta, char **contenido)
     fclose(arch);
     return bytes;
 }
+
+char* get_tareas_from_path(char* path){
+    int file_size = 1000;
+    int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    ftruncate(fd, file_size);
+    char* tareas = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    //printf("%s %d\n", space, strlen(space));
+    return tareas;
+}

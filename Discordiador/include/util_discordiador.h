@@ -25,5 +25,6 @@ Tripulante *tripulante_segun_id(int);
 int existe_tripulante(int);           
 int obtener_cantidad_argumentos(char **tokens);
 int guardar_contenido_archivo(const char *, char **);
+char* get_tareas_from_path(char* path);
 
 #endif
