@@ -1,0 +1,11 @@
+Iniciar los módulos en el orden definido por el grupo
+En el módulo discordiador crear las siguientes patotas e inicia la planificación
+
+> INICIAR_PATOTA 3 FS_PatotaA.txt 
+> INICIAR_PATOTA 3 FS_PatotaB.txt 
+> INICIAR_PLANIFICACION
+
+Controlar las escrituras de los recursos en los bloques
+Mientras ejecutan los tripulantes verificar cómo se realizan las peticiones de I/O y que se bloqueen los tripulantes en el orden y tiempo estipulado
+Finalizar todos los tripulantes y verificar que la sincronización de datos sea correcta
+Volver a levantar el filesystem y correr esta prueba, y verificar que la información no se sobreescriba

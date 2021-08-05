@@ -1,0 +1,22 @@
+Iniciar los módulos en el orden definido por el grupo, en la primer vuelta configurando el algoritmo en First Fit (FF) y en la segunda corrida con Best Fit (BF) en Mi-RAM HQ
+En el módulo discordiador ejecutar los siguientes comandos
+
+> INICIAR_PATOTA 4 SEG_PatotaA.txt 
+> INICIAR_PATOTA 1 SEG_PatotaC.txt 
+> INICIAR_PLANIFICACION
+> LISTAR_TRIPULANTES
+
+Enviar la señal para el DUMP de la memoria.
+Una vez iniciada la planificación esperar 10 ciclos de CPU y ejecutar los siguientes comandos.
+
+> EXPULSAR_TRIPULANTE A1 (Tripulante 1 - Patota A)
+> EXPULSAR_TRIPULANTE A3 (Tripulante 3 - Patota A)
+> LISTAR_TRIPULANTES
+> INICIAR_PATOTA 2 SEG_PatotaB.txt 
+> LISTAR_TRIPULANTES
+
+Enviar nuevamente la señal para el DUMP de la memoria.
+Esperar el fin de las tareas de los tripulantes.
+Enviar nuevamente la señal para el DUMP de la memoria.
+Enviar la señal para compactar la memoria
+Enviar nuevamente la señal para el DUMP de la memoria.
