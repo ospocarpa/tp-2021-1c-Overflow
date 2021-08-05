@@ -17,6 +17,7 @@ bool iniciar_patota_segmentacion(t_iniciar_patota init_patota){
     {
         res_iniciar_patota = true;
         t_tabla_segmentos * tabla_seg = malloc(sizeof(t_tabla_segmentos));
+        agregar_tabla_de_segmento(tabla_seg);
         tabla_seg->segmentos = list_create();
         tabla_seg->pid = init_patota.patota_id;
 
@@ -24,11 +25,13 @@ bool iniciar_patota_segmentacion(t_iniciar_patota init_patota){
             t_segmento * segmento = escribir_segmentacion_pura(data);
 
             list_add(tabla_seg->segmentos, segmento);
+            /*dump_huecos();
+            dump_segmentacion_pura();*/
         }
 
         list_iterate(data_segmentos, agregar_segmento); //equivale al for
 
-        agregar_tabla_de_segmento(tabla_seg);
+        //agregar_tabla_de_segmento(tabla_seg);
     }
     else
     {

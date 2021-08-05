@@ -657,35 +657,35 @@ void validar_compactacion(){
     data.patota_id = 1;
     data.tripulante_id = 2;
 
-    printf("long tarea: %d \n ",data_input2.long_tareas);
+    //printf("long tarea: %d \n ",data_input2.long_tareas);
 
     cfg_create("cfg/mi_ram_hq.config");
     iniciar_memoria_principal(256);
     iniciar_lista_tabla_segmento();
     iniciar_tabla_huecos(256);
     set_size_memoria(256);
-    //char * alg = "FF";
-    //set_algoritmo_ubicacion(alg);
+    char * alg = "BF";
+    set_algoritmo_ubicacion(alg);
 
     bool res1 = iniciar_patota_segmentacion(data_input);
-
+    //dump_segmentacion_pura();
+    //dump_huecos();
     expulsar_tripulante(data);
+    /*printf("\n");
+    dump_segmentacion_pura();
+    dump_huecos();
+    printf("\n");
 
+    printf("\nIniciar patota\n");*/
     bool res2 = iniciar_patota_segmentacion(data_input2);
-
+    /*dump_segmentacion_pura();
+    dump_huecos();*/
     bool hay_memoria_libre = se_puede_escribir(8);//no se puede escribir porque solo hay 47 bytes libres en memoria
     int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
     int cant_huecos = cantidad_huecos_test();
     t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);
 
-    printf("cant de huecos: %d \n ",cant_huecos);
-
-    for (size_t i = 0; i < cant_huecos; i++)
-    {
-        t_hueco * h = get_hueco_index_test(i);
-        printf("base: %d \n",h->base);
-        printf("desplazamiento: %d \n",h->desplazamiento);
-    }
+    dump_segmentacion_pura();
 
     CU_ASSERT_TRUE(res1);
     CU_ASSERT_TRUE(hay_memoria_libre);
