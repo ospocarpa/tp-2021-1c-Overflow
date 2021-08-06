@@ -17,8 +17,11 @@ void inicializacion_estructuras(){
         iniciar_tabla_huecos(get_tamanio_memoria());
     }
     else{
-        list_create(list_tablas_paginacion);
-        list_create(tablas_pag_libre);
+        printf("estoy en paginacion \n");
+        list_tablas_paginacion = list_create();
+        tablas_pag_libre = list_create();
+
+        printf("tabla pag principal vacia: %d \n", list_size(list_tablas_paginacion));
 
         int cantidad_frames_virtual = get_tamanio_swap();
         int cantidad_frames = get_tamanio_tamanio_pagina();

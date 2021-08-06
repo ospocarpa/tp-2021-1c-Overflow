@@ -12,11 +12,10 @@
 #include "memoria.h"
 #include "TAD.h"
 
-void iniciar_tabla_paginacion();
 int get_primer_bit_disponible(t_bitarray* bitarray);
 
 extern void * memoria_principal;
-    extern void * memoria_virtual;
+extern void * memoria_virtual;
 
     typedef struct{
         t_list* pages_filtradas;                      //[t_page]

@@ -27,6 +27,7 @@ void validar_compactacion();
 void validar_cantidad_disponible();
 void validar_existe_memoria_real_disponible();
 void validar_existe_memoria_disponible_paginacion();
+void validar_iniciar_patota_paginada();
 
 int run_tests()
 {
@@ -53,13 +54,14 @@ int run_tests()
     CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible);
     CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
-    CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
-    CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
-    CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
-    CU_add_test(tests, "Valido compactacion", validar_compactacion);
+    // CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
+    // CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
+    // CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
+    // CU_add_test(tests, "Valido compactacion", validar_compactacion);
     CU_add_test(tests, "Valido cantidad de espascio libres", validar_cantidad_disponible);
     CU_add_test(tests, "Valido si hay memoria real disponible", validar_existe_memoria_real_disponible);
     CU_add_test(tests, "Valido si hay espacio en real + virtual", validar_existe_memoria_disponible_paginacion);
+    CU_add_test(tests, "Valido iniciar patota con paginacion", validar_iniciar_patota_paginada);
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -774,5 +776,35 @@ void validar_compactacion(){
         free(seg);
     }
     */
+
+}
+
+void validar_iniciar_patota_paginada(){
+    t_iniciar_patota data_input, data_input2;
+
+    data_input.cant_tripulantes = 2;
+    data_input.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15";
+    data_input.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15");
+    data_input.posiciones = "1|2 0|0";
+    data_input.long_posicion = strlen("1|2 0|0");
+    data_input.patota_id = 1;
+    data_input.id_primer_tripulante = 2;
+
+    data_input2.cant_tripulantes = 1;
+    data_input2.tareas = "DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15";
+    data_input2.long_tareas = strlen("DESCARGAR_ITINERARIO;1;1;1|GENERAR_OXIGENO 10;4;4;15|TOMAR_AGUA;1;1;2|GENERAR_OXIGENO 10;4;4;15");
+    data_input2.posiciones = "9|2";
+    data_input2.long_posicion = strlen("9|2");
+    data_input2.patota_id = 2;
+    data_input2.id_primer_tripulante = 4;
+
+    cfg_create("cfg/mi_ram_hq.config");
+    iniciar_memoria_principal(256);
+    iniciar_memoria_virtual(1024);
+    set_size_memoria(256);
+    inicializacion_estructuras();
+
+    bool res1 =iniciar_patota(data_input);
+    CU_ASSERT_TRUE(res1);
 
 }
