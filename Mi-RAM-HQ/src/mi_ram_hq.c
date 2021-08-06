@@ -2,6 +2,8 @@
 
 int main(int argc, char **argv)
 {
+    run_tests();
+    return 1;
     if (argc > 1 && strcmp(argv[1], "-test") == 0)
     {
         run_tests(); 
@@ -23,11 +25,6 @@ int main(int argc, char **argv)
         
         int puerto = get_puerto();
       
-        int tam_memoria = get_tamanio_memoria();
-        iniciar_memoria_principal(tam_memoria);
-        
-        //Para paginación
-        iniciar_memoria_virtual(get_tamanio_swap());
         inicializacion_estructuras();
         server_mi_ram_iniciar(puerto);
 

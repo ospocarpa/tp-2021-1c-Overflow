@@ -149,7 +149,8 @@ bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bit
 
 
 bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
-    return ! esta_Llena_Memoria(bitmap_memoria_real);
+    //print_bit_map(bitmap_memoria_real);
+    return esta_Llena_Memoria(bitmap_memoria_real);
 }
 
 int cantidad_disponible(t_bitarray* bitmap){
