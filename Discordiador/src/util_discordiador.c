@@ -43,9 +43,9 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         tripulante->patota_id = numeroPatota;
         tripulante->rafagas_consumidas = 0;
         //se inicializan los semaforos de los tripulantes
-        sem_init(&tripulante->activo, 0, 1);
-        sem_init(&tripulante->seleccionado, 0, 1);
-        sem_init(&tripulante->seleccionado_bloqueado, 0, 1);
+        sem_init(&tripulante->activo, 0, 0);
+        sem_init(&tripulante->seleccionado, 0, 0);
+        sem_init(&tripulante->seleccionado_bloqueado, 0, 0);
         //sem_init(&tripulante->sabotaje, 0, 0);
 
         // pthread_mutex_init(&tripulante->seleccionado, NULL);

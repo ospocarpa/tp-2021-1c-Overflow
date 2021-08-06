@@ -85,7 +85,6 @@ void hilo_tripulante(Tripulante *tripulante)
 
     printf("Pedí antes: %d\n", tripulante->id);
     sem_wait(&tripulante->activo); //Activo: se refiere a si la planificación está activa //TO DO
-    sem_wait(&tripulante->activo);
     printf("soy la linea 87\n");
     tripulante->socket_cliente_mongo_store = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
     if (tripulante->socket_cliente_mongo_store < 0)
@@ -171,11 +170,14 @@ void hilo_tripulante(Tripulante *tripulante)
             }
         }
 
+        printf("Inicio: %d\n", list_size(lista_READY));
+        sleep(2);
         //Para que el dispatcher sepa que estamos listos
         sem_post(&listos);
+        printf("Pasé\n");
         //Esperamos ser seleccionados
         sem_wait(&tripulante->seleccionado);
-
+        printf("Pasé II\n");
         if (!planificacion_activa)
         {
             sem_wait(&tripulante->activo);
@@ -277,13 +279,14 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
         break;
     case BLOCKED:
         pthread_mutex_lock(&MXTRIPULANTE);
-
+        printf("Paso por qaui\n");
         list_remove_by_condition(lista_BLOCKIO, mismo_id);
         cantidad_activos--;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
     case READY:
+        printf("Se borra\n");
         pthread_mutex_lock(&MXTRIPULANTE);
         list_remove_by_condition(lista_READY, mismo_id);
         pthread_mutex_unlock(&MXTRIPULANTE);

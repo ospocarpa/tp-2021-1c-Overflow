@@ -9,6 +9,7 @@
 #include "../include/tad_discordiador.h"
 #include <commons/string.h>
 #include <ctype.h>
+#include "global_discordiador.h"
 //
 //#include "tripulantes.h"
 
@@ -18,7 +19,6 @@ void verificarSabotaje();
 void verificar_buscar_el_mas_cercano_desbloquear_tripulantes_ir_a_la_posicion_sabotaje_mover_tripulante_a_tarea();
 
 extern t_list *lista_BLOCKEMERGENCIA;
-extern t_list *lista_READY;
 extern t_list *lista_EXIT;
 extern t_list *lista_BLOCKIO;
 extern t_list *lista_EXEC;

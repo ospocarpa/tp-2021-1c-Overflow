@@ -284,6 +284,7 @@ void planificar()
     for (int c = 0; c < list_size(tripulantes); c++)
     {
         Tripulante *tripulante = list_get(tripulantes, c);
+        //printf("Pasa por aca\n");
         sem_post(&tripulante->activo);
     }
 }

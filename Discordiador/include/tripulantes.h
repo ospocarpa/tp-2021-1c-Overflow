@@ -21,6 +21,7 @@
 #include "../include/server_utils.h"
 #include "config_utils.h"
 #include "sd_fcsk.h"
+#include "global_discordiador.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -39,7 +40,6 @@ extern sem_t bloqueados;
 extern sem_t grado_multiprocesamiento;
 //extern t_list *lista_NEW;
 extern t_list *lista_tripulantes; //Dentro van a estar los tripulantes en estado READY/EXEC/BLOCKED
-extern t_list *lista_READY;
 extern t_list *lista_BLOCKIO;
 extern t_list *lista_EXEC;
 extern t_list *lista_BLOCKEMERGENCIA;

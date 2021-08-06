@@ -17,6 +17,7 @@
 #include <semaphore.h>
 #include "tests.h"
 #include "dispatcher.h"
+#include "global_discordiador.h"
 
 #include <fcntl.h>
 #include <sys/types.h>
@@ -49,7 +50,6 @@ pthread_mutex_t mutex_bloqueado;
 //Listas de estados
 t_list *lista_tripulantes; //[Tripulante]
 //t_list *lista_NEW;
-t_list *lista_READY;
 t_list *lista_EXEC;
 t_list *lista_BLOCKIO;
 t_list *lista_BLOCKEMERGENCIA;
