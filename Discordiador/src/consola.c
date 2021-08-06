@@ -256,7 +256,7 @@ void detener_planificacion()
         for (int c = 0; c < list_size(tripulantes); c++)
         {
             Tripulante *tripulante = list_get(tripulantes, c);
-            pthread_mutex_lock(&tripulante->activo);
+            sem_wait(&tripulante->activo);
         }
     }
     else
@@ -284,7 +284,7 @@ void planificar()
     for (int c = 0; c < list_size(tripulantes); c++)
     {
         Tripulante *tripulante = list_get(tripulantes, c);
-        pthread_mutex_unlock(&tripulante->activo);
+        sem_post(&tripulante->activo);
     }
 }
 void listar_tripulantes()
@@ -377,7 +377,8 @@ void expulsar_tripulante(int tripulante_id)
     for (int c = 0; c < list_size(tripulantes); c++)
     {
         Tripulante *tripulante = list_get(tripulantes, c);
-        if(tripulante->id == tripulante_id) {
+        if (tripulante->id == tripulante_id)
+        {
             patota_id = tripulante->patota_id;
             break;
         }
