@@ -508,14 +508,14 @@ void validar_iniciar_patota(){
     inicializacion_estructuras();
 
     bool res = iniciar_patota(data_input);
-    /*bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
-    int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
+    bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    /*int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
     int cant_huecos = cantidad_huecos_test();
     t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);*/
 
     CU_ASSERT_TRUE(res);
-    /*CU_ASSERT_FALSE(hay_memoria_libre);
-    CU_ASSERT_EQUAL(cant_tablas_segmemtos, 1);
+    CU_ASSERT_TRUE(hay_memoria_libre);
+    /*CU_ASSERT_EQUAL(cant_tablas_segmemtos, 1);
     CU_ASSERT_EQUAL(cant_huecos, 1);
     CU_ASSERT_EQUAL(list_size(tabla->segmentos), 3);
 
