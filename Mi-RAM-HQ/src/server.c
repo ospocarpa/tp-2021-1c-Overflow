@@ -23,6 +23,7 @@ static void *ejecutar_operacion(int tripulante)
 
 	paquete = recibir_mensaje(tripulante);
 
+	printf("Cod. operación: %d\n", paquete.cod_operacion);
 	switch (paquete.cod_operacion)
 	{
 	case INICIAR_PATOTA:
@@ -93,6 +94,7 @@ static void *ejecutar_operacion(int tripulante)
 		break;
 
 	case INFORMAR_POSICION_TRIPULANTE:
+		logger_info("POSICION TRIPULANTE");
 		informe_tripulante = des_res_informar_posicion_tripulante(paquete);
 		tcb = get_TCB(informe_tripulante.patota_id, informe_tripulante.tripulante_id);
 
@@ -104,6 +106,7 @@ static void *ejecutar_operacion(int tripulante)
 		break;
 
 	case INFORMAR_ESTADO_TRIPULANTE:
+		logger_info("INFORMAR ESTADO TRIPULANTE");
 		estado_tripulante = des_cod_informar_estado(paquete);
 		tcb = get_TCB(estado_tripulante.patota_id, estado_tripulante.tripulante_id);
 		tcb.estado = map_estado(estado_tripulante.status);

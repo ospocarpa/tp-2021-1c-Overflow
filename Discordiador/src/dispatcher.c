@@ -32,7 +32,7 @@ Tripulante *busqueda_algoritmo()
     //Retornar la cola de listos
     pthread_mutex_lock(&MXTRIPULANTE);
     int indice = list_size(lista_READY) - 1;
-    printf("%d\n", indice);
+    printf("Indice: %d\n", indice);
     Tripulante *tripulante = list_get(lista_READY, indice);
     pthread_mutex_unlock(&MXTRIPULANTE);
     //printf("ID: %d\n", tripulante->id);
