@@ -256,7 +256,7 @@ void hilo_tripulante(Tripulante *tripulante)
 
 void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
 {
-
+    Tripulante *un_tripulante;
     //funcion auxiliar necesaria ?
     _Bool mismo_id(void *param)
     {
@@ -269,8 +269,8 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
     {
     case EXEC:
         pthread_mutex_lock(&MXTRIPULANTE);
-
-        list_remove_by_condition(lista_EXEC, mismo_id);
+        un_tripulante = list_remove_by_condition(lista_EXEC, mismo_id);
+        printf("id del tripulante removido:%d\n", un_tripulante->id);
         cantidad_activos--;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
@@ -278,14 +278,16 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
     case BLOCKED:
         pthread_mutex_lock(&MXTRIPULANTE);
 
-        list_remove_by_condition(lista_BLOCKIO, mismo_id);
+        un_tripulante = list_remove_by_condition(lista_BLOCKIO, mismo_id);
+        printf("id del tripulante removido:%d\n", un_tripulante->id);
         cantidad_activos--;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
     case READY:
         pthread_mutex_lock(&MXTRIPULANTE);
-        list_remove_by_condition(lista_READY, mismo_id);
+        un_tripulante = list_remove_by_condition(lista_READY, mismo_id);
+        printf("id del tripulante removido:%d\n", un_tripulante->id);
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
     case NEW:

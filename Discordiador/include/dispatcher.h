@@ -17,6 +17,7 @@
 #include <semaphore.h>
 
 extern t_list *lista_READY;
+extern pthread_mutex_t MXTRIPULANTE;
 void init_dispatcher();
 void init_bloqueados();
 Tripulante *busqueda_algoritmo();
