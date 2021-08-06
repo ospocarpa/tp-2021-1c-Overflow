@@ -40,6 +40,11 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         tripulante->posicion = malloc(sizeof(Posicion));
         tripulante->posicion->posx = 0;
         tripulante->posicion->posy = 0;
+        
+        tripulante->posicion_anterior = malloc(sizeof(Posicion));
+        tripulante->posicion_anterior->posx = 0;
+        tripulante->posicion_anterior->posy = 0;
+
         tripulante->patota_id = numeroPatota;
         tripulante->rafagas_consumidas = 0;
         //se inicializan los semaforos de los tripulantes

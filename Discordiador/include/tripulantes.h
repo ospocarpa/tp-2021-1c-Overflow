@@ -21,6 +21,7 @@
 #include "../include/server_utils.h"
 #include "config_utils.h"
 #include "sd_fcsk.h"
+#include "sd_update_bitacora.h"
 #include "global_discordiador.h"
 
 #include <fcntl.h>
@@ -58,5 +59,6 @@ void mover_tripulante_a_tarea(Tripulante *);
 void invocar_fsck();
 void cambiar_estado(Tripulante *, status_tripulante);
 Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje);
+void update_bitacora(int conexion_servidor, char *filename, char *contenido);
 
 #endif

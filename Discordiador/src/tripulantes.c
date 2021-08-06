@@ -170,20 +170,20 @@ void hilo_tripulante(Tripulante *tripulante)
             }
         }
 
-        printf("Inicio: %d\n", list_size(lista_READY));
-        //sleep(2);
         //Para que el dispatcher sepa que estamos listos
         sem_post(&listos);
-        printf("Pasé\n");
+        printf("Pasé id: %d\n", tripulante->id);
         //Esperamos ser seleccionados
         sem_wait(&tripulante->seleccionado);
-        printf("Pasé II\n");
+        
+        printf("Planificacion activa: %d\n", planificacion_activa);
         if (!planificacion_activa)
         {
             sem_wait(&tripulante->activo);
         }
         cambiar_estado(tripulante, EXEC);
 
+        printf("Sabotaje: %d\n", hay_sabotaje);
         if (hay_sabotaje)
         {
             chequear_activados();
@@ -389,23 +389,31 @@ void crearHilosTripulantes(Patota *una_patota)
 
 void mover_tripulante_a_tarea(Tripulante *tripulante)
 {
+    printf("Conexion tripulante mongostore: %d\n", tripulante->socket_cliente_mongo_store);
     // no estaria viendo el cambio de estado de exec -> ready
     // en RR
 
-    //prueba de fifo en test.c
+
     int posicion_tarea_x = tripulante->tarea->posicion.posx;
     int posicion_tarea_y = tripulante->tarea->posicion.posy;
 
     int rafaga = 1;
     int retardo_cpu = config->RETARDO_CICLO_CPU;
+    printf("Retardo: %d\n", retardo_cpu);
     if (config->ALGORITMO == RR)
     {
+        printf("Paso por RR\n");
         rafaga = config->QUANTUM;
     }
     int ciclos_consumidos = 0;
 
-    while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
+    printf("Inicio POSX\n");
+    while ((tripulante->posicion->posx != posicion_tarea_x) && ciclos_consumidos < rafaga)
     {
+        printf("Tripulante: %d-%d\n", tripulante->posicion->posx, tripulante->posicion->posy);
+        printf("Tarea: %d-%d\n", posicion_tarea_x, posicion_tarea_y);
+        tripulante->posicion_anterior->posx = tripulante->posicion->posx;
+        tripulante->posicion_anterior->posy = tripulante->posicion->posy;
         if (tripulante->expulsado)
         {
             liberar_conexion(tripulante->socket_cliente_mi_ram);
@@ -427,7 +435,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
         {
             tripulante->posicion->posx++;
         }
-        else if (posicion_tarea_x < tripulante->posicion->posx)
+        else if (posicion_tarea_x < tripulante->posicion->posy)
         {
             tripulante->posicion->posx--;
         }
@@ -440,8 +448,11 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
         enviar_posicion_mi_ram(tripulante);
     }
 
+    printf("Inicio POSY\n");
     while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
+        printf("Tripulante: %d-%d\n", tripulante->posicion->posx, tripulante->posicion->posy);
+        printf("Tarea: %d-%d\n", posicion_tarea_x, posicion_tarea_y);
         if (tripulante->expulsado)
         {
             liberar_conexion(tripulante->socket_cliente_mi_ram);
@@ -485,14 +496,29 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
 
 void enviar_posicion_mi_ram(Tripulante *tripulante)
 {
+    int socket_miram = 0;
+    printf("Informar posicion: %d\n", tripulante->socket_cliente_mi_ram);
     t_informar_posicion_tripulante info_tripulante;
     info_tripulante.patota_id = tripulante->patota_id;
     info_tripulante.tripulante_id = tripulante->id;
     info_tripulante.posicion.posx = tripulante->posicion->posx;
     info_tripulante.posicion.posy = tripulante->posicion->posy;
 
+    int posx = tripulante->posicion->posx;
+    int posy = tripulante->posicion->posy;
+    int posx_anterior = tripulante->posicion_anterior->posx;
+    int posy_anterior = tripulante->posicion_anterior->posy;
+
     t_package paquete = ser_res_informar_posicion_tripulante(info_tripulante);
-    sendMessage(paquete, tripulante->socket_cliente_mi_ram);
+    sendMessage(paquete, socket_miram);
+    printf("Enviado a miram\n");
+    if(tripulante->socket_cliente_mongo_store>0){
+        char* filename = string_new();
+        string_append_with_format(&filename, "tripulante%s.ims", string_itoa(tripulante->id));
+        char* contenido = string_new();
+        string_append_with_format(&contenido, "Se mueve de %s|%s a %s|%s\n", string_itoa(posx), string_itoa(posy), string_itoa(posx_anterior), string_itoa(posy_anterior));
+        update_bitacora(tripulante->socket_cliente_mongo_store, filename, contenido);
+    }
 }
 
 void chequear_activados()
@@ -678,4 +704,16 @@ void desbloquear_tripulantes()
         sem_post(&un_tripulante->activo);
         list_add(lista_READY, un_tripulante);
     }
+}
+
+void update_bitacora(int conexion_servidor, char *filename, char *contenido)
+{
+    t_file file;
+    file.contenido = contenido;
+    file.long_contenido = strlen(file.contenido);
+    file.nombre_file = filename;
+    file.long_nombre_file = strlen(file.nombre_file);
+
+    t_package paquete = ser_update_bitacora(file);
+    sendMessage(paquete, conexion_servidor);
 }

@@ -26,6 +26,7 @@ typedef struct
     int id;
     status_tripulante status;
     Posicion *posicion;
+    Posicion *posicion_anterior;
     //Tarea *tarea;
     t_info_tarea *tarea;
     int patota_id;
