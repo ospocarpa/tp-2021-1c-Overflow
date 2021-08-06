@@ -140,7 +140,9 @@ t_list* list_slice(t_list* lista, int inicio, int fin){
 
 bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_obj){
     int cant_marcos_real = cantidad_disponible(bitmap_memoria_real);
+    
     int canti_marcos_virtual  = cantidad_disponible(bitmap_memoria_virtual);
+    //printf("Total: %d\n", cant_marcos_real+canti_marcos_virtual);
     if(cant_marcos_real + canti_marcos_virtual >= tamanio_obj ) return true;
     return false;
     
@@ -149,7 +151,8 @@ bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bit
 
 
 bool existe_memoria_real_disponible(t_bitarray* bitmap_memoria_real){
-    return ! esta_Llena_Memoria(bitmap_memoria_real);
+    //print_bit_map(bitmap_memoria_real);
+    return esta_Llena_Memoria(bitmap_memoria_real);
 }
 
 int cantidad_disponible(t_bitarray* bitmap){

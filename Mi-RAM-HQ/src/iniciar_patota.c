@@ -116,8 +116,8 @@ t_list * create_list_data_segmento(t_iniciar_patota data){
 bool iniciar_patota_paginacion(t_iniciar_patota data){
     int tamanio_total = 8 + 21 * data.cant_tripulantes + data.long_tareas;
     bool isAllow = existe_memoria_disponible_paginacion(bitmap_memoria_real, bitmap_memoria_virtual, tamanio_total);
-    if(!isAllow) return false;
-
+    if(!isAllow) return false;  
+    
     void* stream_pcb = get_stream_pcb(data);
     void* stream_tcbs = get_stream_tcbs(data);
     
@@ -138,7 +138,7 @@ void guardar_info_patota(t_iniciar_patota data, void* informacion){
     int pagina_tam = get_tamanio_tamanio_pagina();
     int paginas_que_necesita = tamanio_total/pagina_tam;
     if(tamanio_total%pagina_tam!=0) paginas_que_necesita++;
-
+    
     t_list* pages = list_create();
     t_list* tripulante_ids = list_create();
     int page_id = 0;
@@ -160,8 +160,8 @@ void guardar_info_patota(t_iniciar_patota data, void* informacion){
         // fijarse las comillas dobles 
 
         int base = frameid*pagina_tam;
+        //printf("Pag tam: %d Base: %d\n", pagina_tam, base);
         escribir_memoria_real(informacion_dividida, base, pagina_tam);
-
         list_add(pages, page);
         list_add(tripulante_ids, tripulante_id);
         tripulante_id++;
@@ -173,7 +173,6 @@ void guardar_info_patota(t_iniciar_patota data, void* informacion){
     table_page->tripulante_ids = tripulante_ids;
     table_page->cant_tripulantes = data.cant_tripulantes;
     table_page->cant_caracteres_tarea = data.long_tareas;
-
     list_add(list_tablas_paginacion, table_page);
 }
 // "hit-mongostore-validaciones"

@@ -8,6 +8,12 @@ void * memoria_virtual = NULL;
 
 /* ************************************************** */
 void inicializacion_estructuras(){
+    int tam_memoria = get_tamanio_memoria();
+    iniciar_memoria_principal(tam_memoria);
+    
+    //Para paginación
+    iniciar_memoria_virtual(get_tamanio_swap());
+
     char * tipo_memoria = get_esquema_memoria();
     //printf("%s\n", tipo_memoria);
     if(strcmp(tipo_memoria,"SEGMENTACION") == 0){
@@ -26,15 +32,10 @@ void inicializacion_estructuras(){
         int cantidad_frames_virtual = get_tamanio_swap();
         int cantidad_frames = get_tamanio_tamanio_pagina();
 
-        char* path = get_path_swap();
-        int file_size = cantidad_frames_virtual/8;
-        int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
-        ftruncate(fd, file_size);
-        void* stream = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
-
         void* puntero_bitmap = malloc(cantidad_frames/8);
+        void* puntero_bitmap_virtual = malloc(cantidad_frames_virtual/8);
         bitmap_memoria_real = bitarray_create_with_mode(puntero_bitmap, cantidad_frames/8, LSB_FIRST);
-        bitmap_memoria_virtual = bitarray_create_with_mode(stream, cantidad_frames_virtual/8, LSB_FIRST);
+        bitmap_memoria_virtual = bitarray_create_with_mode(puntero_bitmap_virtual, cantidad_frames_virtual/8, LSB_FIRST);
 
         limpiar_bit_map(bitmap_memoria_real);
         limpiar_bit_map(bitmap_memoria_virtual);
@@ -51,8 +52,24 @@ void iniciar_memoria_principal(int tam_memoria){
 
 void iniciar_memoria_virtual(int tam_memoria){
     if(memoria_virtual == NULL){
-        memoria_virtual = malloc(tam_memoria);
+        int cantidad_frames_virtual = get_tamanio_swap();
+        char* path = get_path_swap();
+        int file_size = cantidad_frames_virtual/8;
+        int fd = open(path, O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+        ftruncate(fd, file_size);
+        memoria_virtual = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
     }
+    //Creación de archivo
+    /*int file_size = 10;
+    int fd = open("./main.txt", O_RDWR | O_CREAT, S_IRUSR | S_IWUSR );
+    ftruncate(fd, file_size);
+    char* tareas = mmap(NULL, file_size, PROT_WRITE | PROT_READ , MAP_SHARED, fd, 0);
+    strcpy(tareas, "Hola mundo");
+    return 1;*/
+
+    /*
+    
+    */
 }
 
 void liberar_memoria_principal(){

@@ -16,11 +16,11 @@ void validar_cargar_informacion_tareas_a_MP();
 void validar_get_tarea();
 void validar_get_tarea2();
 void validar_get_posicion_STR();
-void validar_iniciar_patota_segmentada();
+void validar_iniciar_patota();
 void validar_esta_Llena_Memoria();
 void validar_get_primer_bit_disponible();
 void validar_expulsar_tripulante_segmentada();
-void validar_informacion_de_patota_segmentacion();
+void validar_informacion_de_patota();
 void validar_actualizacion_tripulante();
 void validar_informar_tarea();
 void validar_compactacion();
@@ -31,10 +31,14 @@ void validar_iniciar_patota_paginada();
 
 int run_tests()
 {
+    cfg_create("cfg/mi_ram_hq.config");
+    logger_create("cfg/mi_ram_hq.log", "MI_RAM_HQ");
+    logger_info("Iniciando módulo Mi-RAM-HQ");
+
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite", NULL, NULL);
 
-    CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
+    /*CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
     CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
     CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
@@ -43,25 +47,29 @@ int run_tests()
     CU_add_test(tests, "Valido informar posicion msj mi ram a discordiador", validar_sd_informar_posicion_msj_disc_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj discordiador a mi ram", validar_sd_informar_posicion_msj_mi_ram_disc);
     CU_add_test(tests, "Valido informar estado msj discordiador a mi ram", validar_sd_informar_estado_msj_discordiador_a_mi_ram);
-    CU_add_test(tests, "Valido res de iniciar patota msj mi ram a discordialor", validar_sd_res_iniciar_patota);
-    CU_add_test(tests, "Valido carga de informacion de PCB a MP", validar_cargar_informacion_PCB_a_MP);
+    CU_add_test(tests, "Valido res de iniciar patota msj mi ram a discordialor", validar_sd_res_iniciar_patota);*/
+    
+    /*CU_add_test(tests, "Valido carga de informacion de PCB a MP", validar_cargar_informacion_PCB_a_MP);
     CU_add_test(tests, "Valido carga de informacion de TCB a MP", validar_cargar_informacion_TCB_a_MP);
     CU_add_test(tests, "Valido carga de informacion de TAREAS a MP", validar_cargar_informacion_tareas_a_MP);
+    
     CU_add_test(tests, "Valido get tarea", validar_get_tarea);
     CU_add_test(tests, "Valido get tarea2", validar_get_tarea2);
     CU_add_test(tests, "Valido get posicion", validar_get_posicion_STR);
     CU_add_test(tests, "Valido si la memoria esta llena en el bitmap", validar_esta_Llena_Memoria);
-    CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible);
-    CU_add_test(tests, "Iniciar patota segmentada", validar_iniciar_patota_segmentada);
+    CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible)
+    */
+    CU_add_test(tests, "Iniciar patota", validar_iniciar_patota);
+    CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota);
+    CU_add_test(tests, "Valido iniciar patota con paginacion", validar_iniciar_patota_paginada);
+    /*
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
-    // CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota_segmentacion);
-    // CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
-    // CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
-    // CU_add_test(tests, "Valido compactacion", validar_compactacion);
+    CU_add_test(tests, "Valido la actualización de un tripulante por segmentacion", validar_actualizacion_tripulante);
+    CU_add_test(tests, "Valido actualización de tripulante más solicitud de su próxima tarea", validar_informar_tarea);
+    CU_add_test(tests, "Valido compactacion", validar_compactacion);
     CU_add_test(tests, "Valido cantidad de espascio libres", validar_cantidad_disponible);
     CU_add_test(tests, "Valido si hay memoria real disponible", validar_existe_memoria_real_disponible);
-    CU_add_test(tests, "Valido si hay espacio en real + virtual", validar_existe_memoria_disponible_paginacion);
-    CU_add_test(tests, "Valido iniciar patota con paginacion", validar_iniciar_patota_paginada);
+    CU_add_test(tests, "Valido si hay espacio en real + virtual", validar_existe_memoria_disponible_paginacion);*/
 
     CU_basic_set_mode(CU_BRM_VERBOSE);
     CU_basic_run_tests();
@@ -334,14 +342,12 @@ void validar_cargar_informacion_TCB_a_MP(){
 
 
 void validar_cargar_informacion_PCB_a_MP(){
-
     t_PCB pcb;
     t_PCB pcb_res;
 
     pcb.pid = 0;
     pcb.tareas=1;
-
-    iniciar_memoria_principal(1024);
+    inicializacion_estructuras();
 
     cargar_informacion_PCB_a_MP(pcb,0);
     pcb_res = leer_info_PCB(0);
@@ -488,7 +494,7 @@ void validar_get_primer_bit_disponible(){
 }
 
 
-void validar_iniciar_patota_segmentada(){
+void validar_iniciar_patota(){
 
     t_iniciar_patota data_input;
 
@@ -500,20 +506,17 @@ void validar_iniciar_patota_segmentada(){
     data_input.patota_id = 1;
     data_input.id_primer_tripulante = 2;
 
-    iniciar_memoria_principal(128);
-    iniciar_lista_tabla_segmento();
-    iniciar_tabla_huecos(128);
-    set_size_memoria(128);
+    inicializacion_estructuras();
 
-    bool res = iniciar_patota_segmentacion(data_input);
-    bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
-    int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
+    bool res = iniciar_patota(data_input);
+    //bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    /*int cant_tablas_segmemtos = cantidad_de_tablas_de_segmento_test();
     int cant_huecos = cantidad_huecos_test();
-    t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);
+    t_tabla_segmentos * tabla = get_tabla_segmento_segun_indice_test(0);*/
 
     CU_ASSERT_TRUE(res);
-    CU_ASSERT_FALSE(hay_memoria_libre);
-    CU_ASSERT_EQUAL(cant_tablas_segmemtos, 1);
+    //CU_ASSERT_TRUE(hay_memoria_libre);
+    /*CU_ASSERT_EQUAL(cant_tablas_segmemtos, 1);
     CU_ASSERT_EQUAL(cant_huecos, 1);
     CU_ASSERT_EQUAL(list_size(tabla->segmentos), 3);
 
@@ -523,12 +526,7 @@ void validar_iniciar_patota_segmentada(){
 
     void tabla_destroy(t_segmento * seg){
         free(seg);
-    }
-
-    //list_destroy_and_destroy_elements(tabla, tabla_destroy);
-    //free(tabla);
-
-    //liberar_lista_de_tablas_segmentos();
+    }*/
 }
 
 void validar_expulsar_tripulante_segmentada(){
@@ -581,7 +579,7 @@ void validar_expulsar_tripulante_segmentada(){
     //liberar_lista_de_tablas_segmentos();
 }
 
-void validar_informacion_de_patota_segmentacion(){
+void validar_informacion_de_patota(){
     t_iniciar_patota data_input;
 
     data_input.cant_tripulantes = 1;
@@ -597,21 +595,20 @@ void validar_informacion_de_patota_segmentacion(){
     iniciar_tabla_huecos(128);
     set_size_memoria(128);
 
-    bool res = iniciar_patota_segmentacion(data_input);
-    bool hay_memoria_libre = se_puede_escribir(48);//no se puede escribir porque solo hay 47 bytes libres en memoria
+    bool res = iniciar_patota(data_input);
     
     char* tarea = get_tareas(data_input.patota_id);
     //printf("\nTarea: %s\n", tarea);
     CU_ASSERT_STRING_EQUAL(data_input.tareas, tarea);
 
-    t_TCB tcb_encontrado = get_TCB_segmentacion_pura(data_input.patota_id, 2);
-    //mostrar_tcb(tcb_encontrado);
-    CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
+    t_TCB tcb_encontrado = get_TCB(data_input.patota_id, 2);
+    mostrar_tcb(tcb_encontrado);
+    /*CU_ASSERT_EQUAL(tcb_encontrado.tid, 2);
     CU_ASSERT_EQUAL(tcb_encontrado.estado, 'N');
     CU_ASSERT_EQUAL(tcb_encontrado.posx, 0);
     CU_ASSERT_EQUAL(tcb_encontrado.posy, 0);
     CU_ASSERT_EQUAL(tcb_encontrado.prox_tarea, 1);
-    CU_ASSERT_EQUAL(tcb_encontrado.puntero_pcb, 9);
+    CU_ASSERT_EQUAL(tcb_encontrado.puntero_pcb, 9);*/
 
     //dump_segmentacion_pura();
     liberar_tabla_huecos();
@@ -798,7 +795,7 @@ void validar_iniciar_patota_paginada(){
     data_input2.patota_id = 2;
     data_input2.id_primer_tripulante = 4;
 
-    cfg_create("cfg/mi_ram_hq.config");
+    //cfg_create("cfg/mi_ram_hq.config");
     iniciar_memoria_principal(256);
     iniciar_memoria_virtual(1024);
     set_size_memoria(256);

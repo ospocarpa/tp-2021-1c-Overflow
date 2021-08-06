@@ -20,26 +20,27 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
 
     int cantidad_tripulantes = datosPatota->cant_tripulantes;
     int cantidad_posiciones = 0;
-    char** partes = string_split(datosPatota->posiciones, " ");
-    void a_la_lista_partes(char *item){
-		cantidad_posiciones++;
+    char **partes = string_split(datosPatota->posiciones, " ");
+    void a_la_lista_partes(char *item)
+    {
+        cantidad_posiciones++;
     };
     string_iterate_lines(partes, a_la_lista_partes);
-    
+
     int cant_para_repetir = cantidad_tripulantes - cantidad_posiciones;
-    
-    
-    char* nuevas_posiciones = string_new();
+
+    char *nuevas_posiciones = string_new();
     string_append_with_format(&nuevas_posiciones, "%s ", datosPatota->posiciones);
-    for(int c=0; c<cant_para_repetir; c++){
+    for (int c = 0; c < cant_para_repetir; c++)
+    {
         string_append_with_format(&nuevas_posiciones, "%s", "0|0 ");
-    }  
+    }
     string_trim_right(&nuevas_posiciones);
     datosPatota->posiciones = string_new();
     string_append_with_format(&datosPatota->posiciones, "%s", nuevas_posiciones);
     datosPatota->long_posicion = strlen(datosPatota->posiciones);
 
-    datosPatota->tareas = get_tareas_from_path(tokens[2]);     //"GENERAR_BASURA 30;2;2;2";
+    datosPatota->tareas = get_tareas_from_path(tokens[2]); //"GENERAR_BASURA 30;2;2;2";
     datosPatota->long_tareas = strlen(datosPatota->tareas);
     datosPatota->patota_id = numeroPatota;
     datosPatota->id_primer_tripulante = numeroTripulante;
@@ -77,14 +78,15 @@ void pedirTarea(Tripulante *tripulante)
 }
 
 void hilo_tripulante(Tripulante *tripulante)
-{ 
+{
     pthread_mutex_lock(&MXTRIPULANTE);
     list_add(lista_tripulantes, tripulante);
     pthread_mutex_unlock(&MXTRIPULANTE);
 
     printf("Pedí antes: %d\n", tripulante->id);
-    pthread_mutex_lock(&tripulante->activo); //Activo: se refiere a si la planificación está activa //TO DO
-
+    sem_wait(&tripulante->activo); //Activo: se refiere a si la planificación está activa //TO DO
+    sem_wait(&tripulante->activo);
+    printf("soy la linea 87\n");
     tripulante->socket_cliente_mongo_store = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
     if (tripulante->socket_cliente_mongo_store < 0)
     {
@@ -118,30 +120,31 @@ void hilo_tripulante(Tripulante *tripulante)
     //
 
     _Bool finalizo_tarea = true;
-    //pthread_mutex_lock(&tripulante->activo);
+    //sem_wait(&tripulante->activo);
     while (1)
     {
-        if(tripulante->expulsado){
-            printf("tripulante %d expulsado \n",tripulante->id);
+        if (tripulante->expulsado)
+        {
+            printf("tripulante %d expulsado \n", tripulante->id);
             liberar_conexion(tripulante->socket_cliente_mi_ram);
             liberar_conexion(tripulante->socket_cliente_mongo_store);
             pthread_exit(NULL);
         }
-        
+
         if (finalizo_tarea)
         {
             tripulante->rafagas_consumidas = 0;
             pedirTarea(tripulante);
 
-            /*printf("Tiempo: %d\n", tripulante->tarea->tiempo);
+            printf("Tiempo: %d\n", tripulante->tarea->tiempo);
             printf("Parámetro: %d\n", tripulante->tarea->parametro);
-            printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);*/
+            printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
             //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
             //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
 
             if (!planificacion_activa)
             {
-                pthread_mutex_lock(&tripulante->activo);
+                sem_wait(&tripulante->activo);
             }
 
             if (tripulante->tarea == NULL)
@@ -149,17 +152,18 @@ void hilo_tripulante(Tripulante *tripulante)
                 //Analizar si se eliminó en otra lista // TO DO
                 //  se pondria crear una funcion : cambiar_estado () ??
                 // todo el contenido del if menos el break : podri incluirse en la funcion cambiar_estado()
-
+                printf("tarea null\n");
                 cambiar_estado(tripulante, EXIT); //podria agregarse el envio a mi_ram del estado ??
                 break;
             }
             if (tripulante->status == NEW || tripulante->status == BLOCKED)
             {
+                printf("soy la linea 161\n");
                 // Solo en la 1era iteraccion entraria a est if(por new)
                 //Entraria por BLOCKED en caso de finlizar una tarea por i/o y tengo otra tarea a ejecutar
                 if (!planificacion_activa)
                 {
-                    pthread_mutex_lock(&tripulante->activo);
+                    sem_wait(&tripulante->activo);
                 }
 
                 //Se agrega a la lista de ready
@@ -170,20 +174,20 @@ void hilo_tripulante(Tripulante *tripulante)
         //Para que el dispatcher sepa que estamos listos
         sem_post(&listos);
         //Esperamos ser seleccionados
-        pthread_mutex_lock(&tripulante->seleccionado);
+        sem_wait(&tripulante->seleccionado);
 
         if (!planificacion_activa)
         {
-            pthread_mutex_lock(&tripulante->activo);
+            sem_wait(&tripulante->activo);
         }
         cambiar_estado(tripulante, EXEC);
 
         if (hay_sabotaje)
         {
             chequear_activados();
-            pthread_mutex_lock(&tripulante->activo); //esta linea va o no va ???
+            sem_wait(&tripulante->activo); //esta linea va o no va ???
             //el tripulante debe volve a ser seleccionado
-            pthread_mutex_lock(&tripulante->seleccionado);
+            sem_wait(&tripulante->seleccionado);
         }
 
         mover_tripulante_a_tarea(tripulante);
@@ -197,7 +201,7 @@ void hilo_tripulante(Tripulante *tripulante)
                 {
                     chequear_activados();
                 }
-                pthread_mutex_lock(&tripulante->activo);
+                sem_wait(&tripulante->activo);
             }
             //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
 
@@ -209,7 +213,7 @@ void hilo_tripulante(Tripulante *tripulante)
             cambiar_estado(tripulante, BLOCKED);
 
             //Esperamos ser seleccionados por i/o //solo uno a la vez
-            pthread_mutex_lock(&tripulante->seleccionado_bloqueado);
+            sem_wait(&tripulante->seleccionado_bloqueado);
             pthread_mutex_lock(&mutex_bloqueado);
         }
         //misma logica para todas las tareas ?
@@ -222,7 +226,7 @@ void hilo_tripulante(Tripulante *tripulante)
                 {
                     chequear_activados();
                 }
-                pthread_mutex_lock(&tripulante->activo);
+                sem_wait(&tripulante->activo);
             }
             tripulante->rafagas_consumidas++;
             sleep(config->RETARDO_CICLO_CPU);
@@ -284,6 +288,9 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
         list_remove_by_condition(lista_READY, mismo_id);
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
+    case NEW:
+        printf("pase por new\n");
+        break;
     default:
         break;
     }
@@ -303,6 +310,7 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
         tripulante->status = READY;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
+        printf("pase por ready\n");
         break;
     case BLOCKED:
 
@@ -336,8 +344,7 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
           de los tripulantes se bloquea 
           4 si se desbloquea (por iniciar_planificacion de consola)
          5 otro semaforo arrancar (seleccionado para cada tripulante)?
-        wait (tripulante ->activo)  
-         wait (tripulante->seleccionado)
+        wait (tripulante -sem_wait (tripulante->seleccionado)
 
          --------------------------------------
          PENDIENTES
@@ -394,10 +401,11 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
 
     while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
     {
-        if(tripulante->expulsado){
+        if (tripulante->expulsado)
+        {
             liberar_conexion(tripulante->socket_cliente_mi_ram);
             liberar_conexion(tripulante->socket_cliente_mongo_store);
-            printf("tripulante %d expulsado",tripulante->id);
+            printf("tripulante %d expulsado", tripulante->id);
             pthread_exit(NULL);
         }
         if (!planificacion_activa || hay_sabotaje)
@@ -407,7 +415,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
             {
                 chequear_activados();
             }
-            pthread_mutex_lock(&tripulante->activo);
+            sem_wait(&tripulante->activo);
         }
         //Mueve uno en X
         if (posicion_tarea_x > tripulante->posicion->posx)
@@ -429,10 +437,11 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
 
     while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
-        if(tripulante->expulsado){
+        if (tripulante->expulsado)
+        {
             liberar_conexion(tripulante->socket_cliente_mi_ram);
             liberar_conexion(tripulante->socket_cliente_mongo_store);
-            printf("tripulante %d expulsado",tripulante->id);
+            printf("tripulante %d expulsado", tripulante->id);
             pthread_exit(NULL);
         }
         if (!planificacion_activa || hay_sabotaje)
@@ -442,7 +451,7 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
             {
                 chequear_activados();
             }
-            pthread_mutex_lock(&tripulante->activo);
+            sem_wait(&tripulante->activo);
         }
         //Mueve uno en Y
         if (posicion_tarea_y > tripulante->posicion->posy)
@@ -509,7 +518,7 @@ void ir_a_la_posicion_sabotaje(Tripulante *tripulante, t_sabotaje *sabotaje)
     {
         if (!planificacion_activa)
         {
-            pthread_mutex_lock(&tripulante->activo);
+            sem_wait(&tripulante->activo);
         }
         if (tripulante->posicion->posx != sabotaje->posicion->posx)
         {
@@ -661,7 +670,7 @@ void desbloquear_tripulantes()
     {
         Tripulante *un_tripulante = list_remove(lista_BLOCKEMERGENCIA, 0);
         un_tripulante->status = READY;
-        pthread_mutex_unlock(&un_tripulante->activo);
+        sem_post(&un_tripulante->activo);
         list_add(lista_READY, un_tripulante);
     }
 }

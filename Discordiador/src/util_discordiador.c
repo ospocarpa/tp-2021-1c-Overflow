@@ -43,9 +43,13 @@ Patota *map_to_patota(t_iniciar_patota datosPatota)
         tripulante->patota_id = numeroPatota;
         tripulante->rafagas_consumidas = 0;
         //se inicializan los semaforos de los tripulantes
-        pthread_mutex_init(&tripulante->activo, NULL);
-        pthread_mutex_init(&tripulante->seleccionado, NULL);
-        pthread_mutex_init(&tripulante->seleccionado_bloqueado, NULL);
+        sem_init(&tripulante->activo, 0, 1);
+        sem_init(&tripulante->seleccionado, 0, 1);
+        sem_init(&tripulante->seleccionado_bloqueado, 0, 1);
+        //sem_init(&tripulante->sabotaje, 0, 0);
+
+        // pthread_mutex_init(&tripulante->seleccionado, NULL);
+        // pthread_mutex_init(&tripulante->seleccionado_bloqueado, NULL);
         //pthread_mutex_init(&tripulante->sabotaje,0);
         list_add(patota_new->tripulantes, tripulante);
         // defino los sockets en -1
@@ -132,6 +136,11 @@ char *get_status_string(status_tripulante status)
 t_list *get_tripulantes_all()
 {
     t_list *tripulantes = lista_tripulantes;
+    for (int i = 0; i < list_size(tripulantes); i++)
+    {
+        Tripulante *tripulante = list_get(tripulantes, i);
+        printf("ID del tripulante : %d\n", tripulante->id);
+    }
     return tripulantes;
 }
 

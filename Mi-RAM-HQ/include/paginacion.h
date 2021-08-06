@@ -68,4 +68,7 @@ void* leer_memoria_virtual(int marco, int desplazamiento);
 void escribir_memoria_real(void *stream, int base, int desplazamiento);
 void escribir_memoria_virtual(void *stream, int base, int desplazamiento);
 
+//Últimos métodos
+void expulsar_tripulante_paginacion(t_expulsar_tripulante tripulante);
+
 #endif

@@ -67,6 +67,7 @@ void transferencia_de_memoria_real_a_swap(t_page* page){
 
 int get_first_frame_disponible(t_bitarray* bitmap){
     bool memoria_llena = existe_memoria_real_disponible(bitmap);
+    printf("Memoria llena: %d\n", memoria_llena);
     int indice = 0;
     if(memoria_llena){
         t_page* page = obtener_pagina_candidato_por_algoritmo_de_reemplazo();
@@ -74,7 +75,7 @@ int get_first_frame_disponible(t_bitarray* bitmap){
         indice = page->frame;
     }else{
         //Devuelve el primer bit disponible
-        indice = 1;
+        indice = get_primer_bit_disponible(bitmap);
     }
     return indice;
 }
@@ -127,9 +128,9 @@ char* get_tareas_paginacion(int patota_id){
     t_list* paginas_filtradas = list_slice(tabla_paginacion->pages, 0, cant_paginas_tarea);
 
     void* stream = dame_todo_el_stream(paginas_filtradas);
-    char* tareas = malloc(tabla_paginacion->cant_caracteres_tarea);
+    char* tareas = malloc(tabla_paginacion->cant_caracteres_tarea+1);
     memcpy(tareas, stream, tabla_paginacion->cant_caracteres_tarea);
-
+    tareas[tabla_paginacion->cant_caracteres_tarea] = '\0';
     return tareas;
 }
 
@@ -301,6 +302,7 @@ void* leer_memoria_virtual(int marco, int desplazamiento){
 }
 
 void escribir_memoria_real(void *stream, int base, int desplazamiento){
+    printf("Base: %d Desplazamiento: %d\n", base, desplazamiento);
     memcpy(memoria_principal + base * desplazamiento, stream, desplazamiento);
     return stream;
 }
@@ -312,7 +314,7 @@ void escribir_memoria_real(void *stream, int base, int desplazamiento){
 //bool bitarray_test_bit(t_bitarray *self, off_t bit_index) 
 
 int get_primer_bit_disponible(t_bitarray* bitmap){
-    int indice = -1;
+    int indice = 0;
     int bits = bitarray_get_max_bit(bitmap);
     //printf("Bits: %d\n", bits);
     for(int c = 0; c < bits ; c++){
@@ -330,5 +332,6 @@ void escribir_memoria_virtual(void *stream, int base, int desplazamiento){
     return stream;
 }
 
-void expulsar_tripulante_paginacion(int id_tripulante){
+void expulsar_tripulante_paginacion(t_expulsar_tripulante tripulante){
+    printf("Trip: %d Proceso: %d\n", tripulante.tripulante_id, tripulante.patota_id);
 }
