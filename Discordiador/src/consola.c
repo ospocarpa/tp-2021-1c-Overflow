@@ -252,6 +252,7 @@ void detener_planificacion()
     {
         planificacion_activa = false;
         log_info(logger, "[Planificacion detenida]");
+        
         t_list *tripulantes = get_tripulantes_all();
         for (int c = 0; c < list_size(tripulantes); c++)
         {

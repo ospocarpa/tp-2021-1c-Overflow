@@ -26,12 +26,12 @@ typedef struct
     int id;
     status_tripulante status;
     Posicion *posicion;
+    Posicion *posicion_anterior;
     //Tarea *tarea;
     t_info_tarea *tarea;
     int patota_id;
-    int rafagas_consumidas;
-    sem_t activo; //mutex o binario ?? implementar binario
-                  //desabilitado por defecto
+    int pendiente_de_tarea;
+    sem_t activo; //implementar binario
 
     sem_t seleccionado; //desahibiliado por defecto
                         //habilitado por dispatcher

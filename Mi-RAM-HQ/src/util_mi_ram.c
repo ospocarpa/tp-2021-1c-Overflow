@@ -32,36 +32,54 @@
 
 
     char * dame_tarea (char *lista_tareas,int n_tareas){
+        char* tarea = "";
         char **lista_aux = string_split(lista_tareas,"\n");
+        int cant_tareas = 0;
 
-        return lista_aux[n_tareas-1];
+        void a_la_lista_partes(char *item)
+        {
+            cant_tareas++;
+        };
+        string_iterate_lines(lista_aux, a_la_lista_partes);
 
+        printf("Cant. tareas: %d. Indice tarea: %d\n", cant_tareas, n_tareas);
+        if(cant_tareas >= n_tareas){
+            tarea =  lista_aux[n_tareas-1];
+        }
+        printf("Tarea: %s\n", tarea);
+        return tarea;
     }
 
 
     // la tarea 0 seria como la 1 a la hora de contar
     t_info_tarea get_tarea(char* lista_tareas,int n_tarea){
         t_info_tarea tarea_aux;
+        tarea_aux.tarea = OTRA_TAREA;
+        tarea_aux.parametro = OTRA_TAREA;
+        tarea_aux.posicion.posx = 0;
+        tarea_aux.posicion.posy = 0;
+        tarea_aux.tiempo = -1;
+
         char* tarea = dame_tarea(lista_tareas, n_tarea);
-        //printf("Método interno: %s\n",tarea);
-        
-        
-        char** partes = string_split(tarea,";");
-                    //borrar este spit y cambiar los campos.
-        char** partes_aux = string_split(partes[0]," ");
+        printf("Tarea de util miram: %s\n", tarea);
+        if(strcmp(tarea, "") != 0){
+            printf("Pase por aqui\n");
+            char** partes = string_split(tarea,";");
+            char** partes_aux = string_split(partes[0]," ");
 
-        tarea_aux.tarea = devolver_Enum(partes_aux[0]);
-        // pasar a funcion si es la tarea que conozco , preguntos y return enum 
-        // clave enum
+            tarea_aux.tarea = devolver_Enum(partes_aux[0]);
+            // pasar a funcion si es la tarea que conozco , preguntos y return enum 
+            // clave enum
 
-        //tarea_aux.tarea = partes_aux[0];
-        //cambiar variable
-        if ( tarea_aux.tarea == OTRA_TAREA) tarea_aux.parametro = 0;
-        else tarea_aux.parametro = atoi(partes_aux[1]);
+            //tarea_aux.tarea = partes_aux[0];
+            //cambiar variable
+            if ( tarea_aux.tarea == OTRA_TAREA) tarea_aux.parametro = 0;
+            else tarea_aux.parametro = atoi(partes_aux[1]);
 
-        tarea_aux.posicion.posx = atoi(partes[1]);
-        tarea_aux.posicion.posy = atoi(partes[2]);
-        tarea_aux.tiempo = atoi(partes[3]);
+            tarea_aux.posicion.posx = atoi(partes[1]);
+            tarea_aux.posicion.posy = atoi(partes[2]);
+            tarea_aux.tiempo = atoi(partes[3]);
+        }
     
         return tarea_aux;
     }

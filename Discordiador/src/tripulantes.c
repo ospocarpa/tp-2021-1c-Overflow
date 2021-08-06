@@ -50,6 +50,7 @@ void cargarTripulante(t_iniciar_patota *datosPatota, char **tokens, int cantidad
 
 void pedirTarea(Tripulante *tripulante)
 {
+    int socket_cliente_mi_ram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);
     // Completa esta estructura para pedir la tarea a mi_ram
     t_short_info_tripulante info_tripulante;
     printf("Patota: %d tripulante: %d\n", tripulante->patota_id, tripulante->id);
@@ -58,22 +59,28 @@ void pedirTarea(Tripulante *tripulante)
 
     //Se empaqueta y se envia el mensaje
     t_package paquete = ser_cod_informar_tarea_tripulante(info_tripulante);
-    sendMessage(paquete, tripulante->socket_cliente_mi_ram);
+    sendMessage(paquete, socket_cliente_mi_ram);
     //Se espara una respuesta
-    paquete = recibir_mensaje(tripulante->socket_cliente_mi_ram);
+    paquete = recibir_mensaje(socket_cliente_mi_ram);
     //En tarea se guarda la proxima tarea a ejecutar
     t_info_tarea tarea;
     tarea = des_res_informacion_tarea_tripulante(paquete);
 
     t_info_tarea *tarea_tripulante = malloc(sizeof(t_info_tarea));
 
-    tarea_tripulante->tarea = tarea.tarea;
-    tarea_tripulante->parametro = tarea.parametro;
-    tarea_tripulante->tiempo = tarea.tiempo;
-    tarea_tripulante->posicion.posx = tarea.posicion.posx;
-    tarea_tripulante->posicion.posy = tarea.posicion.posy;
+    printf("Solicitud de tarea\n");
+    if(tarea.tiempo >= 0 ){
+        tarea_tripulante->tarea = tarea.tarea;
+        tarea_tripulante->parametro = tarea.parametro;
+        tarea_tripulante->tiempo = tarea.tiempo;
+        tarea_tripulante->posicion.posx = tarea.posicion.posx;
+        tarea_tripulante->posicion.posy = tarea.posicion.posy;
+    }else{
+        tarea_tripulante = NULL;
+    }
 
     tripulante->tarea = tarea_tripulante;
+    printf("Fin de solicitud de tarea\n");
     return;
 }
 
@@ -83,9 +90,8 @@ void hilo_tripulante(Tripulante *tripulante)
     list_add(lista_tripulantes, tripulante);
     pthread_mutex_unlock(&MXTRIPULANTE);
 
-    printf("Pedí antes: %d\n", tripulante->id);
+    printf("Inicio de tripulante: %d\n", tripulante->id);
     sem_wait(&tripulante->activo); //Activo: se refiere a si la planificación está activa //TO DO
-    printf("soy la linea 87\n");
     tripulante->socket_cliente_mongo_store = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
     if (tripulante->socket_cliente_mongo_store < 0)
     {
@@ -118,10 +124,12 @@ void hilo_tripulante(Tripulante *tripulante)
     printf("multiTarea:%d\n", sval); */
     //
 
+    int rafagas_consumidas = 0;
     _Bool finalizo_tarea = true;
     //sem_wait(&tripulante->activo);
     while (1)
     {
+        printf("Inicio del ciclo\n");
         if (tripulante->expulsado)
         {
             printf("tripulante %d expulsado \n", tripulante->id);
@@ -132,83 +140,58 @@ void hilo_tripulante(Tripulante *tripulante)
 
         if (finalizo_tarea)
         {
-            tripulante->rafagas_consumidas = 0;
             pedirTarea(tripulante);
-
-            printf("Tiempo: %d\n", tripulante->tarea->tiempo);
-            printf("Parámetro: %d\n", tripulante->tarea->parametro);
-            printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
-            //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
-            //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
-
-            if (!planificacion_activa)
-            {
-                sem_wait(&tripulante->activo);
-            }
-
+            
             if (tripulante->tarea == NULL)
             {
                 //Analizar si se eliminó en otra lista // TO DO
-                //  se pondria crear una funcion : cambiar_estado () ??
-                // todo el contenido del if menos el break : podri incluirse en la funcion cambiar_estado()
-                printf("tarea null\n");
-                cambiar_estado(tripulante, EXIT); //podria agregarse el envio a mi_ram del estado ??
+                printf("Al no tener tarea, se expulsa\n");
+                cambiar_estado(tripulante, EXIT);
                 break;
             }
+            printf("Tiempo: %d\n", tripulante->tarea->tiempo);
+            printf("Parámetro: %d\n", tripulante->tarea->parametro);
+            printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
+            tripulante->pendiente_de_tarea = tripulante->tarea->tiempo;
+            
+            printf("Status tripulante: %d\n", tripulante->status);
             if (tripulante->status == NEW || tripulante->status == BLOCKED)
             {
-                printf("soy la linea 161\n");
-                // Solo en la 1era iteraccion entraria a est if(por new)
+                // Solo en la 1era iteraccion entraria a est if (por new)
                 //Entraria por BLOCKED en caso de finlizar una tarea por i/o y tengo otra tarea a ejecutar
-                if (!planificacion_activa)
-                {
-                    sem_wait(&tripulante->activo);
-                }
-
                 //Se agrega a la lista de ready
                 cambiar_estado(tripulante, READY);
             }
         }
 
-        printf("Inicio: %d\n", list_size(lista_READY));
-        //sleep(2);
+        printf("Antes de post\n");
         //Para que el dispatcher sepa que estamos listos
         sem_post(&listos);
-        printf("Pasé\n");
+        
+        printf("Después de post\n");
         //Esperamos ser seleccionados
+        printf("1\n");
         sem_wait(&tripulante->seleccionado);
-        printf("Pasé II\n");
-        if (!planificacion_activa)
-        {
-            sem_wait(&tripulante->activo);
-        }
+        printf("2\n");
         cambiar_estado(tripulante, EXEC);
 
-        if (hay_sabotaje)
-        {
-            chequear_activados();
-            sem_wait(&tripulante->activo); //esta linea va o no va ???
-            //el tripulante debe volve a ser seleccionado
-            sem_wait(&tripulante->seleccionado);
+        chequear_sabotaje(tripulante);
+
+        printf("A ir a la tarea\n");
+        rafagas_consumidas = mover_tripulante_a_tarea(tripulante);
+        printf("Finalizo tareo: %d\n", rafagas_consumidas);
+        if(rafagas_consumidas == tripulante->pendiente_de_tarea){
+            finalizo_tarea = true;
+        }else{
+            tripulante->pendiente_de_tarea -= rafagas_consumidas;
         }
 
-        mover_tripulante_a_tarea(tripulante);
+        sem_post(&grado_multiprocesamiento);
 
         if (tripulante->tarea->tarea != OTRA_TAREA)
         {
-            if (!planificacion_activa || hay_sabotaje)
-            {
-
-                if (hay_sabotaje)
-                {
-                    chequear_activados();
-                }
-                sem_wait(&tripulante->activo);
-            }
-            //TO-DO Deja de ejecutar y pasa a la lista de bloqueados (ANALIZARLO)
-
-            sem_post(&grado_multiprocesamiento);
-
+            chequear_sabotaje(tripulante);
+            
             //printf("tripulante %d bloqueate\n", tripulante->id);
             sem_post(&bloqueados);
             sleep(config->RETARDO_CICLO_CPU);
@@ -217,38 +200,11 @@ void hilo_tripulante(Tripulante *tripulante)
             //Esperamos ser seleccionados por i/o //solo uno a la vez
             sem_wait(&tripulante->seleccionado_bloqueado);
             pthread_mutex_lock(&mutex_bloqueado);
-        }
-        //misma logica para todas las tareas ?
-        while (tripulante->rafagas_consumidas < tripulante->tarea->tiempo)
-        {
-            if (!planificacion_activa || hay_sabotaje)
-            {
-
-                if (hay_sabotaje)
-                {
-                    chequear_activados();
-                }
-                sem_wait(&tripulante->activo);
-            }
-            tripulante->rafagas_consumidas++;
-            sleep(config->RETARDO_CICLO_CPU);
-        }
-        if (tripulante->tarea->tarea != OTRA_TAREA)
-        {
-            //aca ya habria terminado la tarea
-
-            //falta que el tripulane bloqueado envie el mensaje a mongo store
-            // y que espere que este termine para desbloquearse
-            //GENERAR_OXIGENO 12;2;3;5
-            //crear_recurso
-            //agregar_recurso(tripulante->socketMongo,)
-            //esperar respuesta mongo_store
-
+            sleep(config->RETARDO_CICLO_CPU * tripulante->tarea->tiempo);
             pthread_mutex_unlock(&mutex_bloqueado);
+        }else{
+            cambiar_estado(tripulante, READY);
         }
-        //Falta que el tripulante consuma su rafa de CPU---->listo
-        //consulta de agregar ese consumo (si es bloqueado por sabataje)
-        // persistirlo
     }
 
     liberar_conexion(tripulante->socket_cliente_mi_ram);
@@ -267,6 +223,7 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
     }
     //fin de funcion auxiliar
 
+    printf("Cambio de estado\n");
     switch (tripulante->status)
     {
     case EXEC:
@@ -387,25 +344,34 @@ void crearHilosTripulantes(Patota *una_patota)
     }
 }
 
-void mover_tripulante_a_tarea(Tripulante *tripulante)
-{
+int mover_tripulante_a_tarea(Tripulante *tripulante){
+    int rafagas_consumidas = 0;
+    printf("Conexion tripulante mongostore: %d\n", tripulante->socket_cliente_mongo_store);
     // no estaria viendo el cambio de estado de exec -> ready
     // en RR
 
-    //prueba de fifo en test.c
+
     int posicion_tarea_x = tripulante->tarea->posicion.posx;
     int posicion_tarea_y = tripulante->tarea->posicion.posy;
 
     int rafaga = 1;
     int retardo_cpu = config->RETARDO_CICLO_CPU;
+    printf("Retardo: %d\n", retardo_cpu);
     if (config->ALGORITMO == RR)
     {
+        printf("Paso por RR\n");
         rafaga = config->QUANTUM;
     }
     int ciclos_consumidos = 0;
 
-    while (tripulante->posicion->posx != posicion_tarea_x && ciclos_consumidos < rafaga)
+    printf("Inicio POSX\n");
+    while ((tripulante->posicion->posx != posicion_tarea_x) && ciclos_consumidos < rafaga)
     {
+        rafagas_consumidas++;
+        printf("Tripulante: %d-%d\n", tripulante->posicion->posx, tripulante->posicion->posy);
+        printf("Tarea: %d-%d\n", posicion_tarea_x, posicion_tarea_y);
+        tripulante->posicion_anterior->posx = tripulante->posicion->posx;
+        tripulante->posicion_anterior->posy = tripulante->posicion->posy;
         if (tripulante->expulsado)
         {
             liberar_conexion(tripulante->socket_cliente_mi_ram);
@@ -427,9 +393,10 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
         {
             tripulante->posicion->posx++;
         }
-        else if (posicion_tarea_x < tripulante->posicion->posx)
-        {
-            tripulante->posicion->posx--;
+        else{
+            if (posicion_tarea_x < tripulante->posicion->posx){
+                tripulante->posicion->posx--;
+            }
         }
 
         if (config->ALGORITMO == RR)
@@ -440,8 +407,12 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
         enviar_posicion_mi_ram(tripulante);
     }
 
+    printf("Inicio POSY\n");
     while (tripulante->posicion->posy != posicion_tarea_y && ciclos_consumidos < rafaga)
     {
+        rafagas_consumidas++;
+        printf("Tripulante: %d-%d\n", tripulante->posicion->posx, tripulante->posicion->posy);
+        printf("Tarea: %d-%d\n", posicion_tarea_x, posicion_tarea_y);
         if (tripulante->expulsado)
         {
             liberar_conexion(tripulante->socket_cliente_mi_ram);
@@ -481,18 +452,37 @@ void mover_tripulante_a_tarea(Tripulante *tripulante)
     //Prueba en cosola en fifo:OK
     // mi ram nos envia una tarea con pos 3-4
     //iniciar_patota 5 ./cfg/tareasPatota1.txt 1|1 2|2 3|3 4|4 5|5
+    return rafagas_consumidas;
 }
 
 void enviar_posicion_mi_ram(Tripulante *tripulante)
 {
+    int socket_mongostore = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
+    int socket_miram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);;
+    //int socket_miram = tripulante->socket_cliente_mi_ram;
     t_informar_posicion_tripulante info_tripulante;
     info_tripulante.patota_id = tripulante->patota_id;
     info_tripulante.tripulante_id = tripulante->id;
     info_tripulante.posicion.posx = tripulante->posicion->posx;
     info_tripulante.posicion.posy = tripulante->posicion->posy;
 
+    int posx = tripulante->posicion->posx;
+    int posy = tripulante->posicion->posy;
+    int posx_anterior = tripulante->posicion_anterior->posx;
+    int posy_anterior = tripulante->posicion_anterior->posy;
+
     t_package paquete = ser_res_informar_posicion_tripulante(info_tripulante);
-    sendMessage(paquete, tripulante->socket_cliente_mi_ram);
+    sendMessage(paquete, socket_miram);
+    printf("Enviado a miram\n");
+    printf("Enviado a mongostore\n");
+    //tripulante->socket_cliente_mongo_store
+    if(socket_mongostore > 0){
+        char* filename = string_new();
+        string_append_with_format(&filename, "tripulante%s.ims", string_itoa(tripulante->id));
+        char* contenido = string_new();
+        string_append_with_format(&contenido, "Se mueve de %s|%s a %s|%s\n", string_itoa(posx), string_itoa(posy), string_itoa(posx_anterior), string_itoa(posy_anterior));
+        update_bitacora(socket_mongostore, filename, contenido);
+    }
 }
 
 void chequear_activados()
@@ -677,5 +667,36 @@ void desbloquear_tripulantes()
         un_tripulante->status = READY;
         sem_post(&un_tripulante->activo);
         list_add(lista_READY, un_tripulante);
+    }
+}
+
+void update_bitacora(int conexion_servidor, char *filename, char *contenido)
+{
+    t_file file;
+    file.contenido = contenido;
+    file.long_contenido = strlen(file.contenido);
+    file.nombre_file = filename;
+    file.long_nombre_file = strlen(file.nombre_file);
+
+    t_package paquete = ser_update_bitacora(file);
+    sendMessage(paquete, conexion_servidor);
+}
+
+void chequear_sabotaje(Tripulante* tripulante){
+    printf("Sabotaje: %d\n", hay_sabotaje);
+    if (hay_sabotaje)
+    {
+        chequear_activados();
+        //el tripulante debe volve a ser seleccionado
+        sem_wait(&tripulante->seleccionado);
+        sem_wait(&tripulante->activo);
+    }
+}
+
+void chequear_planificacion_activa(Tripulante* tripulante){
+    printf("Planificacion activa: %d\n", planificacion_activa);
+    if (!planificacion_activa)
+    {
+        sem_wait(&tripulante->activo);
     }
 }
