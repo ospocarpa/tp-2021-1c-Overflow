@@ -59,8 +59,8 @@ int run_tests()
     CU_add_test(tests, "Valido si la memoria esta llena en el bitmap", validar_esta_Llena_Memoria);
     CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible)
     */
-    CU_add_test(tests, "Iniciar patota", validar_iniciar_patota);
-    CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota);
+    // CU_add_test(tests, "Iniciar patota", validar_iniciar_patota);
+    // CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota);
     CU_add_test(tests, "Valido iniciar patota con paginacion", validar_iniciar_patota_paginada);
     /*
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
@@ -802,6 +802,15 @@ void validar_iniciar_patota_paginada(){
     inicializacion_estructuras();
 
     bool res1 =iniciar_patota(data_input);
+    int cant_pages = cantidad_de_paginas_de_una_tabla_por_indice_test(0);
+    t_TCB tripulante = get_TCB_paginacion(1,2);
+
+    printf("estado tripulante 1: %c \n",tripulante.estado);
+
     CU_ASSERT_TRUE(res1);
+    CU_ASSERT_EQUAL(cant_pages, 3);
+    //CU_ASSERT_EQUAL(tripulante.estado, NEW);
+    //CU_ASSERT_EQUAL(tripulante.posx, 1);
+    // CU_ASSERT_EQUAL(tripulante.posy, 2);
 
 }

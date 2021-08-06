@@ -110,6 +110,9 @@ t_TCB get_TCB_paginacion(int patota_id, int tripulante_id){
     t_paginacion_temporal informacion_administrativa = get_paginacion_temporal(patota_id, tripulante_id); 
 
     void* stream = dame_todo_el_stream(informacion_administrativa.pages_filtradas);
+    //
+    //char * tarea1 = 
+    //
     void* stream_tcb = malloc(21);
     memcpy(stream_tcb, stream + informacion_administrativa.offset, 21);
 
@@ -171,23 +174,31 @@ t_paginacion_temporal get_paginacion_temporal(int patota_id, int tripulante_id){
     bool mismo_tabla_id(t_table_page *item){
         return item->patota_id == patota_id;
     }
-    t_table_page* tabla_paginacion = list_find(list_tablas_paginacion, &mismo_tabla_id);
+    t_table_page* tabla_paginacion = list_find(list_tablas_paginacion, mismo_tabla_id);
     int pagina_tam = get_tamanio_tamanio_pagina();
     int indice_tripulante;
-    int tripulante_pivote_id;
+    int * tripulante_pivote_id = malloc(sizeof(int));
     for(int c=0; c<list_size(tabla_paginacion->tripulante_ids); c++){
         tripulante_pivote_id = list_get(tabla_paginacion->tripulante_ids, c);
+        printf("id tripulante puntero: %d \n",tripulante_id);
         if(tripulante_pivote_id == tripulante_id){
             indice_tripulante = c;
             break;
         }
+        
     } 
+
+    printf("indice: %d \n",indice_tripulante);
 
     int tamanio_anterior = tabla_paginacion->cant_caracteres_tarea + 8 + 21 * indice_tripulante;
     int cant_paginas = tamanio_anterior/pagina_tam;
+    printf("cantidad de paginas: %d \n",cant_paginas);
     if(tamanio_anterior%pagina_tam == 0) cant_paginas++;
 
+    printf("cantidad de paginas: %d \n",cant_paginas);
+    
     int offset = tamanio_anterior%pagina_tam;
+    printf("offsets: %d \n",offset);
     int inicio_pagina_indice = cant_paginas-1;
     if(tamanio_anterior%pagina_tam == 0) inicio_pagina_indice++;
 
@@ -334,4 +345,12 @@ void escribir_memoria_virtual(void *stream, int base, int desplazamiento){
 
 void expulsar_tripulante_paginacion(t_expulsar_tripulante tripulante){
     printf("Trip: %d Proceso: %d\n", tripulante.tripulante_id, tripulante.patota_id);
+}
+
+// funciones para testear
+int cantidad_de_paginas_de_una_tabla_por_indice_test(int indice){
+    t_table_page * tabla= list_get(list_tablas_paginacion,indice);
+    int cant_pagina = list_size(tabla->pages);
+
+    return cant_pagina;
 }

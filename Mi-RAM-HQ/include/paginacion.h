@@ -71,4 +71,7 @@ void escribir_memoria_virtual(void *stream, int base, int desplazamiento);
 //Últimos métodos
 void expulsar_tripulante_paginacion(t_expulsar_tripulante tripulante);
 
+//funciones para realizar los test
+int cantidad_de_paginas_de_una_tabla_por_indice_test(int indice);
+
 #endif
