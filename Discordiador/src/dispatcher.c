@@ -33,10 +33,11 @@ Tripulante *busqueda_algoritmo()
     //printf("Config dispatcher: %d\n", config->ALGORITMO);
     //Retornar la cola de listos
     printf("soh la linea 35\n");
+    pthread_mutex_lock(&MXTRIPULANTE);
     int indice = list_size(lista_READY) - 1;
     printf("soh la linea 37\n");
     printf("%d\n", indice);
-    pthread_mutex_lock(&MXTRIPULANTE);
+
     Tripulante *tripulante = list_get(lista_READY, indice); //error
     printf("soh la linea 39\n");
     //list_remove(lista_READY, indice);
