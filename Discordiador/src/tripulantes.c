@@ -171,7 +171,7 @@ void hilo_tripulante(Tripulante *tripulante)
         }
 
         printf("Inicio: %d\n", list_size(lista_READY));
-        sleep(2);
+        //sleep(2);
         //Para que el dispatcher sepa que estamos listos
         sem_post(&listos);
         printf("Pasé\n");
@@ -258,7 +258,7 @@ void hilo_tripulante(Tripulante *tripulante)
 
 void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
 {
-
+    Tripulante *un_tripulante;
     //funcion auxiliar necesaria ?
     _Bool mismo_id(void *param)
     {
@@ -271,16 +271,17 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
     {
     case EXEC:
         pthread_mutex_lock(&MXTRIPULANTE);
-
-        list_remove_by_condition(lista_EXEC, mismo_id);
+        un_tripulante = list_remove_by_condition(lista_EXEC, mismo_id);
+        printf("id del tripulante removido:%d\n", un_tripulante->id);
         cantidad_activos--;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
     case BLOCKED:
         pthread_mutex_lock(&MXTRIPULANTE);
-        printf("Paso por qaui\n");
-        list_remove_by_condition(lista_BLOCKIO, mismo_id);
+
+        un_tripulante = list_remove_by_condition(lista_BLOCKIO, mismo_id);
+        printf("id del tripulante removido:%d\n", un_tripulante->id);
         cantidad_activos--;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
@@ -288,7 +289,8 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
     case READY:
         printf("Se borra\n");
         pthread_mutex_lock(&MXTRIPULANTE);
-        list_remove_by_condition(lista_READY, mismo_id);
+        un_tripulante = list_remove_by_condition(lista_READY, mismo_id);
+        printf("id del tripulante removido:%d\n", un_tripulante->id);
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
     case NEW:

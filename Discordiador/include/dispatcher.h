@@ -17,6 +17,7 @@
 #include <semaphore.h>
 #include "global_discordiador.h"
 
+extern pthread_mutex_t MXTRIPULANTE;
 void init_dispatcher();
 void init_bloqueados();
 Tripulante *busqueda_algoritmo();
