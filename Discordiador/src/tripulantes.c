@@ -136,9 +136,9 @@ void hilo_tripulante(Tripulante *tripulante)
             tripulante->rafagas_consumidas = 0;
             pedirTarea(tripulante);
 
-            /*printf("Tiempo: %d\n", tripulante->tarea->tiempo);
+            printf("Tiempo: %d\n", tripulante->tarea->tiempo);
             printf("Parámetro: %d\n", tripulante->tarea->parametro);
-            printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);*/
+            printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
             //Comprobacion que se guardo la tarea por defecto bien(despues borrar)
             //printf("Tiempo de la tarea %d\n", tripulante->tarea->tiempo);
 
@@ -152,12 +152,13 @@ void hilo_tripulante(Tripulante *tripulante)
                 //Analizar si se eliminó en otra lista // TO DO
                 //  se pondria crear una funcion : cambiar_estado () ??
                 // todo el contenido del if menos el break : podri incluirse en la funcion cambiar_estado()
-
+                printf("tarea null\n");
                 cambiar_estado(tripulante, EXIT); //podria agregarse el envio a mi_ram del estado ??
                 break;
             }
             if (tripulante->status == NEW || tripulante->status == BLOCKED)
             {
+                printf("soy la linea 161\n");
                 // Solo en la 1era iteraccion entraria a est if(por new)
                 //Entraria por BLOCKED en caso de finlizar una tarea por i/o y tengo otra tarea a ejecutar
                 if (!planificacion_activa)
@@ -287,6 +288,9 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
         list_remove_by_condition(lista_READY, mismo_id);
         pthread_mutex_unlock(&MXTRIPULANTE);
         break;
+    case NEW:
+        printf("pase por new\n");
+        break;
     default:
         break;
     }
@@ -306,6 +310,7 @@ void cambiar_estado(Tripulante *tripulante, status_tripulante nuevo_estado)
         tripulante->status = READY;
 
         pthread_mutex_unlock(&MXTRIPULANTE);
+        printf("pase por ready\n");
         break;
     case BLOCKED:
 
