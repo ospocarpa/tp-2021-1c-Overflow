@@ -128,9 +128,9 @@ char* get_tareas_paginacion(int patota_id){
     t_list* paginas_filtradas = list_slice(tabla_paginacion->pages, 0, cant_paginas_tarea);
 
     void* stream = dame_todo_el_stream(paginas_filtradas);
-    char* tareas = malloc(tabla_paginacion->cant_caracteres_tarea);
+    char* tareas = malloc(tabla_paginacion->cant_caracteres_tarea+1);
     memcpy(tareas, stream, tabla_paginacion->cant_caracteres_tarea);
-
+    tareas[tabla_paginacion->cant_caracteres_tarea] = '\0';
     return tareas;
 }
 

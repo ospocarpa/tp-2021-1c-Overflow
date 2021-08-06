@@ -140,7 +140,9 @@ t_list* list_slice(t_list* lista, int inicio, int fin){
 
 bool existe_memoria_disponible_paginacion(t_bitarray* bitmap_memoria_real, t_bitarray* bitmap_memoria_virtual, int tamanio_obj){
     int cant_marcos_real = cantidad_disponible(bitmap_memoria_real);
+    
     int canti_marcos_virtual  = cantidad_disponible(bitmap_memoria_virtual);
+    //printf("Total: %d\n", cant_marcos_real+canti_marcos_virtual);
     if(cant_marcos_real + canti_marcos_virtual >= tamanio_obj ) return true;
     return false;
     
