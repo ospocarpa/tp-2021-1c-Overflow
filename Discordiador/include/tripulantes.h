@@ -59,12 +59,11 @@ int mover_tripulante_a_tarea(Tripulante *);
 void invocar_fsck();
 void cambiar_estado(Tripulante *, status_tripulante);
 Tripulante *buscar_el_mas_cercano(t_sabotaje *sabotaje);
-void update_bitacora(int conexion_servidor, char *filename, char *contenido);
 void chequear_sabotaje(Tripulante* tripulante);
 void chequear_planificacion_activa(Tripulante* tripulante);
 void desbloquear_tripulantes();
 void inicio_sabotaje(t_sabotaje *sabotaje);
 void chequear_activados();
 void enviar_posicion_mi_ram(Tripulante *tripulante);
-
+void update_bitacora(int tripulante_id, char *contenido);
 #endif

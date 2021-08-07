@@ -149,6 +149,10 @@ void hilo_tripulante(Tripulante *tripulante)
                 cambiar_estado(tripulante, EXIT);
                 break;
             }
+            char* contenido = string_new();
+            string_append_with_format(&contenido, "Comienzo ejecución de tarea\n");
+            update_bitacora(tripulante->id, contenido);
+
             printf("Tiempo: %d\n", tripulante->tarea->tiempo);
             printf("Parámetro: %d\n", tripulante->tarea->parametro);
             printf("Posicion x-y: %d-%d\n", tripulante->tarea->posicion.posx, tripulante->tarea->posicion.posy);
@@ -457,7 +461,7 @@ int mover_tripulante_a_tarea(Tripulante *tripulante){
 
 void enviar_posicion_mi_ram(Tripulante *tripulante)
 {
-    int socket_mongostore = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
+    
     int socket_miram = crear_conexion(config->IP_MI_RAM_HQ, config->PUERTO_MI_RAM_HQ);;
     //int socket_miram = tripulante->socket_cliente_mi_ram;
     t_informar_posicion_tripulante info_tripulante;
@@ -474,15 +478,11 @@ void enviar_posicion_mi_ram(Tripulante *tripulante)
     t_package paquete = ser_res_informar_posicion_tripulante(info_tripulante);
     sendMessage(paquete, socket_miram);
     printf("Enviado a miram\n");
-    printf("Enviado a mongostore\n");
+    
     //tripulante->socket_cliente_mongo_store
-    if(socket_mongostore > 0){
-        char* filename = string_new();
-        string_append_with_format(&filename, "tripulante%s.ims", string_itoa(tripulante->id));
-        char* contenido = string_new();
-        string_append_with_format(&contenido, "Se mueve de %s|%s a %s|%s\n", string_itoa(posx), string_itoa(posy), string_itoa(posx_anterior), string_itoa(posy_anterior));
-        update_bitacora(socket_mongostore, filename, contenido);
-    }
+    char* contenido = string_new();
+    string_append_with_format(&contenido, "Se mueve de %s|%s a %s|%s\n", string_itoa(posx), string_itoa(posy), string_itoa(posx_anterior), string_itoa(posy_anterior));
+    update_bitacora(tripulante->id, contenido);
 }
 
 void chequear_activados()
@@ -670,16 +670,23 @@ void desbloquear_tripulantes()
     }
 }
 
-void update_bitacora(int conexion_servidor, char *filename, char *contenido)
+void update_bitacora(int tripulante_id, char *contenido)
 {
-    t_file file;
-    file.contenido = contenido;
-    file.long_contenido = strlen(file.contenido);
-    file.nombre_file = filename;
-    file.long_nombre_file = strlen(file.nombre_file);
+    int conexion_servidor = crear_conexion(config->IP_I_MONGO_STORE, config->PUERTO_I_MONGO_STORE);
+    printf("Enviado a mongostore\n");
+    if(conexion_servidor > 0){
+        char* filename = string_new();
+        string_append_with_format(&filename, "tripulante%s.ims", string_itoa(tripulante_id));
 
-    t_package paquete = ser_update_bitacora(file);
-    sendMessage(paquete, conexion_servidor);
+        t_file file;
+        file.contenido = contenido;
+        file.long_contenido = strlen(file.contenido);
+        file.nombre_file = filename;
+        file.long_nombre_file = strlen(file.nombre_file);
+
+        t_package paquete = ser_update_bitacora(file);
+        sendMessage(paquete, conexion_servidor);
+    }
 }
 
 void chequear_sabotaje(Tripulante* tripulante){
