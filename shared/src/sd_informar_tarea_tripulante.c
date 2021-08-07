@@ -27,6 +27,15 @@ t_info_tarea des_res_informacion_tarea_tripulante(t_package paquete){
     memcpy(&data.tarea, paquete.buffer, sizeof(type_task));
     paquete.buffer += sizeof(type_task);
 
+    memcpy(&data.tam_desc_tarea, paquete.buffer, sizeof(int));
+    paquete.buffer += sizeof(int);
+
+    int size_des = data.tam_desc_tarea;
+    data.desc_tarea = malloc(size_des+1);
+    memcpy(data.desc_tarea, paquete.buffer,size_des);
+    paquete.buffer += size_des;
+    data.desc_tarea[size_des] = '\0';
+
     memcpy(&data.parametro, paquete.buffer, sizeof(int));
     paquete.buffer += sizeof(int);
 
@@ -46,7 +55,7 @@ t_info_tarea des_res_informacion_tarea_tripulante(t_package paquete){
 // es la serializacion de la respuesta de mi ram al mensaje de discordiador
 t_package ser_res_informar_tarea_tripulante(t_info_tarea data_buffer)
 {
-    int tam_buffer = sizeof(type_task) + sizeof(int) * 2+ sizeof(Posicion);
+    int tam_buffer = sizeof(type_task) + 2* sizeof(int) * 2+ sizeof(Posicion) + data_buffer.tam_desc_tarea;
     t_package paquete;
     paquete.buffer = malloc(tam_buffer);
     int offset = 0;
@@ -55,6 +64,12 @@ t_package ser_res_informar_tarea_tripulante(t_info_tarea data_buffer)
 
     memcpy(paquete.buffer, &data_buffer.tarea, sizeof(type_task));
     offset += sizeof(type_task);
+
+    memcpy(paquete.buffer+offset, &data_buffer.tam_desc_tarea, sizeof(int));
+    offset += sizeof(int);
+
+    memcpy(paquete.buffer+offset, data_buffer.desc_tarea, data_buffer.tam_desc_tarea);
+    offset += data_buffer.tam_desc_tarea;
 
     memcpy(paquete.buffer+offset, &data_buffer.parametro, sizeof(int));
     offset += sizeof(int);

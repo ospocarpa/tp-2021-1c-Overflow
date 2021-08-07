@@ -127,6 +127,8 @@
 
 	typedef struct{
 		type_task tarea;
+		int tam_desc_tarea;
+		char * desc_tarea;
 		int parametro;
 		Posicion posicion;
 		int tiempo;	

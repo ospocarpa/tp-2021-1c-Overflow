@@ -37,11 +37,12 @@ int run_tests()
     CU_initialize_registry();
     CU_pSuite tests = CU_add_suite("Cliente Suite", NULL, NULL);
 
+    CU_add_test(tests, "Valido informar tarea msj mi ram a discordiador", validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador);
+
     /*CU_add_test(tests, "Valido serializacion y deserializacion iniciar patota", validar_sd_iniciar_patota);
     CU_add_test(tests, "Valido serializacion y deserializacion de expulsar tripulante", validar_sd_expulsar_tripulante);
     CU_add_test(tests, "Valido serializacion y deserializacion listar tripulante", validar_sd_listar_tripulante);
     CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
-    CU_add_test(tests, "Valido informar tarea msj mi ram a discordiador", validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador);
     CU_add_test(tests, "Valido informar tarea msj discordiador a mi ram", validar_sd_informar_tarea_tripulante_msj_discordiador_a_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj mi ram a discordiador", validar_sd_informar_posicion_msj_disc_mi_ram);
     CU_add_test(tests, "Valido informar posicion msj discordiador a mi ram", validar_sd_informar_posicion_msj_mi_ram_disc);
@@ -58,8 +59,8 @@ int run_tests()
     CU_add_test(tests, "Valido si la memoria esta llena en el bitmap", validar_esta_Llena_Memoria);
     CU_add_test(tests, "Valido si hay algun bit disponible bitmap", validar_get_primer_bit_disponible)
     */
-    CU_add_test(tests, "Iniciar patota", validar_iniciar_patota);
-    CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota);
+    // CU_add_test(tests, "Iniciar patota", validar_iniciar_patota);
+    // CU_add_test(tests, "Valido el get tarea y get de un tcb de una patota", validar_informacion_de_patota);
     /*;
     
     CU_add_test(tests, "Expulsar tripulante segmentada", validar_expulsar_tripulante_segmentada);
@@ -217,6 +218,8 @@ void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador(){
     pos.posy = 0;
 
     tarea.tarea = GENERAR_OXIGENO;
+    tarea.tam_desc_tarea = strlen("GENERAR_OXIGENO");
+    tarea.desc_tarea = "GENERAR_OXIGENO";
     tarea.posicion = pos;
     tarea.parametro = 3;
     tarea.tiempo = 4;
@@ -225,12 +228,15 @@ void validar_sd_informar_tarea_tripulante_msj_mi_ram_a_discordiador(){
     tarea_res = des_res_informacion_tarea_tripulante(paquete);
 
     CU_ASSERT_EQUAL(GENERAR_OXIGENO, tarea_res.tarea);
+    CU_ASSERT_STRING_EQUAL(tarea.desc_tarea, tarea_res.desc_tarea);
+    CU_ASSERT_EQUAL(tarea.tam_desc_tarea, tarea_res.tam_desc_tarea);
     CU_ASSERT_EQUAL(tarea.parametro, tarea_res.parametro);
     CU_ASSERT_EQUAL(tarea.posicion.posx, tarea_res.posicion.posx);
     CU_ASSERT_EQUAL(tarea.posicion.posy, tarea_res.posicion.posy);
     CU_ASSERT_EQUAL(tarea.tiempo, tarea_res.tiempo);
 
     free(paquete.buffer);
+    free(tarea_res.desc_tarea);
 }
 
 void validar_sd_informar_posicion_msj_disc_mi_ram(){
