@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "cmath": "c",
+        "tests.h": "c",
+        "cliente.h": "c",
+        "util_discordiador.h": "c"
+    }
+}
